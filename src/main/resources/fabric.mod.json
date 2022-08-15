@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "verdant_villagers",
+  "version": "${version}",
+
+  "name": "Verdant Villagers",
+  "description": "coming soon",
+  "authors": [
+    "Cosmic Terror Turtle"
+  ],
+  "contact": {
+    "sources": "https://github.com/CosmicTerrorTurtle/verdant_villagers"
+  },
+
+  "license": "MIT License",
+  "icon": "assets/verdant_villagers/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.cosmic_terror_turtle.verdant_villagers.VerdantVillagers"
+    ],
+    "client": [
+      "net.cosmic_terror_turtle.verdant_villagers.VerdantVillagersClient"
+    ]
+  },
+  "mixins": [
+    "verdant_villagers.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.14.6",
+    "fabric": "*",
+    "minecraft": "~1.19",
+    "java": ">=17"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
