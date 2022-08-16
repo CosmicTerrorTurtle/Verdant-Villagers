@@ -8,9 +8,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(TitleScreen.class)
-public class ExampleMixin {
+public class TitleScreenMixin {
 	@Inject(at = @At("HEAD"), method = "init()V")
 	private void init(CallbackInfo info) {
-		VerdantVillagers.LOGGER.info("This line is printed by an example mod mixin!");
+		VerdantVillagers.LOGGER.info("This line is called in TitleScreen#init!");
 	}
 }
