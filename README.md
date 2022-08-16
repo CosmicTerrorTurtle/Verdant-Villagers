@@ -14,5 +14,5 @@ Already implemented:
 Coming in the future:
 - Villagers with different professions (builder, farmer, miner, guard etc.) that gather resources, craft tools and blocks, build structures and roads etc.
 - A villager trading system
-- New village types: Biome-specific like desert/tundra village with different buildings than the standard village type; underground villages, underwater villages, sky villages
+- New village types: Biome-specific like desert/tundra villages with different buildings than the standard village type; underground villages, underwater villages, sky villages
 - New block palette types: Colored blocks (beds, glass blocks/panes, flowers, concrete)
