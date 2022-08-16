@@ -1,0 +1,16 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.village_heart.hover": {
+			"loop": true,
+			"bones": {
+				"main_bone": {
+					"position": {
+						"vector": [0, "math.sin(query.anim_time*100)*4", 0]
+					}
+				}
+			}
+		}
+	},
+	"geckolib_format_version": 2
+}

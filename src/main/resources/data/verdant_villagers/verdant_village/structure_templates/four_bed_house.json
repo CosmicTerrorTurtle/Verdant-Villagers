@@ -1,0 +1,74 @@
+{
+  "village_types": ["standard"],
+  "available_for_villager_count": [0, 1000],
+  "data_per_structure_type": {
+    "house": {
+      "villagers_accounted_for": "4"
+    }
+  },
+  "abbreviation_map": {
+    "nul": "null",
+    "air": "state:minecraft:air",
+    "gra": "state:minecraft:grass_block",
+    "dir": "state:minecraft:dirt",
+    "stf": "palette:0:verdant_villagers:stone:full",
+    "wlo": "palette:0:verdant_villagers:wood:log_axis_y",
+    "wlx": "palette:0:verdant_villagers:wood:log_axis_x",
+    "wlz": "palette:0:verdant_villagers:wood:log_axis_z",
+    "wpl": "palette:0:verdant_villagers:wood:planks",
+    "sbw": "palette:0:verdant_villagers:wood:stairs_waterlogged_false_half_bottom_facing_west_shape_straight",
+    "sbe": "palette:0:verdant_villagers:wood:stairs_waterlogged_false_half_bottom_facing_east_shape_straight",
+    "stw": "palette:0:verdant_villagers:wood:stairs_waterlogged_false_half_top_facing_west_shape_straight",
+    "ste": "palette:0:verdant_villagers:wood:stairs_waterlogged_false_half_top_facing_east_shape_straight",
+    "fns": "palette:0:verdant_villagers:wood:fence_waterlogged_false_north_true_south_true_west_false_east_false",
+    "fwe": "palette:0:verdant_villagers:wood:fence_waterlogged_false_north_false_south_false_west_true_east_true",
+    "fnw": "palette:0:verdant_villagers:wood:fence_waterlogged_false_north_true_south_false_west_true_east_false",
+    "fsw": "palette:0:verdant_villagers:wood:fence_waterlogged_false_north_false_south_true_west_true_east_false",
+    "dlw": "palette:0:verdant_villagers:wood:door_half_lower_facing_west_hinge_left_open_false",
+    "duw": "palette:0:verdant_villagers:wood:door_half_upper_facing_west_hinge_left_open_false",
+    "dle": "palette:0:verdant_villagers:wood:door_half_lower_facing_east_hinge_left_open_false",
+    "due": "palette:0:verdant_villagers:wood:door_half_upper_facing_east_hinge_left_open_false",
+    "crt": "state:minecraft:crafting_table",
+    "bhn": "state:minecraft:white_bed:facing:north:part:head",
+    "bfn": "state:minecraft:white_bed:facing:north:part:foot",
+    "bhs": "state:minecraft:white_bed:facing:south:part:head",
+    "bfs": "state:minecraft:white_bed:facing:south:part:foot",
+    "gns": "state:minecraft:glass_pane:north:true:south:true",
+    "gwe": "state:minecraft:glass_pane:west:true:east:true",
+    "tor": "state:minecraft:torch"
+  },
+  "block_state_cube": [
+    [["nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"]],
+    [["nul","nul","dir","dir","dir","dir","dir","dir","dir","nul","nul"],["nul","air","gra","gra","gra","gra","gra","gra","gra","air","nul"],["nul","air","fsw","fns","fns","fns","fns","fns","fnw","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"]],
+    [["nul","nul","dir","dir","dir","dir","dir","dir","dir","nul","nul"],["nul","air","gra","gra","gra","gra","gra","gra","gra","air","nul"],["nul","air","fwe","air","air","air","air","air","fwe","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"]],
+    [["nul","nul","dir","dir","dir","dir","dir","dir","dir","nul","nul"],["nul","air","gra","gra","gra","gra","gra","gra","gra","air","nul"],["nul","air","fwe","air","air","air","air","air","fwe","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"]],
+    [["nul","nul","dir","dir","dir","dir","dir","dir","dir","nul","nul"],["air","air","gra","gra","gra","gra","gra","gra","gra","air","air"],["air","air","fwe","air","air","air","air","air","fwe","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["sbw","sbw","sbw","sbw","sbw","sbw","sbw","sbw","sbw","sbw","sbw"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"]],
+    [["nul","stf","stf","stf","stf","stf","stf","stf","stf","stf","nul"],["air","stf","stf","stf","stf","stf","stf","stf","stf","stf","air"],["air","wlo","wpl","wpl","wpl","dlw","wpl","wpl","wpl","wlo","air"],["air","wlo","wpl","gns","wpl","duw","wpl","gns","wpl","wlo","air"],["air","wlo","wpl","wpl","wpl","wpl","wpl","wpl","wpl","wlo","air"],["ste","wlo","wlz","wlz","wlz","wlz","wlz","wlz","wlz","wlo","ste"],["sbw","sbw","sbw","sbw","sbw","sbw","sbw","sbw","sbw","sbw","sbw"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"]],
+    [["nul","stf","stf","stf","stf","stf","stf","stf","stf","stf","nul"],["air","stf","stf","stf","stf","stf","stf","stf","stf","stf","air"],["air","wpl","bhn","bfn","air","air","air","bfs","bhs","wpl","air"],["air","wpl","air","air","air","air","air","air","air","wpl","air"],["air","wpl","air","air","air","air","air","air","air","wpl","air"],["air","wlx","air","air","air","air","air","air","air","wlx","air"],["ste","wpl","air","air","air","air","air","air","air","wpl","ste"],["sbw","sbw","sbw","sbw","sbw","sbw","sbw","sbw","sbw","sbw","sbw"],["air","air","air","air","air","air","air","air","air","air","air"]],
+    [["nul","stf","stf","stf","stf","stf","stf","stf","stf","stf","nul"],["air","stf","stf","stf","stf","stf","stf","stf","stf","stf","air"],["air","wpl","crt","air","air","air","air","air","crt","wpl","air"],["air","gwe","air","air","air","air","air","air","air","gwe","air"],["air","wpl","air","air","air","air","air","air","air","wpl","air"],["air","wlx","air","air","air","air","air","air","air","wlx","air"],["air","wpl","air","air","air","air","air","air","air","wpl","air"],["ste","wpl","air","air","air","air","air","air","air","wpl","ste"],["sbw","sbw","sbw","sbw","sbw","sbw","sbw","sbw","sbw","sbw","sbw"]],
+    [["nul","stf","stf","stf","stf","stf","stf","stf","stf","stf","nul"],["air","stf","stf","stf","stf","stf","stf","stf","stf","stf","air"],["air","wpl","air","air","air","tor","air","air","air","wpl","air"],["air","gwe","air","air","air","air","air","air","air","gwe","air"],["air","wpl","air","air","air","air","air","air","air","wpl","air"],["air","wlx","air","air","air","air","air","air","air","wlx","air"],["air","wpl","air","air","air","air","air","air","air","wpl","air"],["air","wpl","air","air","air","air","air","air","air","wpl","air"],["wpl","wpl","wpl","wpl","wpl","wpl","wpl","wpl","wpl","wpl","wpl"]],
+    [["nul","stf","stf","stf","stf","stf","stf","stf","stf","stf","nul"],["air","stf","stf","stf","stf","stf","stf","stf","stf","stf","air"],["air","wpl","crt","air","air","air","air","air","crt","wpl","air"],["air","gwe","air","air","air","air","air","air","air","gwe","air"],["air","wpl","air","air","air","air","air","air","air","wpl","air"],["air","wlx","air","air","air","air","air","air","air","wlx","air"],["air","wpl","air","air","air","air","air","air","air","wpl","air"],["stw","wpl","air","air","air","air","air","air","air","wpl","stw"],["sbe","sbe","sbe","sbe","sbe","sbe","sbe","sbe","sbe","sbe","sbe"]],
+    [["nul","stf","stf","stf","stf","stf","stf","stf","stf","stf","nul"],["air","stf","stf","stf","stf","stf","stf","stf","stf","stf","air"],["air","wpl","bhn","bfn","air","air","air","bfs","bhs","wpl","air"],["air","wpl","air","air","air","air","air","air","air","wpl","air"],["air","wpl","air","air","air","air","air","air","air","wpl","air"],["air","wlx","air","air","air","air","air","air","air","wlx","air"],["stw","wpl","air","air","air","air","air","air","air","wpl","stw"],["sbe","sbe","sbe","sbe","sbe","sbe","sbe","sbe","sbe","sbe","sbe"],["air","air","air","air","air","air","air","air","air","air","air"]],
+    [["nul","stf","stf","stf","stf","stf","stf","stf","stf","stf","nul"],["air","stf","stf","stf","stf","stf","stf","stf","stf","stf","air"],["air","wlo","wpl","wpl","wpl","dle","wpl","wpl","wpl","wlo","air"],["air","wlo","wpl","gns","wpl","due","wpl","gns","wpl","wlo","air"],["air","wlo","wpl","wpl","wpl","wpl","wpl","wpl","wpl","wlo","air"],["stw","wlo","wlz","wlz","wlz","wlz","wlz","wlz","wlz","wlo","stw"],["sbe","sbe","sbe","sbe","sbe","sbe","sbe","sbe","sbe","sbe","sbe"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"]],
+    [["nul","nul","nul","nul","nul","wpl","nul","nul","nul","nul","nul"],["air","air","air","air","air","sbe","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["sbe","sbe","sbe","sbe","sbe","sbe","sbe","sbe","sbe","sbe","sbe"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"]]
+  ],
+  "center": [4, 0, 5],
+  "points_of_interest": [
+    {
+      "subclass_name": "StructureAccessPoint",
+      "subclass_data": {
+        "pos": [-5, 0, 0],
+        "radius": 0.2,
+        "template_column": {
+          "base_level_index": 1,
+          "abbreviation_map": {
+            "air": "state:minecraft:air",
+            "pth": "state:minecraft:dirt_path",
+            "dir": "state:minecraft:dirt"
+          },
+          "block_states": ["dir", "pth", "air", "air", "air"]
+        }
+      }
+    }
+  ]
+}

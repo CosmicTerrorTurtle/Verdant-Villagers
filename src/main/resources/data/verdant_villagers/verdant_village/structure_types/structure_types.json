@@ -1,0 +1,18 @@
+{
+  "house": {
+    "search_distance_multiplier": 1,
+    "structure_check_method": "count_villagers"
+  },
+  "storage": {
+    "search_distance_multiplier": 1,
+    "structure_check_method": "count_villagers"
+  },
+  "plant_farm": {
+    "search_distance_multiplier": 1,
+    "structure_check_method": "count_villagers"
+  },
+  "decorative_plant": {
+    "search_distance_multiplier": 4,
+    "structure_check_method": "count_villagers"
+  }
+}

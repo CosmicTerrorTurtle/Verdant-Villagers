@@ -1,0 +1,60 @@
+{
+  "village_types": ["standard"],
+  "available_for_villager_count": [0, 1000],
+  "data_per_structure_type": {
+    "house": {
+      "villagers_accounted_for": "2"
+    }
+  },
+  "abbreviation_map": {
+    "nul": "null",
+    "air": "state:minecraft:air",
+    "stf": "palette:0:verdant_villagers:stone:full",
+    "wlo": "palette:0:verdant_villagers:wood:log_axis_y",
+    "wpl": "palette:0:verdant_villagers:wood:planks",
+    "sbn": "palette:0:verdant_villagers:wood:stairs_waterlogged_false_half_bottom_facing_north_shape_straight",
+    "sbs": "palette:0:verdant_villagers:wood:stairs_waterlogged_false_half_bottom_facing_south_shape_straight",
+    "sbw": "palette:0:verdant_villagers:wood:stairs_waterlogged_false_half_bottom_facing_west_shape_straight",
+    "sbe": "palette:0:verdant_villagers:wood:stairs_waterlogged_false_half_bottom_facing_east_shape_straight",
+    "sb1": "palette:0:verdant_villagers:wood:stairs_waterlogged_false_half_bottom_facing_east_shape_outer_left",
+    "sb2": "palette:0:verdant_villagers:wood:stairs_waterlogged_false_half_bottom_facing_east_shape_outer_right",
+    "sb3": "palette:0:verdant_villagers:wood:stairs_waterlogged_false_half_bottom_facing_west_shape_outer_left",
+    "sb4": "palette:0:verdant_villagers:wood:stairs_waterlogged_false_half_bottom_facing_west_shape_outer_right",
+    "dle": "palette:0:verdant_villagers:wood:door_half_lower_facing_east_hinge_left_open_false",
+    "due": "palette:0:verdant_villagers:wood:door_half_upper_facing_east_hinge_left_open_false",
+    "crt": "state:minecraft:crafting_table",
+    "bhe": "state:minecraft:white_bed:facing:east:part:head",
+    "bfe": "state:minecraft:white_bed:facing:east:part:foot",
+    "gns": "state:minecraft:glass_pane:north:true:south:true",
+    "gwe": "state:minecraft:glass_pane:west:true:east:true",
+    "tor": "state:minecraft:torch"
+  },
+  "block_state_cube": [
+    [["nul","nul","nul","nul","nul","nul","nul"],["air","air","air","air","air","air","air"],["air","air","air","air","air","air","air"],["air","air","air","air","air","air","air"],["sb3","sbw","sbw","sbw","sbw","sbw","sb4"],["air","air","air","air","air","air","air"],["air","air","air","air","air","air","air"]],
+    [["nul","stf","stf","stf","stf","stf","nul"],["air","wlo","wpl","wpl","wpl","wlo","air"],["air","wlo","wpl","gns","wpl","wlo","air"],["air","wlo","wpl","wpl","wpl","wlo","air"],["sbs","wlo","wpl","wpl","wpl","wlo","sbn"],["air","sb3","sbw","sbw","sbw","sb4","air"],["air","air","air","air","air","air","air"]],
+    [["nul","stf","stf","stf","stf","stf","nul"],["air","wpl","bhe","crt","bhe","wpl","air"],["air","wpl","air","air","air","wpl","air"],["air","wpl","air","air","air","wpl","air"],["sbs","wpl","air","air","air","wpl","sbn"],["air","sbs","air","air","air","sbn","air"],["air","air","sb3","sbw","sb4","air","air"]],
+    [["nul","stf","stf","stf","stf","stf","nul"],["air","wpl","bfe","tor","bfe","wpl","air"],["air","gwe","air","air","air","gwe","air"],["air","wpl","air","air","air","wpl","air"],["sbs","wpl","air","air","air","wpl","sbn"],["air","sbs","air","air","air","sbn","air"],["air","air","sbs","wpl","sbn","air","air"]],
+    [["nul","stf","stf","stf","stf","stf","nul"],["air","wpl","air","air","air","wpl","air"],["air","wpl","air","air","air","wpl","air"],["air","wpl","air","air","air","wpl","air"],["sbs","wpl","air","air","air","wpl","sbn"],["air","sbs","air","air","air","sbn","air"],["air","air","sb2","sbe","sb1","air","air"]],
+    [["nul","stf","stf","stf","stf","stf","nul"],["air","wlo","wpl","dle","wpl","wlo","air"],["air","wlo","wpl","due","wpl","wlo","air"],["air","wlo","wpl","wpl","wpl","wlo","air"],["sbs","wlo","wpl","wpl","wpl","wlo","sbn"],["air","sb2","sbe","sbe","sbe","sb1","air"],["air","air","air","air","air","air","air"]],
+    [["nul","nul","nul","nul","nul","nul","nul"],["air","air","air","air","air","air","air"],["air","air","air","air","air","air","air"],["air","air","air","air","air","air","air"],["sb2","sbe","sbe","sbe","sbe","sbe","sb1"],["air","air","air","air","air","air","air"],["air","air","air","air","air","air","air"]]
+  ],
+  "center": [3, 0, 3],
+  "points_of_interest": [
+    {
+      "subclass_name": "StructureAccessPoint",
+      "subclass_data": {
+        "pos": [-3, 0, 0],
+        "radius": 0.2,
+        "template_column": {
+          "base_level_index": 1,
+          "abbreviation_map": {
+            "air": "state:minecraft:air",
+            "pth": "state:minecraft:dirt_path",
+            "dir": "state:minecraft:dirt"
+          },
+          "block_states": ["dir", "pth", "air", "air", "air"]
+        }
+      }
+    }
+  ]
+}

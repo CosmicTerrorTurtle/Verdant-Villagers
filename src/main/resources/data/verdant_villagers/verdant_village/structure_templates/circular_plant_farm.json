@@ -1,0 +1,56 @@
+{
+  "village_types": ["standard"],
+  "available_for_villager_count": [0, 1000],
+  "data_per_structure_type": {
+    "plant_farm": {
+      "villagers_accounted_for": "6"
+    }
+  },
+  "abbreviation_map": {
+    "nul": "null",
+    "air": "state:minecraft:air",
+    "gra": "state:minecraft:grass_block",
+    "pth": "state:minecraft:dirt_path",
+    "dir": "state:minecraft:dirt",
+    "far": "state:minecraft:farmland",
+    "wat": "state:minecraft:water",
+    "fcn": "palette:0:verdant_villagers:wood:fence_waterlogged_false_north_true_south_false_west_false_east_false",
+    "fcs": "palette:0:verdant_villagers:wood:fence_waterlogged_false_north_false_south_true_west_false_east_false",
+    "fns": "palette:0:verdant_villagers:wood:fence_waterlogged_false_north_true_south_true_west_false_east_false",
+    "fwe": "palette:0:verdant_villagers:wood:fence_waterlogged_false_north_false_south_false_west_true_east_true",
+    "fnw": "palette:0:verdant_villagers:wood:fence_waterlogged_false_north_true_south_false_west_true_east_false",
+    "fne": "palette:0:verdant_villagers:wood:fence_waterlogged_false_north_true_south_false_west_false_east_true",
+    "fsw": "palette:0:verdant_villagers:wood:fence_waterlogged_false_north_false_south_true_west_true_east_false",
+    "fse": "palette:0:verdant_villagers:wood:fence_waterlogged_false_north_false_south_true_west_false_east_true"
+  },
+  "block_state_cube": [
+    [["nul","nul","nul","nul","nul","nul","nul","nul","nul"],["nul","gra","gra","gra","gra","gra","gra","gra","nul"],["nul","fsw","fns","fns","fns","fns","fns","fnw","nul"],["nul","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","nul"]],
+    [["nul","nul","dir","dir","dir","dir","dir","nul","nul"],["gra","gra","far","far","far","far","far","gra","gra"],["fsw","fne","air","air","air","air","air","fse","fnw"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"]],
+    [["nul","dir","dir","dir","dir","dir","dir","dir","nul"],["gra","far","far","far","far","far","far","far","gra"],["fwe","air","air","air","air","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"]],
+    [["nul","dir","dir","dir","dir","dir","dir","dir","nul"],["gra","far","far","far","far","far","far","far","gra"],["fwe","air","air","air","air","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"]],
+    [["nul","dir","dir","dir","dir","air","dir","dir","nul"],["gra","far","far","far","wat","far","far","far","gra"],["fwe","air","air","air","air","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"]],
+    [["nul","dir","dir","dir","dir","dir","dir","dir","nul"],["gra","far","far","far","far","far","far","far","gra"],["fwe","air","air","air","air","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"]],
+    [["nul","dir","dir","dir","dir","dir","dir","dir","nul"],["gra","far","far","far","far","far","far","far","gra"],["fwe","air","air","air","air","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"]],
+    [["nul","nul","dir","dir","dir","dir","dir","nul","nul"],["gra","gra","far","far","far","far","far","gra","gra"],["fse","fnw","air","air","air","air","air","fsw","fne"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"]],
+    [["nul","nul","nul","nul","dir","nul","nul","nul","nul"],["nul","gra","gra","gra","pth","gra","gra","gra","nul"],["nul","fse","fns","fcn","air","fcs","fns","fne","nul"],["nul","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","nul"]]
+  ],
+  "center": [4, 1, 4],
+  "points_of_interest": [
+    {
+      "subclass_name": "StructureAccessPoint",
+      "subclass_data": {
+        "pos": [-5, 0, 0],
+        "radius": 0.2,
+        "template_column": {
+          "base_level_index": 1,
+          "abbreviation_map": {
+            "air": "state:minecraft:air",
+            "pth": "state:minecraft:dirt_path",
+            "dir": "state:minecraft:dirt"
+          },
+          "block_states": ["dir", "pth", "air", "air", "air"]
+        }
+      }
+    }
+  ]
+}

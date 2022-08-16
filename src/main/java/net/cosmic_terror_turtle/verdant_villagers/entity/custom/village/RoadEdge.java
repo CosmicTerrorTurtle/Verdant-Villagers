@@ -1,0 +1,304 @@
+package net.cosmic_terror_turtle.verdant_villagers.entity.custom.village;
+
+import net.cosmic_terror_turtle.verdant_villagers.util.MathUtils;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+public class RoadEdge extends GeoFeature {
+
+    public static final double ROAD_STEP = 0.1; // Lower step -> higher precision in placing the road blocks
+    public static final double ROAD_DOT_SPACE = 2.5; // Space between road dots
+    public static final int FIRST = 1;
+    public static final int SECOND = 2;
+    public static final int THIRD = 3;
+
+
+    public RoadJunction from;
+    public RoadJunction to;
+    public ArrayList<RoadDot> roadDots = new ArrayList<>();
+    public final double radius;
+    private int polynomialDegree;
+    private double c;
+    private final double d; // The distance between both ends on the X-Z-plane.
+    private double e;
+    private double ySlope; // The slope of this edge's delta-Y versus d.
+
+    public RoadEdge(int elementID, Random random, RoadJunction from, RoadJunction to, boolean overwriteJunctions,
+                    RoadType type) {
+        this(elementID, random, from, to, type.edgeRadius, overwriteJunctions,
+                type.edgeBlockColumnRadii, type.edgeTemplateBlockColumns, type.edgeMiddleColumnSpace, type.edgeTemplateMiddleColumn);
+    }
+    public RoadEdge(int elementID, Random random, RoadJunction from, RoadJunction to, double radius, boolean overwriteJunctions,
+                    VerticalBlockColumn templateRoadColumn) {
+        this(elementID, random, from, to, radius, overwriteJunctions,
+                new double[]{radius}, new VerticalBlockColumn[]{templateRoadColumn}, 1000000.0, null);
+    }
+    public RoadEdge(int elementID, Random random, RoadJunction from, RoadJunction to, double radius, boolean overwriteJunctions,
+                    double[] roadColumnRadii, VerticalBlockColumn[] templateRoadColumns, double middleColumnSpace, VerticalBlockColumn templateMiddleColumn) {
+        super(elementID);
+        this.from = from;
+        this.to = to;
+        this.radius = radius;
+
+        d = Math.sqrt(MathHelper.square(from.pos.getX()-to.pos.getX())+MathHelper.square(from.pos.getZ()-to.pos.getZ()));
+
+        preparePolynomialFunction(random);
+        setBitsMegaBlocksAndRoadDots(overwriteJunctions, middleColumnSpace, templateMiddleColumn, roadColumnRadii, templateRoadColumns);
+    }
+
+    private void preparePolynomialFunction(Random random) {
+        double fraction; // The fraction of d that abs(function) should return at max.
+        int deg = MathUtils.nextInt(1, 3);
+        switch (deg) {
+            case 1 -> {
+                polynomialDegree = FIRST;
+                e = 0;
+                c = 0;
+            }
+            case 2 -> {
+                polynomialDegree = SECOND;
+                fraction = 0.4;
+                e = 0;
+                c = random.nextDouble(-4 * fraction / d, 4 * fraction / d);
+            }
+            case 3 -> {
+                fraction = 0.3;
+                polynomialDegree = THIRD;
+                e = random.nextDouble( d / 3, d * 2 / 3);
+                double aMax1 = (d + e) / 3 + Math.sqrt((d + e) * (d + e) / 9 - d * e / 3);
+                double aMax2 = (d + e) / 3 - Math.sqrt((d + e) * (d + e) / 9 - d * e / 3);
+                double cMax = fraction * d / Math.max(Math.abs(aMax1 * (d - aMax1) * (e - aMax1)), Math.abs(aMax2 * (d - aMax2) * (e - aMax2)));
+                c = random.nextDouble( -cMax, cMax);
+            }
+        }
+    }
+
+    /**
+     * Calculates the polynomial function for one input value.
+     * @param a The input value of the function.
+     * @return The output value of the function.
+     */
+    private double getFunctionAt(double a) {
+        switch (polynomialDegree) {
+            default:
+            case FIRST:
+                return 0;
+            case SECOND:
+                return c*a*(d-a);
+            case THIRD:
+                return c*a*(d-a)*(e-a);
+        }
+    }
+
+    private double getSlopeAt(double a) {
+        switch (polynomialDegree) {
+            default:
+            case FIRST:
+                return 0;
+            case SECOND:
+                return c*(d-2*a);
+            case THIRD:
+                return c*(3*a*a-2*(d+e)*a+d*e);
+        }
+    }
+
+    private void setBitsMegaBlocksAndRoadDots(boolean overwriteJunctions, double middleColumnSpace, VerticalBlockColumn templateMiddleColumn,
+                                              double[] roadColumnRadii, VerticalBlockColumn[] templateRoadColumns) {
+
+        double roundingOffset = 0.5; // Makes the block position coordinates be centered in a block.
+        ArrayList<VerticalBlockColumn> normalColumns = new ArrayList<>();
+        ArrayList<VerticalBlockColumn> middleColumns = new ArrayList<>();
+        double angleAtFrom;
+        if (to.pos.getZ()>from.pos.getZ()) {
+            angleAtFrom = Math.acos((to.pos.getX()-from.pos.getX())/d);
+        } else {
+            angleAtFrom = -Math.acos((to.pos.getX()-from.pos.getX())/d);
+        }
+        double aOffsetStart = from.sameHeightRadius;
+        double aOffsetEnd = to.sameHeightRadius;
+        if (d > aOffsetStart + aOffsetEnd) {
+            ySlope = (to.pos.getY()-from.pos.getY())/(d-aOffsetStart-aOffsetEnd);
+        } else {
+            ySlope = 1000000;
+        }
+        double aCoord;
+        double faCoord;
+        double f_of_a;
+        double f_slope;
+        double tmp;
+        double yCoord;
+        VerticalBlockColumn templateColumn;
+        double spaceAfterLastMiddleColumn = 0;
+        double spaceAfterLastDot = 0;
+        for (double a=0; a<d; a+=ROAD_STEP) {
+            f_of_a = getFunctionAt(a);
+            f_slope = getSlopeAt(a);
+            if (a<aOffsetStart) {
+                yCoord = 0;
+            } else if (a<d-aOffsetEnd) {
+                yCoord = ySlope*(a-aOffsetStart);
+            } else {
+                yCoord = to.pos.getY()-from.pos.getY();
+            }
+            // Bulk bits
+            for (double offset=-radius; offset<=radius; offset+=ROAD_STEP) {
+                tmp = offset/Math.sqrt(1+f_slope*f_slope);
+                aCoord = a+f_slope*tmp;
+                faCoord = f_of_a-tmp;
+                templateColumn = templateRoadColumns[0];
+                for (int i=0; i<roadColumnRadii.length; i++) {
+                    if (Math.abs(offset) <= roadColumnRadii[i]) {
+                        templateColumn = templateRoadColumns[i];
+                        break;
+                    }
+                }
+                addToColumns(normalColumns, templateColumn.copyWith(new BlockPos(
+                        aCoord*Math.cos(angleAtFrom) - faCoord*Math.sin(angleAtFrom) + roundingOffset,
+                        yCoord + roundingOffset,
+                        aCoord*Math.sin(angleAtFrom) + faCoord*Math.cos(angleAtFrom) + roundingOffset
+                )), true);
+            }
+            // Middle column bits
+            spaceAfterLastMiddleColumn += ROAD_STEP;
+            if (spaceAfterLastMiddleColumn>middleColumnSpace) {
+                spaceAfterLastMiddleColumn = 0;
+                if (templateMiddleColumn != null && a>from.radius && a<d-to.radius) {
+                    middleColumns.add(templateMiddleColumn.copyWith(new BlockPos(
+                                    a*Math.cos(angleAtFrom) - f_of_a*Math.sin(angleAtFrom) + roundingOffset,
+                                    yCoord + roundingOffset,
+                                    a*Math.sin(angleAtFrom) + f_of_a*Math.cos(angleAtFrom) + roundingOffset
+                    )));
+                }
+            }
+            // Dots
+            spaceAfterLastDot += ROAD_STEP;
+            if (spaceAfterLastDot>ROAD_DOT_SPACE) {
+                spaceAfterLastDot = 0;
+                for (double offset : new double[]{-radius, radius}) {
+                    tmp = offset/Math.sqrt(1+f_slope*f_slope);
+                    aCoord = a+f_slope*tmp;
+                    faCoord = f_of_a-tmp;
+                    roadDots.add(new RoadDot(this, from.pos.add(
+                            aCoord*Math.cos(angleAtFrom) - faCoord*Math.sin(angleAtFrom) + roundingOffset,
+                            yCoord + roundingOffset,
+                            aCoord*Math.sin(angleAtFrom) + faCoord*Math.cos(angleAtFrom) + roundingOffset
+                    )));
+                }
+            }
+        }
+        for (VerticalBlockColumn middleColumn : middleColumns) {
+            addToColumns(normalColumns, middleColumn, true);
+        }
+        ArrayList<GeoFeatureBit> relativeBits = new ArrayList<>();
+        for (VerticalBlockColumn column : normalColumns) {
+            for (int i=0; i<column.states.length; i++) {
+                if (overwriteJunctions || Math.pow(column.anchor.getX(), 2) + Math.pow(column.anchor.getZ(), 2) > Math.pow(from.radius, 2)
+                        && Math.pow(column.anchor.getX()+from.pos.getX()-to.pos.getX(), 2) + Math.pow(column.anchor.getZ()+from.pos.getZ()-to.pos.getZ(), 2) > Math.pow(to.radius, 2)) {
+                    relativeBits.add(new GeoFeatureBit(column.states[i], column.anchor.up(i-column.baseLevelIndex)));
+                }
+            }
+        }
+        setBits(relativeBits, from.pos, ROTATE_NOT);
+    }
+
+    /**
+     * Adds a vertical road column to a list if the x/z coordinate combination of the column's anchor is unique.
+     * @param columns The list of columns.
+     * @param newColumn The column to be added.
+     * @param replaceOld Whether the first old column with the same anchor x/z should be replaced with the new column.
+     */
+    private static void addToColumns(ArrayList<VerticalBlockColumn> columns, VerticalBlockColumn newColumn, boolean replaceOld) {
+        for (VerticalBlockColumn oldColumn : columns) {
+            if (oldColumn.anchor.getX()==newColumn.anchor.getX() && oldColumn.anchor.getZ()==newColumn.anchor.getZ()) {
+                if (replaceOld) {
+                    columns.remove(oldColumn);
+                    columns.add(newColumn);
+                }
+                return;
+            }
+        }
+        columns.add(newColumn);
+    }
+
+    public double getYSlope() {
+        return ySlope;
+    }
+
+    /**
+     * Creates a new RoadEdge from an NbtCompound.
+     * @param nbt The compound representing a RoadEdge.
+     * @param junctions All junctions of the village. If null (use this for reading access paths), then the two junctions
+     *                  that belong to this edge will be read from it's nbt tag.
+     */
+    public RoadEdge(@NotNull NbtCompound nbt, @Nullable ArrayList<RoadJunction> junctions) {
+        super(nbt);
+        if (junctions != null) {
+            // Major road
+            int fromId = nbt.getInt("fromId");
+            for (RoadJunction junction : junctions) {
+                if (junction.elementID == fromId) {
+                    from = junction;
+                    break;
+                }
+            }
+            int toId = nbt.getInt("toId");
+            for (RoadJunction junction : junctions) {
+                if (junction.elementID == toId) {
+                    to = junction;
+                    break;
+                }
+            }
+        } else {
+            // Access path
+            from = new RoadJunction(nbt.getCompound("from"));
+            to = new RoadJunction(nbt.getCompound("to"));
+        }
+        NbtCompound roadDotsNbt = nbt.getCompound("roadDots");
+        for (String key : roadDotsNbt.getKeys()) {
+            roadDots.add(new RoadDot(roadDotsNbt.getCompound(key), this));
+        }
+        radius = nbt.getDouble("radius");
+        polynomialDegree = nbt.getInt("polynomialDegree");
+        c = nbt.getDouble("c");
+        d = nbt.getDouble("d");
+        e = nbt.getDouble("e");
+        ySlope = nbt.getDouble("ySlope");
+    }
+    /**
+     * Saves this RoadEdge to an NbtCompound.
+     * @param isMajorRoad If this edge should be saved as a major road or as an access path. If true, only the elementID
+     *                    from both junctions will be saved. If false, both junctions will be saved under this edge's nbt tag.
+     * @return The compound representing this RoadEdge.
+     */
+    public NbtCompound toNbt(boolean isMajorRoad) {
+        NbtCompound nbt = super.toNbt();
+        if (isMajorRoad) {
+            nbt.putInt("fromId", from.elementID);
+            nbt.putInt("toId", to.elementID);
+        } else {
+            // Is access path
+            nbt.put("from", from.toNbt());
+            nbt.put("to", to.toNbt());
+        }
+        NbtCompound roadDotsNbt = new NbtCompound();
+        int i=0;
+        for (RoadDot dot : roadDots) {
+            roadDotsNbt.put(Integer.toString(i), dot.toNbt());
+            i++;
+        }
+        nbt.put("roadDots", roadDotsNbt);
+        nbt.putDouble("radius", radius);
+        nbt.putInt("polynomialDegree", polynomialDegree);
+        nbt.putDouble("c", c);
+        nbt.putDouble("d", d);
+        nbt.putDouble("e", e);
+        nbt.putDouble("ySlope", ySlope);
+        return nbt;
+    }
+}

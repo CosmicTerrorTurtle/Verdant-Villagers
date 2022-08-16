@@ -1,0 +1,23 @@
+{
+  "village_types": ["standard"],
+  "available_for_villager_count": [0, 1000],
+  "data_per_structure_type": {
+    "decorative_plant": {
+      "villagers_accounted_for": "2"
+    }
+  },
+  "abbreviation_map": {
+    "nul": "null",
+    "csp": "collision_space",
+    "gra": "state:minecraft:grass_block",
+    "fnc": "palette:0:verdant_villagers:wood:fence_waterlogged_false_north_false_south_false_west_false_east_false",
+    "wlv": "palette:0:verdant_villagers:wood:leaves_persistent_true"
+  },
+  "block_state_cube": [
+    [["nul","nul","nul"],["csp","csp","csp"],["csp","csp","csp"],["csp","csp","csp"]],
+    [["nul","gra","nul"],["csp","fnc","csp"],["csp","wlv","csp"],["csp","wlv","csp"]],
+    [["nul","nul","nul"],["csp","csp","csp"],["csp","csp","csp"],["csp","csp","csp"]]
+  ],
+  "center": [1, 0, 1],
+  "points_of_interest": []
+}
