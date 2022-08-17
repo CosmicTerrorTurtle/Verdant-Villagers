@@ -39,7 +39,7 @@ public class ServerVillage extends Village {
     private static final int SEARCH_DISTANCE_STRUCTURE_AVG = 13;
     private static final double SEARCH_DISTANCE_STRUCTURE_FRACTION = 0.1;
     // If the distance between two positions is lower than this threshold, they are considered to be close to each other.
-    private static final int POSITIONS_ARE_CLOSE_DISTANCE = 90;
+    private static final int POSITIONS_ARE_CLOSE_DISTANCE = 100;
     // The minimum number of near road junctions needed for a structure position to be valid.
     private static final int MIN_NEAR_ROAD_JUNCTIONS = 6;
     // The minimum space between two road junctions (regardless of whether they are connected or not).
@@ -50,7 +50,7 @@ public class ServerVillage extends Village {
     // The maximum slope angle that a road edge can have.
     private static final double ROAD_EDGE_MAX_Y_SLOPE = 0.5;
     // The maximum length that an access point path can have.
-    private static final int ACCESS_POINT_PATH_MAX_LENGTH = 25;
+    private static final int ACCESS_POINT_PATH_MAX_LENGTH = 24;
 
 
     // Fields deleted when the block gets unloaded.

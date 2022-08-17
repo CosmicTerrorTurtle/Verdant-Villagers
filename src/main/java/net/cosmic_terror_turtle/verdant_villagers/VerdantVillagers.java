@@ -2,6 +2,7 @@ package net.cosmic_terror_turtle.verdant_villagers;
 
 import net.cosmic_terror_turtle.verdant_villagers.block.ModBlocks;
 import net.cosmic_terror_turtle.verdant_villagers.data.ModResources;
+import net.cosmic_terror_turtle.verdant_villagers.data.gen.DataGen;
 import net.cosmic_terror_turtle.verdant_villagers.data.village.DataRegistry;
 import net.cosmic_terror_turtle.verdant_villagers.item.ModItems;
 import net.cosmic_terror_turtle.verdant_villagers.util.ModRegistries;

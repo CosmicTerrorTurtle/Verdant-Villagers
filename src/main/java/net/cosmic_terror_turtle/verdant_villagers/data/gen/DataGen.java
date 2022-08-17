@@ -106,8 +106,12 @@ public class DataGen {
 
         // Wood
         generateWoodBlockPaletteType();
+        generateWoodBlockPalette(VerdantVillagers.MOD_ID, "dark_oak", "minecraft", "dark_oak", true);
         generateWoodBlockPalette(VerdantVillagers.MOD_ID, "spruce", "minecraft", "spruce", true);
         generateWoodBlockPalette(VerdantVillagers.MOD_ID, "oak", "minecraft", "oak", true);
+        generateWoodBlockPalette(VerdantVillagers.MOD_ID, "jungle", "minecraft", "jungle", true);
+        generateWoodBlockPalette(VerdantVillagers.MOD_ID, "birch", "minecraft", "birch", true);
+        generateWoodBlockPalette(VerdantVillagers.MOD_ID, "acacia", "minecraft", "acacia", true);
 
         // Stone
         generateStoneBlockPaletteType();
