@@ -17,7 +17,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -43,10 +42,10 @@ public class ServerVillage extends Village {
     // The minimum number of near road junctions needed for a structure position to be valid.
     private static final int MIN_NEAR_ROAD_JUNCTIONS = 6;
     // The minimum space between two road junctions (regardless of whether they are connected or not).
-    private static final int ROAD_JUNCTION_SPACE = 50;
+    private static final int ROAD_JUNCTION_BASE_SPACE = 44;
     // The minimum and maximum length that a road edge is allowed to have.
-    private static final int ROAD_EDGE_MIN_LENGTH = ROAD_JUNCTION_SPACE;
-    private static final int ROAD_EDGE_MAX_LENGTH = 90;
+    private static final int ROAD_EDGE_BASE_MIN_LENGTH = ROAD_JUNCTION_BASE_SPACE;
+    private static final int ROAD_EDGE_BASE_MAX_LENGTH = 66;
     // The maximum slope angle that a road edge can have.
     private static final double ROAD_EDGE_MAX_Y_SLOPE = 0.5;
     // The maximum length that an access point path can have.
@@ -691,7 +690,7 @@ public class ServerVillage extends Village {
         RoadEdge testEdge;
         ArrayList<RoadEdge> newEdges = new ArrayList<>();
         double testSquaredDist;
-        boolean edgeDoesNotCollide;
+        boolean edgeCollides;
         do {
             withinBounds = false;
             foundPositionNearJunctions = false;
@@ -709,14 +708,14 @@ public class ServerVillage extends Village {
 
                             // Is the test position close enough to existing junctions?
                             for (RoadJunction junction : roadJunctions) {
-                                if (testPos.getSquaredDistance(junction.pos) < Math.pow(ROAD_EDGE_MAX_LENGTH, 2)) {
+                                if (testPos.getSquaredDistance(junction.pos) < Math.pow(ROAD_EDGE_BASE_MAX_LENGTH*roadType.edgeMinMaxLengthMultiplier, 2)) {
                                     foundPositionNearJunctions = true;
                                 }
                             }
 
                             // Is the test position too close to existing junctions?
                             for (RoadJunction junction : roadJunctions) {
-                                if (testPos.getSquaredDistance(junction.pos) < Math.pow(ROAD_JUNCTION_SPACE, 2)) {
+                                if (testPos.getSquaredDistance(junction.pos) < Math.pow(ROAD_JUNCTION_BASE_SPACE*roadType.edgeMinMaxLengthMultiplier, 2)) {
                                     testPosIsValid = false;
                                     break;
                                 }
@@ -724,7 +723,6 @@ public class ServerVillage extends Village {
                             if (!testPosIsValid) {
                                 break;
                             }
-                            // Test position is not too close to other junctions.
 
                             // Create new junction.
                             newJunction = new RoadJunction(nextElementID++, testPos, roadType);
@@ -760,70 +758,79 @@ public class ServerVillage extends Village {
                             // New junction does not collide with anything.
 
                             // Create between one and two edges (if not, then fail the test position).
-                            newEdges.clear();
                             if (!roadJunctions.isEmpty()) {
                                 // Search for existing junctions to connect the new junction to.
                                 Collections.shuffle(roadJunctions);
                                 for (RoadJunction junction : roadJunctions) {
                                     // Is the edge's length okay?
                                     testSquaredDist = newJunction.pos.getSquaredDistance(junction.pos);
-                                    if (Math.pow(ROAD_EDGE_MIN_LENGTH, 2) <= testSquaredDist && testSquaredDist <= Math.pow(ROAD_EDGE_MAX_LENGTH, 2)) {
-                                        // Create new road edge.
-                                        testEdge = new RoadEdge(nextElementID++, random, newJunction, junction, false, roadType);
-                                        // Check edge's Y-slope.
-                                        if (Math.abs(testEdge.getYSlope())<ROAD_EDGE_MAX_Y_SLOPE) {
-                                            // Check if the test edge collides with any structures, other edges or junctions.
-                                            edgeDoesNotCollide = true;
-                                            for (Structure structure : structures) {
-                                                if (featuresOverlap(testEdge, structure, true)) {
-                                                    edgeDoesNotCollide = false;
-                                                    break;
-                                                }
-                                            }
-                                            if (edgeDoesNotCollide) {
-                                                for (RoadJunction roadJunction : roadJunctions) {
-                                                    if (roadJunction != junction && featuresOverlap(roadJunction, testEdge, true)) {
-                                                        edgeDoesNotCollide = false;
-                                                        break;
-                                                    }
-                                                }
-                                                if (edgeDoesNotCollide) {
-                                                    for (RoadEdge edge : roadEdges) {
-                                                        if (edgesOverlap(testEdge, edge)) {
-                                                            edgeDoesNotCollide = false;
-                                                            break;
-                                                        }
-                                                    }
-                                                    if (edgeDoesNotCollide) {
-                                                        for (RoadEdge accessPath : accessPaths) {
-                                                            if (featuresOverlap(testEdge, accessPath, true)) {
-                                                                edgeDoesNotCollide = false;
-                                                                break;
-                                                            }
-                                                        }
-                                                        if (edgeDoesNotCollide) {
-                                                            for (RoadEdge edge : newEdges) {
-                                                                if (edgesOverlap(testEdge, edge)) {
-                                                                    edgeDoesNotCollide = false;
-                                                                    break;
-                                                                }
-                                                            }
-                                                            if (edgeDoesNotCollide) {
-                                                                // Test edge is okay.
-                                                                newEdges.add(testEdge);
-                                                                // Only add a maximum of two edges.
-                                                                if (newEdges.size() >= 2) {
-                                                                    // Break the loop that searches for junctions to connect to, since the new junction is already connected to enough ones.
-                                                                    break;
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-
+                                    if (testSquaredDist < Math.pow(ROAD_EDGE_BASE_MIN_LENGTH*roadType.edgeMinMaxLengthMultiplier, 2)
+                                            || testSquaredDist > Math.pow(ROAD_EDGE_BASE_MAX_LENGTH*roadType.edgeMinMaxLengthMultiplier, 2)) {
+                                        continue;
+                                    }
+                                    // Create new road edge.
+                                    testEdge = new RoadEdge(nextElementID++, random, newJunction, junction, false, roadType);
+                                    // Is the edge's Y-slope okay?
+                                    if (Math.abs(testEdge.getYSlope()) > ROAD_EDGE_MAX_Y_SLOPE) {
+                                        continue;
+                                    }
+                                    // Check if the test edge collides with any structures, other edges or junctions.
+                                    edgeCollides = false;
+                                    for (Structure structure : structures) {
+                                        if (featuresOverlap(testEdge, structure, true)) {
+                                            edgeCollides = true;
+                                            break;
                                         }
                                     }
+                                    if (edgeCollides) {
+                                        continue;
+                                    }
+                                    for (RoadJunction roadJunction : roadJunctions) {
+                                        if (roadJunction != junction && featuresOverlap(roadJunction, testEdge, true)) {
+                                            edgeCollides = true;
+                                            break;
+                                        }
+                                    }
+                                    if (edgeCollides) {
+                                        continue;
+                                    }
+                                    for (RoadEdge edge : roadEdges) {
+                                        if (edgesOverlap(testEdge, edge)) {
+                                            edgeCollides = true;
+                                            break;
+                                        }
+                                    }
+                                    if (edgeCollides) {
+                                        continue;
+                                    }
+                                    for (RoadEdge accessPath : accessPaths) {
+                                        if (featuresOverlap(testEdge, accessPath, true)) {
+                                            edgeCollides = true;
+                                            break;
+                                        }
+                                    }
+                                    if (edgeCollides) {
+                                        continue;
+                                    }
+                                    for (RoadEdge edge : newEdges) {
+                                        if (edgesOverlap(testEdge, edge)) {
+                                            edgeCollides = true;
+                                            break;
+                                        }
+                                    }
+                                    if (edgeCollides) {
+                                        continue;
+                                    }
+
+                                    // Test edge is okay.
+                                    newEdges.add(testEdge);
+                                    // Only add a maximum of two edges.
+                                    if (newEdges.size() >= 2) {
+                                        // Break the loop that searches for junctions to connect to, since the
+                                        // new junction is already connected to enough ones.
+                                        break;
+                                    }
+
                                 }
                                 if (newEdges.isEmpty()) {
                                     break;

@@ -4,7 +4,6 @@ import net.cosmic_terror_turtle.verdant_villagers.VerdantVillagers;
 import net.cosmic_terror_turtle.verdant_villagers.data.village.BlockStateParsing;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.util.Identifier;
 
 public class RoadType {
 
@@ -22,7 +21,7 @@ public class RoadType {
 
     public static RoadType getSmallPath() {
         return new RoadType(
-                2.0,
+                1.0, 2.0,
                 new double[]{2.0},
                 new VerticalBlockColumn[]{new VerticalBlockColumn(new BlockState[]{dirt, dirtPath}, 1, air, 4)},
                 1000000.0,
@@ -32,10 +31,12 @@ public class RoadType {
         );
     }
     public static RoadType getMediumPath(ServerVillage village) {
-        BlockState log = BlockStateParsing.parsePlainBlockState(village.getBlockPaletteOf(new Identifier(VerdantVillagers.MOD_ID, "wood"), 0).getElement("log_axis_y"));
-        BlockState fence = BlockStateParsing.parsePlainBlockState(village.getBlockPaletteOf(new Identifier(VerdantVillagers.MOD_ID, "wood"), 0).getElement("fence_waterlogged_false_north_false_south_false_west_false_east_false"));
+        BlockState log = BlockStateParsing.getBlockStateFrom(
+                village, VerdantVillagers.MOD_ID, "wood", "log_axis_y", 0);
+        BlockState fence = BlockStateParsing.getBlockStateFrom(
+                village, VerdantVillagers.MOD_ID, "wood", "fence_waterlogged_false_north_false_south_false_west_false_east_false", 0);
         return new RoadType(
-                2.5,
+                1.1, 2.5,
                 new double[]{2.5},
                 new VerticalBlockColumn[]{new VerticalBlockColumn(new BlockState[]{dirt, dirtPath}, 1, air, 5)},
                 6.0,
@@ -51,10 +52,12 @@ public class RoadType {
         );
     }
     public static RoadType getBigPath(ServerVillage village) {
-        BlockState log = BlockStateParsing.parsePlainBlockState(village.getBlockPaletteOf(new Identifier(VerdantVillagers.MOD_ID, "wood"), 0).getElement("log_axis_y"));
-        BlockState fence = BlockStateParsing.parsePlainBlockState(village.getBlockPaletteOf(new Identifier(VerdantVillagers.MOD_ID, "wood"), 0).getElement("fence_waterlogged_false_north_false_south_false_west_false_east_false"));
+        BlockState log = BlockStateParsing.getBlockStateFrom(
+                village, VerdantVillagers.MOD_ID, "wood", "log_axis_y", 0);
+        BlockState fence = BlockStateParsing.getBlockStateFrom(
+                village, VerdantVillagers.MOD_ID, "wood", "fence_waterlogged_false_north_false_south_false_west_false_east_false", 0);
         return new RoadType(
-                3.0,
+                1.2, 3.0,
                 new double[]{3.0},
                 new VerticalBlockColumn[]{new VerticalBlockColumn(new BlockState[]{dirt, dirtPath}, 1, air, 6)},
                 8.0,
@@ -70,11 +73,14 @@ public class RoadType {
         );
     }
     public static RoadType getSmallStreet(ServerVillage village) {
-        BlockState full0 = BlockStateParsing.parsePlainBlockState(village.getBlockPaletteOf(new Identifier(VerdantVillagers.MOD_ID, "stone"), 0).getElement("full"));
-        BlockState full1 = BlockStateParsing.parsePlainBlockState(village.getBlockPaletteOf(new Identifier(VerdantVillagers.MOD_ID, "stone"), 1).getElement("full"));
-        BlockState wall = BlockStateParsing.parsePlainBlockState(village.getBlockPaletteOf(new Identifier(VerdantVillagers.MOD_ID, "stone"), 0).getElement("wall_waterlogged_false_up_true_north_none_south_none_west_none_east_none"));
+        BlockState full0 = BlockStateParsing.getBlockStateFrom(
+                village, VerdantVillagers.MOD_ID, "stone", "full", 0);
+        BlockState full1 = BlockStateParsing.getBlockStateFrom(
+                village, VerdantVillagers.MOD_ID, "stone", "full", 1);
+        BlockState wall = BlockStateParsing.getBlockStateFrom(
+                village, VerdantVillagers.MOD_ID, "stone", "wall_waterlogged_false_up_true_north_none_south_none_west_none_east_none", 0);
         return new RoadType(
-                3.0,
+                1.3, 3.0,
                 new double[]{3.0},
                 new VerticalBlockColumn[]{new VerticalBlockColumn(new BlockState[]{full0, full0}, 1, air, 6)},
                 8.0,
@@ -90,11 +96,14 @@ public class RoadType {
         );
     }
     public static RoadType getMediumStreet(ServerVillage village) {
-        BlockState full0 = BlockStateParsing.parsePlainBlockState(village.getBlockPaletteOf(new Identifier(VerdantVillagers.MOD_ID, "stone"), 0).getElement("full"));
-        BlockState full1 = BlockStateParsing.parsePlainBlockState(village.getBlockPaletteOf(new Identifier(VerdantVillagers.MOD_ID, "stone"), 1).getElement("full"));
-        BlockState wall = BlockStateParsing.parsePlainBlockState(village.getBlockPaletteOf(new Identifier(VerdantVillagers.MOD_ID, "stone"), 0).getElement("wall_waterlogged_false_up_true_north_none_south_none_west_none_east_none"));
+        BlockState full0 = BlockStateParsing.getBlockStateFrom(
+                village, VerdantVillagers.MOD_ID, "stone", "full", 0);
+        BlockState full1 = BlockStateParsing.getBlockStateFrom(
+                village, VerdantVillagers.MOD_ID, "stone", "full", 1);
+        BlockState wall = BlockStateParsing.getBlockStateFrom(
+                village, VerdantVillagers.MOD_ID, "stone", "wall_waterlogged_false_up_true_north_none_south_none_west_none_east_none", 0);
         return new RoadType(
-                3.5,
+                1.5, 3.5,
                 new double[]{
                         2.5,
                         3.5
@@ -116,6 +125,9 @@ public class RoadType {
         );
     }
 
+
+    public double edgeMinMaxLengthMultiplier;
+
     public double edgeRadius;
     public double[] edgeBlockColumnRadii;
     public VerticalBlockColumn[] edgeTemplateBlockColumns;
@@ -127,10 +139,11 @@ public class RoadType {
     public double[] junctionBlockColumnRadii;
     public VerticalBlockColumn[] junctionTemplateBlockColumns;
 
-    public RoadType(double edgeRadius,
+    public RoadType(double edgeMinMaxLengthMultiplier, double edgeRadius,
                     double[] edgeBlockColumnRadii, VerticalBlockColumn[] edgeTemplateBlockColumns,
                     double edgeMiddleColumnSpace, VerticalBlockColumn edgeTemplateMiddleColumn,
                     double[] junctionBlockColumnRadii, VerticalBlockColumn[] junctionTemplateBlockColumns) {
+        this.edgeMinMaxLengthMultiplier = edgeMinMaxLengthMultiplier;
         this.edgeRadius = edgeRadius;
         this.edgeBlockColumnRadii = edgeBlockColumnRadii;
         this.edgeTemplateBlockColumns = edgeTemplateBlockColumns;
