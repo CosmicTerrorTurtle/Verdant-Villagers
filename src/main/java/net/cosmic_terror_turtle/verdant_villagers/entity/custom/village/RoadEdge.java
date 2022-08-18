@@ -12,8 +12,10 @@ import java.util.Random;
 
 public class RoadEdge extends GeoFeature {
 
+    public static final double ROUNDING_OFFSET = 0.5; // Makes the block position coordinates be centered in a block.
     public static final double ROAD_STEP = 0.1; // Lower step -> higher precision in placing the road blocks
     public static final double ROAD_DOT_SPACE = 2.5; // Space between road dots
+
     public static final int FIRST = 1;
     public static final int SECOND = 2;
     public static final int THIRD = 3;
@@ -27,29 +29,34 @@ public class RoadEdge extends GeoFeature {
     private double c;
     private final double d; // The distance between both ends on the X-Z-plane.
     private double e;
+    private final boolean adjustToTerrain;
     private double ySlope; // The slope of this edge's delta-Y versus d.
 
-    public RoadEdge(int elementID, Random random, RoadJunction from, RoadJunction to, boolean overwriteJunctions,
+    public RoadEdge(int elementID, ServerVillage village, RoadJunction from, RoadJunction to, boolean overwriteJunctions, boolean adjustToTerrain,
                     RoadType type) {
-        this(elementID, random, from, to, type.edgeRadius, overwriteJunctions,
+        this(elementID, village, from, to, type.edgeRadius, overwriteJunctions, adjustToTerrain,
                 type.edgeBlockColumnRadii, type.edgeTemplateBlockColumns, type.edgeMiddleColumnSpace, type.edgeTemplateMiddleColumn);
     }
-    public RoadEdge(int elementID, Random random, RoadJunction from, RoadJunction to, double radius, boolean overwriteJunctions,
+    public RoadEdge(int elementID, ServerVillage village, RoadJunction from, RoadJunction to, double radius, boolean overwriteJunctions, boolean adjustToTerrain,
                     VerticalBlockColumn templateRoadColumn) {
-        this(elementID, random, from, to, radius, overwriteJunctions,
+        this(elementID, village, from, to, radius, overwriteJunctions, adjustToTerrain,
                 new double[]{radius}, new VerticalBlockColumn[]{templateRoadColumn}, 1000000.0, null);
     }
-    public RoadEdge(int elementID, Random random, RoadJunction from, RoadJunction to, double radius, boolean overwriteJunctions,
+    public RoadEdge(int elementID, ServerVillage village, RoadJunction from, RoadJunction to, double radius, boolean overwriteJunctions, boolean adjustToTerrain,
                     double[] roadColumnRadii, VerticalBlockColumn[] templateRoadColumns, double middleColumnSpace, VerticalBlockColumn templateMiddleColumn) {
         super(elementID);
         this.from = from;
         this.to = to;
         this.radius = radius;
+        this.adjustToTerrain = adjustToTerrain;
 
         d = Math.sqrt(MathHelper.square(from.pos.getX()-to.pos.getX())+MathHelper.square(from.pos.getZ()-to.pos.getZ()));
+        if (d <= 0) {
+            throw new RuntimeException("Illegal road edge length (on the x-z-plane).");
+        }
 
-        preparePolynomialFunction(random);
-        setBitsMegaBlocksAndRoadDots(overwriteJunctions, middleColumnSpace, templateMiddleColumn, roadColumnRadii, templateRoadColumns);
+        preparePolynomialFunction(village.random);
+        setBitsMegaBlocksAndRoadDots(village, overwriteJunctions, middleColumnSpace, templateMiddleColumn, roadColumnRadii, templateRoadColumns);
     }
 
     private void preparePolynomialFunction(Random random) {
@@ -108,10 +115,10 @@ public class RoadEdge extends GeoFeature {
         }
     }
 
-    private void setBitsMegaBlocksAndRoadDots(boolean overwriteJunctions, double middleColumnSpace, VerticalBlockColumn templateMiddleColumn,
+    private void setBitsMegaBlocksAndRoadDots(ServerVillage village,
+                                              boolean overwriteJunctions, double middleColumnSpace, VerticalBlockColumn templateMiddleColumn,
                                               double[] roadColumnRadii, VerticalBlockColumn[] templateRoadColumns) {
 
-        double roundingOffset = 0.5; // Makes the block position coordinates be centered in a block.
         ArrayList<VerticalBlockColumn> normalColumns = new ArrayList<>();
         ArrayList<VerticalBlockColumn> middleColumns = new ArrayList<>();
         double angleAtFrom;
@@ -127,12 +134,19 @@ public class RoadEdge extends GeoFeature {
         } else {
             ySlope = 1000000;
         }
+        TerrainAdjustment terrainAdjustment;
+        if (adjustToTerrain) {
+            terrainAdjustment = new TerrainAdjustment(village, angleAtFrom);
+        } else {
+            terrainAdjustment = null;
+        }
         double aCoord;
         double faCoord;
         double f_of_a;
         double f_slope;
         double tmp;
         double yCoord;
+        double yAdjustingOffset;
         VerticalBlockColumn templateColumn;
         double spaceAfterLastMiddleColumn = 0;
         double spaceAfterLastDot = 0;
@@ -145,6 +159,11 @@ public class RoadEdge extends GeoFeature {
                 yCoord = ySlope*(a-aOffsetStart);
             } else {
                 yCoord = to.pos.getY()-from.pos.getY();
+            }
+            if (terrainAdjustment != null) {
+                yAdjustingOffset = terrainAdjustment.getYOffset(a);
+            } else {
+                yAdjustingOffset = 0;
             }
             // Bulk bits
             for (double offset=-radius; offset<=radius; offset+=ROAD_STEP) {
@@ -159,35 +178,35 @@ public class RoadEdge extends GeoFeature {
                     }
                 }
                 addToColumns(normalColumns, templateColumn.copyWith(new BlockPos(
-                        aCoord*Math.cos(angleAtFrom) - faCoord*Math.sin(angleAtFrom) + roundingOffset,
-                        yCoord + roundingOffset,
-                        aCoord*Math.sin(angleAtFrom) + faCoord*Math.cos(angleAtFrom) + roundingOffset
+                        aCoord*Math.cos(angleAtFrom) - faCoord*Math.sin(angleAtFrom) + ROUNDING_OFFSET,
+                        yCoord + yAdjustingOffset + ROUNDING_OFFSET,
+                        aCoord*Math.sin(angleAtFrom) + faCoord*Math.cos(angleAtFrom) + ROUNDING_OFFSET
                 )), true);
             }
             // Middle column bits
             spaceAfterLastMiddleColumn += ROAD_STEP;
-            if (spaceAfterLastMiddleColumn>middleColumnSpace) {
+            if (spaceAfterLastMiddleColumn > middleColumnSpace) {
                 spaceAfterLastMiddleColumn = 0;
                 if (templateMiddleColumn != null && a>from.radius && a<d-to.radius) {
                     middleColumns.add(templateMiddleColumn.copyWith(new BlockPos(
-                                    a*Math.cos(angleAtFrom) - f_of_a*Math.sin(angleAtFrom) + roundingOffset,
-                                    yCoord + roundingOffset,
-                                    a*Math.sin(angleAtFrom) + f_of_a*Math.cos(angleAtFrom) + roundingOffset
+                                    a*Math.cos(angleAtFrom) - f_of_a*Math.sin(angleAtFrom) + ROUNDING_OFFSET,
+                                    yCoord + yAdjustingOffset + ROUNDING_OFFSET,
+                                    a*Math.sin(angleAtFrom) + f_of_a*Math.cos(angleAtFrom) + ROUNDING_OFFSET
                     )));
                 }
             }
             // Dots
             spaceAfterLastDot += ROAD_STEP;
-            if (spaceAfterLastDot>ROAD_DOT_SPACE) {
+            if (spaceAfterLastDot > ROAD_DOT_SPACE) {
                 spaceAfterLastDot = 0;
                 for (double offset : new double[]{-radius, radius}) {
                     tmp = offset/Math.sqrt(1+f_slope*f_slope);
                     aCoord = a+f_slope*tmp;
                     faCoord = f_of_a-tmp;
                     roadDots.add(new RoadDot(this, from.pos.add(
-                            aCoord*Math.cos(angleAtFrom) - faCoord*Math.sin(angleAtFrom) + roundingOffset,
-                            yCoord + roundingOffset,
-                            aCoord*Math.sin(angleAtFrom) + faCoord*Math.cos(angleAtFrom) + roundingOffset
+                            aCoord*Math.cos(angleAtFrom) - faCoord*Math.sin(angleAtFrom) + ROUNDING_OFFSET,
+                            yCoord + yAdjustingOffset + ROUNDING_OFFSET,
+                            aCoord*Math.sin(angleAtFrom) + faCoord*Math.cos(angleAtFrom) + ROUNDING_OFFSET
                     )));
                 }
             }
@@ -268,6 +287,7 @@ public class RoadEdge extends GeoFeature {
         c = nbt.getDouble("c");
         d = nbt.getDouble("d");
         e = nbt.getDouble("e");
+        adjustToTerrain = nbt.getBoolean("adjustToTerrain");
         ySlope = nbt.getDouble("ySlope");
     }
     /**
@@ -298,7 +318,117 @@ public class RoadEdge extends GeoFeature {
         nbt.putDouble("c", c);
         nbt.putDouble("d", d);
         nbt.putDouble("e", e);
+        nbt.putBoolean("adjustToTerrain", adjustToTerrain);
         nbt.putDouble("ySlope", ySlope);
         return nbt;
+    }
+
+    private class TerrainAdjustment {
+
+        public static final double TERRAIN_ADJUSTING_SPACE = 2.0; // Space between terrain adjusting points
+        public static final double MAX_SLOPE_DEVIATION = 0.15; // Maximum difference between overall slope and the slopes from the adjusted points
+        public static final double SMOOTHING_FACTOR = 0.1; // Factor by which a points gets adjusted towards its neighbors
+        public static final int MAX_SMOOTHING_ITERATIONS = 10; // The maximum number of iterations that smooth the adjusting offsets.
+
+
+        private final double aOffsetStart;
+        private final double aOffsetEnd;
+        private ArrayList<Double> yOffsetValues;
+
+        public TerrainAdjustment(ServerVillage village, double angleAtFrom) {
+            aOffsetStart = from.sameHeightRadius;
+            aOffsetEnd = to.sameHeightRadius;
+
+            yOffsetValues = new ArrayList<>();
+
+            // Get offset values
+            for (double a=0; a<d; a+=TERRAIN_ADJUSTING_SPACE) {
+                if (a<aOffsetStart || d-aOffsetEnd<a) {
+                    yOffsetValues.add(0.0);
+                } else {
+                    yOffsetValues.add(getTerrainOffset(village, angleAtFrom, a, ySlope*(a-aOffsetStart), 0.15*d));
+                }
+            }
+
+            // Smooth offset values
+            for (int i = 0; i< MAX_SMOOTHING_ITERATIONS; i++) {
+                if (!smoothOffsets()) {
+                    break;
+                }
+            }
+        }
+
+        private double getTerrainOffset(ServerVillage village, double angleAtFrom, double a, double yCoord, double maxOffset) {
+            BlockPos startPosition = from.pos.add(
+                    a*Math.cos(angleAtFrom) - getFunctionAt(a)*Math.sin(angleAtFrom),
+                    yCoord,
+                    a*Math.sin(angleAtFrom) + getFunctionAt(a)*Math.cos(angleAtFrom)
+            );
+            BlockPos surfaceBlock = village.getSurfaceBlock(startPosition, (int) (startPosition.getY()-maxOffset), (int) (startPosition.getY()+maxOffset));
+            double terrainOffset;
+            if (surfaceBlock != null) {
+                terrainOffset = surfaceBlock.getY() - yCoord - from.pos.getY();
+            } else {
+                terrainOffset = 0;
+            }
+            if (terrainOffset > 0) {
+                return Math.min(terrainOffset, maxOffset);
+            } else {
+                return Math.max(terrainOffset, -maxOffset);
+            }
+        }
+
+        /**
+         * Smooths offsets that lead to large slope deviations.
+         * @return True if more smoothing may be needed.
+         */
+        private boolean smoothOffsets() {
+            ArrayList<Double> newOffsets = new ArrayList<>();
+            double a;
+            boolean smoothingNeeded = false;
+
+            for (int i=0; i<yOffsetValues.size(); i++) {
+                // Only values between the aOffsets can be smoothed.
+                a = i*TERRAIN_ADJUSTING_SPACE;
+                if (a<aOffsetStart || d-aOffsetEnd<a) {
+                    newOffsets.add(yOffsetValues.get(i));
+                    continue;
+                }
+
+                // Is the slope deviation of this offset value too large?
+                if (Math.abs(getYOffsetFromIndex(i)-getYOffsetFromIndex(i-1))/TERRAIN_ADJUSTING_SPACE > MAX_SLOPE_DEVIATION
+                        || Math.abs(getYOffsetFromIndex(i+1)-getYOffsetFromIndex(i))/TERRAIN_ADJUSTING_SPACE > MAX_SLOPE_DEVIATION) {
+                    smoothingNeeded = true;
+                    newOffsets.add( yOffsetValues.get(i) + SMOOTHING_FACTOR * (getYOffsetFromIndex(i+1)+getYOffsetFromIndex(i-1)-2*yOffsetValues.get(i)) );
+                } else {
+                    newOffsets.add(yOffsetValues.get(i));
+                }
+            }
+            yOffsetValues = newOffsets;
+
+            return smoothingNeeded;
+        }
+
+        private double getYOffsetFromIndex(int index) {
+            if (index < 0 || index >= yOffsetValues.size()) {
+                return 0;
+            }
+            return yOffsetValues.get(index);
+        }
+
+        private double interpolateOffset(int leftIndex, double percentageToRightPoint) {
+            if (leftIndex < 0) {
+                leftIndex = -1;
+            }
+            if (leftIndex >= yOffsetValues.size()-1) {
+                leftIndex = yOffsetValues.size()-1;
+            }
+            return (1-percentageToRightPoint) * getYOffsetFromIndex(leftIndex) + percentageToRightPoint * getYOffsetFromIndex(leftIndex+1);
+        }
+
+        public double getYOffset(double a) {
+            int leftIndex = (int) (a/TERRAIN_ADJUSTING_SPACE);
+            return interpolateOffset(leftIndex, (a-leftIndex*TERRAIN_ADJUSTING_SPACE)/TERRAIN_ADJUSTING_SPACE);
+        }
     }
 }

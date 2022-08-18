@@ -17,6 +17,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -613,7 +614,7 @@ public class ServerVillage extends Village {
      * @param maxY The maximum Y value checked.
      * @return The block position of the surface block or null if no surface block was found.
      */
-    private BlockPos getSurfaceBlock(BlockPos startPosition, int minY, int maxY) {
+    public BlockPos getSurfaceBlock(BlockPos startPosition, int minY, int maxY) {
         // Increase starting height for accessing different heights
         int maxStartOffset = 20;
         int minStartHeight = Math.max(minY, startPosition.getY()-maxStartOffset);
@@ -769,7 +770,7 @@ public class ServerVillage extends Village {
                                         continue;
                                     }
                                     // Create new road edge.
-                                    testEdge = new RoadEdge(nextElementID++, random, newJunction, junction, false, roadType);
+                                    testEdge = new RoadEdge(nextElementID++, this, newJunction, junction, false, true, roadType);
                                     // Is the edge's Y-slope okay?
                                     if (Math.abs(testEdge.getYSlope()) > ROAD_EDGE_MAX_Y_SLOPE) {
                                         continue;
@@ -1019,11 +1020,12 @@ public class ServerVillage extends Village {
                 pointApproved = false;
 
                 // Attempt to connect the access point.
-                // Find all road dots within a distance.
+                // Find all road dots within a distance (and x-z-distance of at least 1).
                 nearDots = new ArrayList<>();
                 for (RoadEdge edge : roadEdges) {
                     for (RoadDot dot : edge.roadDots) {
-                        if (dot.pos.isWithinDistance(accessPoint.pos, ACCESS_POINT_PATH_MAX_LENGTH)) {
+                        if (dot.pos.isWithinDistance(accessPoint.pos, ACCESS_POINT_PATH_MAX_LENGTH)
+                                && 1 < MathHelper.square(dot.pos.getX()-accessPoint.pos.getX()) + MathHelper.square(dot.pos.getZ()-accessPoint.pos.getZ())) {
                             nearDots.add(dot);
                         }
                     }
@@ -1042,9 +1044,9 @@ public class ServerVillage extends Village {
 
                         // Create test edge.
                         RoadEdge testEdge = new RoadEdge(
-                                nextElementID++, random, new RoadJunction(nextElementID++, accessPoint.pos, 0, 0.6),
+                                nextElementID++, this, new RoadJunction(nextElementID++, accessPoint.pos, 0, 0.6),
                                 new RoadJunction(nextElementID++, roadDot.pos, 0, 2.0*roadDot.edge.radius),
-                                accessPoint.radius, true, accessPoint.templateRoadColumn
+                                accessPoint.radius, true, true, accessPoint.templateRoadColumn
                         );
                         // Check edge's Y-slope.
                         if (Math.abs(testEdge.getYSlope()) < ROAD_EDGE_MAX_Y_SLOPE) {
