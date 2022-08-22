@@ -1,4 +1,4 @@
-package io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village;
+package io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.road;
 
 import io.github.cosmic_terror_turtle.verdant_villagers.util.NbtUtils;
 import net.minecraft.nbt.NbtCompound;

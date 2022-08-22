@@ -112,6 +112,8 @@ public class ModResources {
                     }
                 }
 
+                // Check if the loaded data contains errors.
+                DataRegistry.checkData();
             }
         });
     }

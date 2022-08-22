@@ -3,6 +3,10 @@ package io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village;
 import io.github.cosmic_terror_turtle.verdant_villagers.data.village.BlockPalette;
 import io.github.cosmic_terror_turtle.verdant_villagers.data.village.DataRegistry;
 import io.github.cosmic_terror_turtle.verdant_villagers.data.village.RawStructureTemplate;
+import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.road.RoadDot;
+import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.road.RoadEdge;
+import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.road.RoadJunction;
+import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.road.RoadType;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure.PointOfInterest;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure.Structure;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure.StructureAccessPoint;
@@ -11,7 +15,6 @@ import io.github.cosmic_terror_turtle.verdant_villagers.util.MathUtils;
 import io.github.cosmic_terror_turtle.verdant_villagers.util.ModTags;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.VillageHeartEntity;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
@@ -730,7 +733,7 @@ public class ServerVillage extends Village {
 
                             // Does the new junction collide with any existing structures, edges or access paths?
                             for (Structure structure : structures) {
-                                if (featuresOverlap(newJunction, structure, true)) {
+                                if (GeoFeatureCollision.featuresOverlap(newJunction, structure, true)) {
                                     testPosIsValid = false;
                                     break;
                                 }
@@ -739,7 +742,7 @@ public class ServerVillage extends Village {
                                 break;
                             }
                             for (RoadEdge edge : roadEdges) {
-                                if (featuresOverlap(newJunction, edge, true)) {
+                                if (GeoFeatureCollision.featuresOverlap(newJunction, edge, true)) {
                                     testPosIsValid = false;
                                     break;
                                 }
@@ -748,7 +751,7 @@ public class ServerVillage extends Village {
                                 break;
                             }
                             for (RoadEdge edge : accessPaths) {
-                                if (featuresOverlap(newJunction, edge, true)) {
+                                if (GeoFeatureCollision.featuresOverlap(newJunction, edge, true)) {
                                     testPosIsValid = false;
                                     break;
                                 }
@@ -778,7 +781,7 @@ public class ServerVillage extends Village {
                                     // Check if the test edge collides with any structures, other edges or junctions.
                                     edgeCollides = false;
                                     for (Structure structure : structures) {
-                                        if (featuresOverlap(testEdge, structure, true)) {
+                                        if (GeoFeatureCollision.featuresOverlap(testEdge, structure, true)) {
                                             edgeCollides = true;
                                             break;
                                         }
@@ -787,7 +790,7 @@ public class ServerVillage extends Village {
                                         continue;
                                     }
                                     for (RoadJunction roadJunction : roadJunctions) {
-                                        if (roadJunction != junction && featuresOverlap(roadJunction, testEdge, true)) {
+                                        if (roadJunction != junction && GeoFeatureCollision.featuresOverlap(roadJunction, testEdge, true)) {
                                             edgeCollides = true;
                                             break;
                                         }
@@ -796,7 +799,7 @@ public class ServerVillage extends Village {
                                         continue;
                                     }
                                     for (RoadEdge edge : roadEdges) {
-                                        if (edgesOverlap(testEdge, edge)) {
+                                        if (GeoFeatureCollision.edgesOverlap(testEdge, edge)) {
                                             edgeCollides = true;
                                             break;
                                         }
@@ -805,7 +808,7 @@ public class ServerVillage extends Village {
                                         continue;
                                     }
                                     for (RoadEdge accessPath : accessPaths) {
-                                        if (featuresOverlap(testEdge, accessPath, true)) {
+                                        if (GeoFeatureCollision.featuresOverlap(testEdge, accessPath, true)) {
                                             edgeCollides = true;
                                             break;
                                         }
@@ -814,7 +817,7 @@ public class ServerVillage extends Village {
                                         continue;
                                     }
                                     for (RoadEdge edge : newEdges) {
-                                        if (edgesOverlap(testEdge, edge)) {
+                                        if (GeoFeatureCollision.edgesOverlap(testEdge, edge)) {
                                             edgeCollides = true;
                                             break;
                                         }
@@ -932,7 +935,7 @@ public class ServerVillage extends Village {
                             }
                             doesNotCollide = true;
                             for (Structure structure : structures) {
-                                if (featuresOverlap(newStructure, structure, true)) {
+                                if (GeoFeatureCollision.featuresOverlap(newStructure, structure, true)) {
                                     doesNotCollide = false;
                                     break;
                                 }
@@ -941,7 +944,7 @@ public class ServerVillage extends Village {
                                 break;
                             }
                             for (RoadEdge edge : roadEdges) {
-                                if (featuresOverlap(newStructure, edge, true)) {
+                                if (GeoFeatureCollision.featuresOverlap(newStructure, edge, true)) {
                                     doesNotCollide = false;
                                     break;
                                 }
@@ -950,7 +953,7 @@ public class ServerVillage extends Village {
                                 break;
                             }
                             for (RoadEdge accessPath : accessPaths) {
-                                if (featuresOverlap(newStructure, accessPath, true)) {
+                                if (GeoFeatureCollision.featuresOverlap(newStructure, accessPath, true)) {
                                     doesNotCollide = false;
                                     break;
                                 }
@@ -959,7 +962,7 @@ public class ServerVillage extends Village {
                                 break;
                             }
                             for (RoadJunction junction : roadJunctions) {
-                                if (featuresOverlap(newStructure, junction, true)) {
+                                if (GeoFeatureCollision.featuresOverlap(newStructure, junction, true)) {
                                     doesNotCollide = false;
                                     break;
                                 }
@@ -1052,31 +1055,31 @@ public class ServerVillage extends Village {
                         if (Math.abs(testEdge.getYSlope()) < ROAD_EDGE_MAX_Y_SLOPE) {
                             noCollision = true;
                             // Check if the test edge collides with the road edge it is trying to connect to.
-                            if (accessPathCollidesWithEdge(testEdge, roadDot.edge)) {
+                            if (GeoFeatureCollision.accessPathCollidesWithEdge(testEdge, roadDot.edge)) {
                                 noCollision = false;
                             }
                             // Check if the test edge collides with any structures.
                             if (noCollision) {
                                 for (Structure collisionTestStructure : structures) {
-                                    if (featuresOverlap(testEdge, collisionTestStructure, false)) {
+                                    if (GeoFeatureCollision.featuresOverlap(testEdge, collisionTestStructure, false)) {
                                         noCollision = false;
                                         break;
                                     }
                                 }
-                                if (featuresOverlapIgnoreMatchingBlocks(testEdge, structure)) {
+                                if (GeoFeatureCollision.featuresOverlapIgnoreMatchingBlocks(testEdge, structure)) {
                                     noCollision = false;
                                 }
                             }
                             // Check if the test edge collides with any other paths.
                             if (noCollision) {
                                 for (RoadEdge path : accessPaths) {
-                                    if (featuresOverlap(testEdge, path, false)) {
+                                    if (GeoFeatureCollision.featuresOverlap(testEdge, path, false)) {
                                         noCollision = false;
                                         break;
                                     }
                                 }
                                 for (RoadEdge path : approvedPaths) {
-                                    if (featuresOverlap(testEdge, path, false)) {
+                                    if (GeoFeatureCollision.featuresOverlap(testEdge, path, false)) {
                                         noCollision = false;
                                         break;
                                     }
@@ -1085,7 +1088,7 @@ public class ServerVillage extends Village {
                             // Check if the test edge collides with any junctions.
                             if (noCollision) {
                                 for (RoadJunction junction : roadJunctions) {
-                                    if (featuresOverlap(testEdge, junction, false)) {
+                                    if (GeoFeatureCollision.featuresOverlap(testEdge, junction, false)) {
                                         noCollision = false;
                                         break;
                                     }
@@ -1130,122 +1133,5 @@ public class ServerVillage extends Village {
         if (world != null && bit.blockState != null && !world.getBlockState(bit.blockPos).isIn(ModTags.Blocks.VILLAGE_UNTOUCHED_BLOCKS)) {
             world.setBlockState(bit.blockPos, bit.blockState);
         }
-    }
-
-    /**
-     * Determines if the features overlap.
-     * @param feature1 First input.
-     * @param feature2 Second input.
-     * @param useMegaBlocks Whether the positions of the mega blocks or of the feature bits will be analyzed.
-     * @return True if they overlap.
-     */
-    private static boolean featuresOverlap(GeoFeature feature1, GeoFeature feature2, boolean useMegaBlocks) {
-        // Check bounds.
-        if (!feature1.boundsCollideWith(feature2)) {
-            return false;
-        }
-
-        // Check the mega blocks or bits for collision.
-        if (useMegaBlocks) {
-            for (BlockPos feature1BlockPosition : feature1.getTouchedMegaBlocks()) {
-                for (BlockPos feature2BlockPosition : feature2.getTouchedMegaBlocks()) {
-                    if (feature1BlockPosition.equals(feature2BlockPosition)) {
-                        return true;
-                    }
-                }
-            }
-        } else {
-            for (GeoFeatureBit feature1Bit : feature1.getBits()) {
-                for (GeoFeatureBit feature2Bit : feature2.getBits()) {
-                    if (feature1Bit.blockPos.equals(feature2Bit.blockPos)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    private static boolean featuresOverlapIgnoreMatchingBlocks(GeoFeature feature1, GeoFeature feature2) {
-        // Check bounds.
-        if (!feature1.boundsCollideWith(feature2)) {
-            return false;
-        }
-
-        // Check the bits for collision.
-        for (GeoFeatureBit feature1Bit : feature1.getBits()) {
-            for (GeoFeatureBit feature2Bit : feature2.getBits()) {
-                if (feature1Bit.blockPos.equals(feature2Bit.blockPos)
-                        && feature1Bit.blockState!=null && feature2Bit.blockState!=null
-                        && !feature1Bit.blockState.isOf(feature2Bit.blockState.getBlock())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Determines whether two edges overlap, but ignores block positions that are within the same height radius of
-     * the junctions that the edges share.
-     * @param edge1 The first edge.
-     * @param edge2 The second Edge.
-     * @return True if the edges overlap.
-     */
-    private static boolean edgesOverlap(RoadEdge edge1, RoadEdge edge2) {
-        // Check bounds.
-        if (!edge1.boundsCollideWith(edge2)) {
-            return false;
-        }
-
-        // Check the bits for collision.
-        for (GeoFeatureBit bit1 : edge1.getBits()) {
-            for (GeoFeatureBit bit2 : edge2.getBits()) {
-                if (!posIsInSameHeightRadius(bit1.blockPos, edge1.from) && !posIsInSameHeightRadius(bit1.blockPos, edge1.to)
-                    && bit1.blockPos.equals(bit2.blockPos)) {
-                   return true;
-                }
-            }
-        }
-        return false;
-    }
-    private static boolean posIsInSameHeightRadius(BlockPos pos, RoadJunction junction) {
-        return Math.pow(pos.getX()-junction.pos.getX(), 2) + Math.pow(pos.getZ()-junction.pos.getZ(), 2) <= junction.sameHeightRadius*junction.sameHeightRadius;
-    }
-
-    /**
-     * Determines whether the access path collides with the edge. When two bits overlap that are either both air or both
-     * not air, this does not count as a collision. Instead, the bit of the access path gets removed from it.
-     * @param accessPath The access path that is being planned.
-     * @param edge The edge that the access path is trying to connect to.
-     * @return True if the path collides with the edge.
-     */
-    private static boolean accessPathCollidesWithEdge(RoadEdge accessPath, RoadEdge edge) {
-        // Check bounds.
-        if (!accessPath.boundsCollideWith(edge)) {
-            return false;
-        }
-
-        // Check the bits for collision.
-        ArrayList<GeoFeatureBit> toBeRemoved = new ArrayList<>();
-        for (GeoFeatureBit accessPathBit : accessPath.getBits()) {
-            for (GeoFeatureBit edgeBit : edge.getBits()) {
-                if (accessPathBit.blockPos.equals(edgeBit.blockPos)) {
-                    if (accessPathBit.blockState!=null && edgeBit.blockState!=null) {
-                        // Are both bits air or both bits non-air?
-                        if ((accessPathBit.blockState.isOf(Blocks.AIR) && edgeBit.blockState.isOf(Blocks.AIR))
-                                || (!accessPathBit.blockState.isOf(Blocks.AIR) && !edgeBit.blockState.isOf(Blocks.AIR))) {
-                            toBeRemoved.add(accessPathBit);
-                        } else {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        // No collision; remove the overlapping bits.
-        for (GeoFeatureBit bit : toBeRemoved) {
-            accessPath.getBits().remove(bit);
-        }
-        return false;
     }
 }

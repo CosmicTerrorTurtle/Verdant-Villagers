@@ -1,7 +1,9 @@
-package io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village;
+package io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.road;
 
 import io.github.cosmic_terror_turtle.verdant_villagers.VerdantVillagers;
 import io.github.cosmic_terror_turtle.verdant_villagers.data.village.BlockStateParsing;
+import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.ServerVillage;
+import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.VerticalBlockColumn;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 

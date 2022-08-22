@@ -34,6 +34,40 @@ public class DataRegistry {
         villageNames.clear();
     }
 
+    public static void checkData() {
+
+        // For each palette type, there must be at least one palette and default palette.
+        for (Map.Entry<String, HashMap<String, BlockPalette>> entry : blockPalettes.entrySet()) {
+            if (entry.getValue().isEmpty()) {
+                throw new RuntimeException("No block palettes found for palette type '"+entry.getKey()+"'.");
+            }
+        }
+        for (Map.Entry<String, HashMap<String, BlockPalette>> entry : defaultBlockPalettes.entrySet()) {
+            if (entry.getValue().isEmpty()) {
+                throw new RuntimeException("No default block palettes found for palette type '"+entry.getKey()+"'.");
+            }
+        }
+
+        // There must be at least one village type present.
+        if (villageTypes.isEmpty()) {
+            throw new RuntimeException("No village types found.");
+        }
+
+        // Each structure type listed in VillageTypeData.structureTypesToBuild must exist.
+        for (VillageTypeData typeData : villageTypes.values()) {
+            for (String structureType : typeData.structureTypesToBuild) {
+                if (!structureTypes.containsKey(structureType)) {
+                    throw new RuntimeException("Structure type '"+structureType+"' does not exist.");
+                }
+            }
+        }
+
+        // There must be at least one village name present.
+        if (villageNames.isEmpty()) {
+            throw new RuntimeException("No village names found.");
+        }
+    }
+
     public static void addBlockPaletteType(BlockPaletteType type) {
         blockPaletteTypes.put(type.id.toString(), type);
         blockPalettes.put(type.id.toString(), new HashMap<>());
