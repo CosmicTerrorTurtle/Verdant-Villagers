@@ -4,7 +4,7 @@
   "version": "${version}",
 
   "name": "Verdant Villagers",
-  "description": "coming soon",
+  "description": "This mod makes villages come alive. Watch the villagers gather resources, craft tools and blocks, and build new structures and roads on their own or help them with it.",
   "authors": [
     "Cosmic Terror Turtle"
   ],
@@ -18,10 +18,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.cosmic_terror_turtle.verdant_villagers.VerdantVillagers"
+      "io.github.cosmic_terror_turtle.verdant_villagers.VerdantVillagers"
     ],
     "client": [
-      "net.cosmic_terror_turtle.verdant_villagers.VerdantVillagersClient"
+      "io.github.cosmic_terror_turtle.verdant_villagers.VerdantVillagersClient"
     ]
   },
   "mixins": [

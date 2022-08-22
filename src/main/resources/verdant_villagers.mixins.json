@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "net.cosmic_terror_turtle.verdant_villagers.mixin",
+  "package": "io.github.cosmic_terror_turtle.verdant_villagers.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
   ],
