@@ -7,6 +7,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import io.github.cosmic_terror_turtle.verdant_villagers.data.village.BlockStateParsing;
 import net.minecraft.block.BlockState;
 import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.command.argument.IdentifierArgumentType;
@@ -21,6 +22,9 @@ import net.minecraft.util.registry.Registry;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SaveVillageStructureCommand {
 
@@ -28,31 +32,83 @@ public class SaveVillageStructureCommand {
         dispatcher.register(
                 CommandManager.literal("save_village_structure").then(
                         CommandManager.argument("file_name", StringArgumentType.word()).then(
-                                CommandManager.argument("lower_pos", BlockPosArgumentType.blockPos()).then(
-                                        CommandManager.argument("upper_pos", BlockPosArgumentType.blockPos()).then(
-                                                CommandManager.argument("null_block", IdentifierArgumentType.identifier())
-                                                .executes(context -> run(context, IdentifierArgumentType.getIdentifier(context, "null_block")))
+                                CommandManager.argument("pos1", BlockPosArgumentType.blockPos()).then(
+                                        CommandManager.argument("pos2", BlockPosArgumentType.blockPos()).then(
+                                                CommandManager.argument("null_block", IdentifierArgumentType.identifier()).then(
+                                                        CommandManager.argument("collision_space_block", IdentifierArgumentType.identifier())
+                                                        .executes(context -> run(context, true, true))
+                                                )
+                                                .executes(context -> run(context, true, false))
                                         )
-                                        .executes(context -> run(context, null))
+                                        .executes(context -> run(context, false, false))
                                 )
                         )
                 )
         );
     }
 
-    public static int run(CommandContext<ServerCommandSource> context, Identifier nullBlockId) throws CommandSyntaxException {
-        ServerWorld world = context.getSource().getWorld();
+    /**
+     * Runs this command.
+     * @param context The context in which the command was called.
+     * @param nullBlock Whether a null block was provided to the command.
+     * @param collisionSpace Whether a collision space block was provided to the command.
+     * @return {@link Command#SINGLE_SUCCESS}
+     * @throws CommandSyntaxException If fetching the block positions or writing the json file failed.
+     */
+    public static int run(CommandContext<ServerCommandSource> context, boolean nullBlock, boolean collisionSpace) throws CommandSyntaxException {
+        // Fetch command parameters
         String fileName = StringArgumentType.getString(context, "file_name");
-        BlockPos lower = BlockPosArgumentType.getBlockPos(context, "lower_pos");
-        BlockPos upper = BlockPosArgumentType.getBlockPos(context, "upper_pos");
-        int lowerX = lower.getX();
-        int lowerY = lower.getY();
-        int lowerZ = lower.getZ();
-        int upperX = upper.getX();
-        int upperY = upper.getY();
-        int upperZ = upper.getZ();
+        BlockPos pos1 = BlockPosArgumentType.getBlockPos(context, "pos1");
+        BlockPos pos2 = BlockPosArgumentType.getBlockPos(context, "pos2");
+        Identifier nullBlockId = nullBlock ? IdentifierArgumentType.getIdentifier(context, "null_block") : null;
+        Identifier collisionSpaceId = collisionSpace ? IdentifierArgumentType.getIdentifier(context, "collision_space_block") : null;
 
-        // Save to json file
+        // Fetch world and min/max coordinates of the structure
+        ServerWorld world = context.getSource().getWorld();
+        int lowerX = Math.min(pos1.getX(), pos2.getX());
+        int lowerY = Math.min(pos1.getY(), pos2.getY());
+        int lowerZ = Math.min(pos1.getZ(), pos2.getZ());
+        int upperX = Math.max(pos1.getX(), pos2.getX());
+        int upperY = Math.max(pos1.getY(), pos2.getY());
+        int upperZ = Math.max(pos1.getZ(), pos2.getZ());
+
+        // Analyze the block states; populate the state strings and the inverse abbreviation map
+        BlockState state;
+        Identifier stateId;
+        String parsedState;
+        HashMap<String, String> inverseAbbreviationMap = new HashMap<>();
+        inverseAbbreviationMap.put("null", "nul");
+        inverseAbbreviationMap.put(BlockStateParsing.COLLISION_SPACE, "csp");
+        int abbreviationName = 0x100;
+        ArrayList<ArrayList<ArrayList<String>>> stateStrings = new ArrayList<>();
+        ArrayList<ArrayList<String>> stateStrings_;
+        ArrayList<String> stateStrings__;
+        for (int x=upperX; x>=lowerX; x--) {
+            stateStrings_ = new ArrayList<>();
+            for (int y=lowerY; y<=upperY; y++) {
+                stateStrings__ = new ArrayList<>();
+                for (int z=lowerZ; z<=upperZ; z++) {
+                    state = world.getBlockState(new BlockPos(x, y, z));
+                    stateId = Registry.BLOCK.getId(state.getBlock());
+                    // If the state's block id matches, write null keyword
+                    if (nullBlockId != null && nullBlockId.equals(stateId)) {
+                        stateStrings__.add("nul");
+                    } else if(collisionSpaceId != null && collisionSpaceId.equals(stateId)) {
+                        stateStrings__.add("csp");
+                    } else {
+                        parsedState = blockStateToString(state);
+                        if (!inverseAbbreviationMap.containsKey(parsedState)) {
+                            inverseAbbreviationMap.put(parsedState, Integer.toHexString(abbreviationName++));
+                        }
+                        stateStrings__.add(inverseAbbreviationMap.get(parsedState));
+                    }
+                }
+                stateStrings_.add(stateStrings__);
+            }
+            stateStrings.add(stateStrings_);
+        }
+
+        // Save structure to a json file
         try (JsonWriter writer = new JsonWriter(new FileWriter(fileName+".json"))) {
             String normalIndent = "  ";
             String compactIndent = "";
@@ -70,8 +126,8 @@ public class SaveVillageStructureCommand {
             writer.name("available_for_villager_count");
             writer.beginArray();
             writer.setIndent(compactIndent);
-            writer.value(0);
-            writer.value(1000);
+            writer.value(0L);
+            writer.value(1000L);
             writer.endArray();
             writer.setIndent(normalIndent);
 
@@ -81,26 +137,21 @@ public class SaveVillageStructureCommand {
 
             writer.name("abbreviation_map");
             writer.beginObject();
-            writer.name("nul");
-            writer.value("null");
+            for (Map.Entry<String, String> entry : inverseAbbreviationMap.entrySet()) {
+                writer.name(entry.getValue());
+                writer.value(entry.getKey());
+            }
             writer.endObject();
 
-            BlockState state;
             writer.name("block_state_cube");
             writer.beginArray();
-            for (int x=upperX; x>=lowerX; x--) {
+            for (ArrayList<ArrayList<String>> innerList1 : stateStrings) {
                 writer.beginArray();
                 writer.setIndent(compactIndent);
-                for (int y=lowerY; y<=upperY; y++) {
+                for (ArrayList<String> innerList2 : innerList1) {
                     writer.beginArray();
-                    for (int z=lowerZ; z<=upperZ; z++) {
-                        state = world.getBlockState(new BlockPos(x, y, z));
-                        // If the state's block id matches, write null keyword
-                        if (nullBlockId != null && Registry.BLOCK.getId(state.getBlock()).equals(nullBlockId)) {
-                            writer.value("nul");
-                        } else {
-                            writer.value(blockStateToString(state));
-                        }
+                    for (String stateString : innerList2) {
+                        writer.value(stateString);
                     }
                     writer.endArray();
                 }
@@ -112,9 +163,9 @@ public class SaveVillageStructureCommand {
             writer.name("center");
             writer.beginArray();
             writer.setIndent(compactIndent);
-            writer.value(0);
-            writer.value(0);
-            writer.value(0);
+            writer.value(0L);
+            writer.value(0L);
+            writer.value(0L);
             writer.endArray();
             writer.setIndent(normalIndent);
 

@@ -11,7 +11,6 @@ import java.util.HashMap;
 
 public class StructureTemplate {
 
-
     HashMap<String, HashMap<String, String>> dataPerStructureType;
     private final ArrayList<GeoFeatureBit> bits;
     public ArrayList<PointOfInterest> pointsOfInterest = new ArrayList<>();
