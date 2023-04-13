@@ -17,11 +17,11 @@ import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.VillageHea
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -413,7 +413,7 @@ public class ServerVillage extends Village {
         for (Map.Entry<Identifier, Integer> entry : blockCounts.entrySet()) {
             for (BlockPalette newPalette : newPalettes) {
                 for (Block block : newPalette.indicatorBlocks) {
-                    if (entry.getKey().equals(Registry.BLOCK.getId(block))) {
+                    if (entry.getKey().equals(Registries.BLOCK.getId(block))) {
                         pointsPerPalette.put(newPalette.id, pointsPerPalette.getOrDefault(newPalette.id, 0) + entry.getValue());
                     }
                 }

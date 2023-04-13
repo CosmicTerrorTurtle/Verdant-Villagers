@@ -21,20 +21,18 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.*;
+import software.bernie.geckolib.core.object.PlayState;
 
-public class VillageHeartEntity extends PathAwareEntity implements IAnimatable {
+public class VillageHeartEntity extends PathAwareEntity implements GeoEntity {
 
     public static final double ANCHOR_DISTANCE = 100.0;
     public static final double ANCHOR_HOVER_HEIGHT = 5;
 
-    private final AnimationFactory factory;
+    private final AnimatableInstanceCache cache;
 
     private boolean initialized;
     private Village village;
@@ -43,7 +41,7 @@ public class VillageHeartEntity extends PathAwareEntity implements IAnimatable {
         super(entityType, world);
 
         moveControl = new FlightMoveControl(this, 20, true);
-        factory = new AnimationFactory(this);
+        cache = new SingletonAnimatableInstanceCache(this);
 
         // Pre-initialization
         initialized = false;
@@ -148,19 +146,19 @@ public class VillageHeartEntity extends PathAwareEntity implements IAnimatable {
 
     // Animation methods
 
-    private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-        event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.village_heart.hover", true));
+    private PlayState predicate(AnimationState state) {
+        state.getController().setAnimation(RawAnimation.begin().then("animation.village_heart.hover", Animation.LoopType.LOOP));
         return PlayState.CONTINUE;
     }
 
     @Override
-    public void registerControllers(AnimationData animationData) {
-        animationData.addAnimationController(new AnimationController<>(this, "controller", 0, this::predicate));
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
     }
 
     @Override
-    public AnimationFactory getFactory() {
-        return factory;
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return cache;
     }
 
 

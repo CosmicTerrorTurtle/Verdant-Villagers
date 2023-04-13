@@ -2,10 +2,10 @@ package io.github.cosmic_terror_turtle.verdant_villagers.util;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.Registries;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +39,7 @@ public class NbtUtils {
         if (!nbt.contains("blockId")) {
             return null;
         }
-        BlockState state = Registry.BLOCK.get(new Identifier(nbt.getString("blockId"))).getDefaultState();
+        BlockState state = Registries.BLOCK.get(new Identifier(nbt.getString("blockId"))).getDefaultState();
         NbtCompound propertiesNbt = nbt.getCompound("properties");
         for (Property<?> property : state.getProperties()) {
             if (propertiesNbt.contains(property.getName())) {
@@ -59,7 +59,7 @@ public class NbtUtils {
     public static NbtCompound blockStateToNbt(@Nullable BlockState state) {
         NbtCompound nbt = new NbtCompound();
         if (state != null) {
-            nbt.putString("blockId", Registry.BLOCK.getId(state.getBlock()).toString());
+            nbt.putString("blockId", Registries.BLOCK.getId(state.getBlock()).toString());
             NbtCompound propertiesNbt = new NbtCompound();
             for (Property<?> property : state.getProperties()) {
                 propertiesNbt.putString(property.getName(), getPropertyValueAsString(state, property));

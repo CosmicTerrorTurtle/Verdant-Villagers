@@ -3,9 +3,9 @@ package io.github.cosmic_terror_turtle.verdant_villagers.entity.client;
 import io.github.cosmic_terror_turtle.verdant_villagers.VerdantVillagers;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.VillageHeartEntity;
 import net.minecraft.util.Identifier;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib.model.GeoModel;
 
-public class VillageHeartModel extends AnimatedGeoModel<VillageHeartEntity> {
+public class VillageHeartModel extends GeoModel<VillageHeartEntity> {
 
     @Override
     public Identifier getModelResource(VillageHeartEntity object) {

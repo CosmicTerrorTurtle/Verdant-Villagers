@@ -34,6 +34,10 @@ public class DataRegistry {
         villageNames.clear();
     }
 
+    /**
+     * Checks if all resource data is valid.
+     * @throws RuntimeException if an error gets detected.
+     */
     public static void checkData() {
 
         // For each palette type, there must be at least one palette and default palette.

@@ -11,6 +11,7 @@ import io.github.cosmic_terror_turtle.verdant_villagers.data.village.BlockStateP
 import net.minecraft.block.BlockState;
 import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.command.argument.IdentifierArgumentType;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.world.ServerWorld;
@@ -18,7 +19,6 @@ import net.minecraft.state.property.Property;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -89,7 +89,7 @@ public class SaveVillageStructureCommand {
                 stateStrings__ = new ArrayList<>();
                 for (int z=lowerZ; z<=upperZ; z++) {
                     state = world.getBlockState(new BlockPos(x, y, z));
-                    stateId = Registry.BLOCK.getId(state.getBlock());
+                    stateId = Registries.BLOCK.getId(state.getBlock());
                     // If the state's block id matches, write null keyword
                     if (nullBlockId != null && nullBlockId.equals(stateId)) {
                         stateStrings__.add("nul");
@@ -186,7 +186,7 @@ public class SaveVillageStructureCommand {
 
     public static String blockStateToString(BlockState state) {
         StringBuilder builder = new StringBuilder("state:");
-        builder.append(Registry.BLOCK.getId(state.getBlock()));
+        builder.append(Registries.BLOCK.getId(state.getBlock()));
         for (Property<?> property : state.getProperties()) {
             builder.append(":").append(property.getName()).append(":").append(getPropertyValueAsString(state, property));
         }

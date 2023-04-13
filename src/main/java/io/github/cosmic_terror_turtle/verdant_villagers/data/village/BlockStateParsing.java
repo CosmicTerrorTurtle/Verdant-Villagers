@@ -5,10 +5,10 @@ import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.Ge
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.ServerVillage;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure.StructureTemplate;
 import net.minecraft.block.BlockState;
+import net.minecraft.registry.Registries;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -101,7 +101,7 @@ public class BlockStateParsing {
             properties.put(split[i-1], split[i]);
         }
 
-        BlockState state = Registry.BLOCK.get(new Identifier(split[0], split[1])).getDefaultState();
+        BlockState state = Registries.BLOCK.get(new Identifier(split[0], split[1])).getDefaultState();
         for (Property<?> property : state.getProperties()) {
             if (properties.containsKey(property.getName())) {
                 state = getStateWith(state, property, properties.get(property.getName()));

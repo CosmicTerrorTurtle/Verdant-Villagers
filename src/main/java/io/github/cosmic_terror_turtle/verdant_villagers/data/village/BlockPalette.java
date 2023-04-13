@@ -3,8 +3,8 @@ package io.github.cosmic_terror_turtle.verdant_villagers.data.village;
 import com.google.gson.stream.JsonReader;
 import io.github.cosmic_terror_turtle.verdant_villagers.data.JsonUtils;
 import net.minecraft.block.Block;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class BlockPalette {
                 case "palette_id" -> id = new Identifier(reader.nextString());
                 case "add_to_defaults" -> addToDefaults = reader.nextBoolean();
                 case "indicator_blocks" -> indicatorBlocks = new ArrayList<>(
-                        JsonUtils.readStringArray(reader).stream().map(block_id -> Registry.BLOCK.get(new Identifier(block_id))).toList()
+                        JsonUtils.readStringArray(reader).stream().map(block_id -> Registries.BLOCK.get(new Identifier(block_id))).toList()
                 );
                 case "elements" -> elements = JsonUtils.readStringArray(reader);
             }

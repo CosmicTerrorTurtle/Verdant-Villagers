@@ -2,9 +2,9 @@ package io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village;
 
 import io.github.cosmic_terror_turtle.verdant_villagers.util.NbtUtils;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,7 +43,7 @@ public class MegaChunk {
         for (int i=0; i<LENGTH; i++) {
             for (int j=0; j<LENGTH; j++) {
                 for (int k=0; k<LENGTH; k++) {
-                    blockId = Registry.BLOCK.getId(world.getBlockState(lowerTip.add(i, j, k)).getBlock());
+                    blockId = Registries.BLOCK.getId(world.getBlockState(lowerTip.add(i, j, k)).getBlock());
                     blockCounts.put(blockId, blockCounts.getOrDefault(blockId, 0)+1);
                 }
             }
