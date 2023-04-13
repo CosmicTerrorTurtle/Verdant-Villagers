@@ -32,6 +32,9 @@ public class ServerVillage extends Village {
     private enum UpdateCyclePhase {PAUSE, STRUCTURES, ROADS}
 
 
+    // If true, the village will immediately place a feature once it is planned.
+    public static final boolean PLACE_BLOCKS_DIRECTLY = true;
+
     // The side length of an L*L*L volume of blocks called mega block.
     public static final int MEGA_BLOCK_LENGTH = 2;
 
@@ -847,14 +850,15 @@ public class ServerVillage extends Village {
                             // Add new chunks around the added junction.
                             addMegaChunksAround(megaChunk.getLowerTip());
 
-                            // build the junction
-                            for (GeoFeatureBit bit : newJunction.getBits()) {
-                                attemptToPlace(bit);
-                            }
-                            // build the edges
-                            for (RoadEdge edge : newEdges) {
-                                for (GeoFeatureBit bit : edge.getBits()) {
+                            // Build the junction and its edges
+                            if (PLACE_BLOCKS_DIRECTLY) {
+                                for (GeoFeatureBit bit : newJunction.getBits()) {
                                     attemptToPlace(bit);
+                                }
+                                for (RoadEdge edge : newEdges) {
+                                    for (GeoFeatureBit bit : edge.getBits()) {
+                                        attemptToPlace(bit);
+                                    }
                                 }
                             }
 
@@ -982,9 +986,11 @@ public class ServerVillage extends Village {
                             // Add new chunks around the added house.
                             addMegaChunksAround(megaChunk.getLowerTip());
 
-                            // build the structure
-                            for (GeoFeatureBit bit : newStructure.getBits()) {
-                                attemptToPlace(bit);
+                            // Build the structure
+                            if (PLACE_BLOCKS_DIRECTLY) {
+                                for (GeoFeatureBit bit : newStructure.getBits()) {
+                                    attemptToPlace(bit);
+                                }
                             }
 
                             return true;
@@ -1115,10 +1121,12 @@ public class ServerVillage extends Village {
 
         accessPaths.addAll(approvedPaths);
 
-        // place bits of the access paths
-        for (RoadEdge approvedPath : approvedPaths) {
-            for (GeoFeatureBit bit : approvedPath.getBits()) {
-                attemptToPlace(bit);
+        // Build the access paths
+        if (PLACE_BLOCKS_DIRECTLY) {
+            for (RoadEdge approvedPath : approvedPaths) {
+                for (GeoFeatureBit bit : approvedPath.getBits()) {
+                    attemptToPlace(bit);
+                }
             }
         }
 

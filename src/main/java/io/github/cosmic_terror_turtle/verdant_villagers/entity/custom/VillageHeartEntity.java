@@ -1,8 +1,8 @@
 package io.github.cosmic_terror_turtle.verdant_villagers.entity.custom;
 
+import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.ClientVillage;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.ServerVillage;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.Village;
-import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.ClientVillage;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.control.FlightMoveControl;
 import net.minecraft.entity.ai.pathing.BirdNavigation;
@@ -80,9 +80,9 @@ public class VillageHeartEntity extends PathAwareEntity implements IAnimatable {
         return birdNavigation;
     }
 
-    public void moveTo(Vec3d v, double speed) {
+    public void setTargetPosition(Vec3d v, double speedModifier) {
         if (getNavigation().isIdle()) {
-            getNavigation().startMovingTo(v.x, v.y, v.z, speed);
+            getNavigation().startMovingTo(v.x, v.y, v.z, speedModifier);
         }
     }
 

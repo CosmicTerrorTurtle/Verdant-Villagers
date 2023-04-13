@@ -52,7 +52,7 @@ public class VillageAnchorBlockEntity extends BlockEntity {
                 closestVillageHeart = villageHeart;
             }
             if (closestVillageHeart != null) {
-                closestVillageHeart.moveTo(Vec3d.ofCenter(pos).add(0, VillageHeartEntity.ANCHOR_HOVER_HEIGHT, 0), 1.0);
+                closestVillageHeart.setTargetPosition(Vec3d.ofCenter(pos).add(0, VillageHeartEntity.ANCHOR_HOVER_HEIGHT, 0), 1.0);
             }
         }
     }
