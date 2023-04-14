@@ -704,7 +704,7 @@ public class ServerVillage extends Village {
             startAngle = random.nextDouble(2*Math.PI);
             addAngle = 0;
             do {
-                testPos = pos.add(searchRadius*Math.cos(startAngle+addAngle), -1, searchRadius*Math.sin(startAngle+addAngle));
+                testPos = pos.add((int) (searchRadius*Math.cos(startAngle+addAngle)), -1, (int) (searchRadius*Math.sin(startAngle+addAngle)));
                 testPos = getSurfaceBlock(testPos, testPos.getY()-50, testPos.getY()+50);
                 if (testPos!= null) {
                     testPosIsValid = true;
@@ -909,7 +909,7 @@ public class ServerVillage extends Village {
             startAngle = random.nextDouble(2*Math.PI);
             addAngle = 0;
             do {
-                testPos = pos.add(searchRadius*Math.cos(startAngle+addAngle), -1, searchRadius*Math.sin(startAngle+addAngle));
+                testPos = pos.add((int) (searchRadius*Math.cos(startAngle+addAngle)), -1, (int) (searchRadius*Math.sin(startAngle+addAngle)));
                 testPos = getSurfaceBlock(testPos, testPos.getY()-50, testPos.getY()+50);
                 if (testPos != null) {
                     for (MegaChunk megaChunk : megaChunks) {

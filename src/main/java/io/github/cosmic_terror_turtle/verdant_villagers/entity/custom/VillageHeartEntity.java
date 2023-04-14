@@ -86,11 +86,12 @@ public class VillageHeartEntity extends PathAwareEntity implements GeoEntity {
 
     @Override
     public boolean damage(DamageSource source, float amount) {
-        if (source != DamageSource.OUT_OF_WORLD) {
-            // activate this to make the village heart invulnerable
-            //return false;
+        // The village heart can only be damaged by creative mode players.
+        if (source.isSourceCreativePlayer()) {
+            return super.damage(source, amount);
+        } else {
+            return false;
         }
-        return super.damage(source, amount);
     }
 
     @Override
