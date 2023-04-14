@@ -4,8 +4,8 @@ import com.google.gson.stream.JsonReader;
 import io.github.cosmic_terror_turtle.verdant_villagers.VerdantVillagers;
 import io.github.cosmic_terror_turtle.verdant_villagers.data.village.*;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure.StructureProvider;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
-import net.fabricmc.fabric.impl.resource.loader.ResourceManagerHelperImpl;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
@@ -19,7 +19,7 @@ public class ModResources {
 
     public static void registerResourceReloadListeners() {
 
-        ResourceManagerHelperImpl.get(ResourceType.SERVER_DATA).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
+        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
             @Override
             public Identifier getFabricId() {
                 return new Identifier(VerdantVillagers.MOD_ID, "data_reload_listener");
