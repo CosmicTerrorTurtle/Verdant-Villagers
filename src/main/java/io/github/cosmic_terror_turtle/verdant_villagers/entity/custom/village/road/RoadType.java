@@ -48,7 +48,7 @@ public class RoadType {
                         getJunctionRadius(2.5)
                 },
                 new VerticalBlockColumn[]{
-                        new VerticalBlockColumn(new BlockState[]{dirt, log, log, log, fence, torch}, 1, air, 4),
+                        new VerticalBlockColumn(new BlockState[]{dirt, log, log, log, fence, torch}, 1, air, 3),
                         new VerticalBlockColumn(new BlockState[]{dirt, dirtPath}, 1, air, 7)
                 }
         );
@@ -69,7 +69,7 @@ public class RoadType {
                         getJunctionRadius(3.0)
                 },
                 new VerticalBlockColumn[]{
-                        new VerticalBlockColumn(new BlockState[]{dirt, log, log, log, fence, torch}, 1, air, 6),
+                        new VerticalBlockColumn(new BlockState[]{dirt, log, log, log, fence, torch}, 1, air, 4),
                         new VerticalBlockColumn(new BlockState[]{dirt, dirtPath}, 1, air, 8)
                 }
         );
@@ -92,7 +92,7 @@ public class RoadType {
                         getJunctionRadius(3.0)
                 },
                 new VerticalBlockColumn[]{
-                        new VerticalBlockColumn(new BlockState[]{full0, full1, full1, full1, wall, torch}, 1, air, 6),
+                        new VerticalBlockColumn(new BlockState[]{full0, full1, full1, full1, wall, torch}, 1, air, 4),
                         new VerticalBlockColumn(new BlockState[]{full0, full0}, 1, air, 8)
                 }
         );
@@ -121,7 +121,7 @@ public class RoadType {
                         getJunctionRadius(3.5)
                 },
                 new VerticalBlockColumn[]{
-                        new VerticalBlockColumn(new BlockState[]{full0, full1, full1, full1, wall, torch}, 1, air, 8),
+                        new VerticalBlockColumn(new BlockState[]{full0, full1, full1, full1, wall, torch}, 1, air, 5),
                         new VerticalBlockColumn(new BlockState[]{full0, full0}, 1, air, 9)
                 }
         );
