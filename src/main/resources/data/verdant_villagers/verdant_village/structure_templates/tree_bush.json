@@ -10,8 +10,8 @@
     "nul": "null",
     "csp": "collision_space",
     "gra": "state:minecraft:grass_block",
-    "fnc": "palette:0:verdant_villagers:wood:fence_waterlogged_false_north_false_south_false_west_false_east_false",
-    "wlv": "palette:0:verdant_villagers:wood:leaves_persistent_true"
+    "fnc": "palette:0:verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:false:south:false:west:false:east:false",
+    "wlv": "palette:0:verdant_villagers:wood___minecraft:oak_leaves:persistent:true"
   },
   "block_state_cube": [
     [["nul","nul","nul"],["csp","csp","csp"],["csp","csp","csp"],["csp","csp","csp"]],

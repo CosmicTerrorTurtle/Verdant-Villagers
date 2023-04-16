@@ -14,14 +14,14 @@
     "dir": "state:minecraft:dirt",
     "far": "state:minecraft:farmland",
     "wat": "state:minecraft:water",
-    "fcn": "palette:0:verdant_villagers:wood:fence_waterlogged_false_north_true_south_false_west_false_east_false",
-    "fcs": "palette:0:verdant_villagers:wood:fence_waterlogged_false_north_false_south_true_west_false_east_false",
-    "fns": "palette:0:verdant_villagers:wood:fence_waterlogged_false_north_true_south_true_west_false_east_false",
-    "fwe": "palette:0:verdant_villagers:wood:fence_waterlogged_false_north_false_south_false_west_true_east_true",
-    "fnw": "palette:0:verdant_villagers:wood:fence_waterlogged_false_north_true_south_false_west_true_east_false",
-    "fne": "palette:0:verdant_villagers:wood:fence_waterlogged_false_north_true_south_false_west_false_east_true",
-    "fsw": "palette:0:verdant_villagers:wood:fence_waterlogged_false_north_false_south_true_west_true_east_false",
-    "fse": "palette:0:verdant_villagers:wood:fence_waterlogged_false_north_false_south_true_west_false_east_true"
+    "fcn": "palette:0:verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:true:south:false:west:false:east:false",
+    "fcs": "palette:0:verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:false:south:true:west:false:east:false",
+    "fns": "palette:0:verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:true:south:true:west:false:east:false",
+    "fwe": "palette:0:verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:false:south:false:west:true:east:true",
+    "fnw": "palette:0:verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:true:south:false:west:true:east:false",
+    "fne": "palette:0:verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:true:south:false:west:false:east:true",
+    "fsw": "palette:0:verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:false:south:true:west:true:east:false",
+    "fse": "palette:0:verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:false:south:true:west:false:east:true"
   },
   "block_state_cube": [
     [["nul","nul","nul","nul","nul","nul","nul","nul","nul"],["nul","gra","gra","gra","gra","gra","gra","gra","nul"],["nul","fsw","fns","fns","fns","fns","fns","fnw","nul"],["nul","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","nul"]],

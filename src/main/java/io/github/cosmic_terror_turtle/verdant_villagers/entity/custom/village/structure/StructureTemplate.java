@@ -28,8 +28,8 @@ public class StructureTemplate {
 
     public ArrayList<GeoFeatureBit> getBits() {
         for (GeoFeatureBit bit : bits) {
-            if (bit instanceof GeoFeatureBitOption) {
-                ((GeoFeatureBitOption) bit).randomize();
+            if (bit instanceof GeoFeatureBitOption option) {
+                option.randomize();
             }
         }
         return bits;

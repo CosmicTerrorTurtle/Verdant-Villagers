@@ -14,7 +14,7 @@ import java.util.Random;
 public class RoadEdge extends GeoFeature {
 
     public static final double ROUNDING_OFFSET = 0.5; // Makes the block position coordinates be centered in a block.
-    public static final double ROAD_STEP = 0.1; // Lower step -> higher precision in placing the road blocks
+    public static final double ROAD_STEP = 0.08; // Lower step -> higher precision in placing the road blocks
     public static final double ROAD_DOT_SPACE = 2.5; // Space between road dots
 
     public static final int FIRST = 1;
@@ -329,7 +329,7 @@ public class RoadEdge extends GeoFeature {
         public static final double TERRAIN_ADJUSTING_SPACE = 2.0; // Space between terrain adjusting points
         public static final double MAX_SLOPE_DEVIATION = 0.15; // Maximum difference between overall slope and the slopes from the adjusted points
         public static final double SMOOTHING_FACTOR = 0.2; // Factor by which a points gets adjusted towards its neighbors
-        public static final int MAX_SMOOTHING_ITERATIONS = 10; // The maximum number of iterations that smooth the adjusting offsets.
+        public static final int MAX_SMOOTHING_ITERATIONS = 15; // The maximum number of iterations that smooth the adjusting offsets.
 
 
         private final double aOffsetStart;
@@ -347,16 +347,18 @@ public class RoadEdge extends GeoFeature {
                 if (a<aOffsetStart || d-aOffsetEnd<a) {
                     yOffsetValues.add(0.0);
                 } else {
-                    yOffsetValues.add(getTerrainOffset(village, angleAtFrom, a, ySlope*(a-aOffsetStart), 0.15*d));
+                    yOffsetValues.add(getTerrainOffset(village, angleAtFrom, a, ySlope*(a-aOffsetStart), 0.2*d));
                 }
             }
 
             // Smooth offset values
             for (int i = 0; i< MAX_SMOOTHING_ITERATIONS; i++) {
-                if (!smoothOffsets()) {
+                if (!smoothOffsets(false)) {
                     break;
                 }
             }
+            // Final smooth
+            smoothOffsets(true);
         }
 
         private double getTerrainOffset(ServerVillage village, double angleAtFrom, double a, double yCoord, double maxOffset) {
@@ -381,9 +383,10 @@ public class RoadEdge extends GeoFeature {
 
         /**
          * Smooths offsets that lead to large slope deviations.
+         * @param smoothAll If true, values will be smoothed even if their slopes are acceptable.
          * @return True if more smoothing may be needed.
          */
-        private boolean smoothOffsets() {
+        private boolean smoothOffsets(boolean smoothAll) {
             ArrayList<Double> newOffsets = new ArrayList<>();
             double a;
             boolean smoothingNeeded = false;
@@ -396,8 +399,9 @@ public class RoadEdge extends GeoFeature {
                     continue;
                 }
 
-                // Is the slope deviation of this offset value too large?
-                if (Math.abs(getYOffsetFromIndex(i)-getYOffsetFromIndex(i-1))/TERRAIN_ADJUSTING_SPACE > MAX_SLOPE_DEVIATION
+                // Is the slope deviation of this offset value too large or is smoothAll enabled?
+                if (smoothAll
+                        || Math.abs(getYOffsetFromIndex(i)-getYOffsetFromIndex(i-1))/TERRAIN_ADJUSTING_SPACE > MAX_SLOPE_DEVIATION
                         || Math.abs(getYOffsetFromIndex(i+1)-getYOffsetFromIndex(i))/TERRAIN_ADJUSTING_SPACE > MAX_SLOPE_DEVIATION) {
                     smoothingNeeded = true;
                     newOffsets.add( yOffsetValues.get(i) + SMOOTHING_FACTOR * (getYOffsetFromIndex(i+1)+getYOffsetFromIndex(i-1)-2*yOffsetValues.get(i)) );

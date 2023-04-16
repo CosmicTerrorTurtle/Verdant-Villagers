@@ -18,8 +18,6 @@ public class VerdantVillagers implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		//DataGen.generateBlockPalettes();
-		//System.exit(0);
 
 		ModItemGroups.registerItemGroups();
 		ModItems.registerModItems();
