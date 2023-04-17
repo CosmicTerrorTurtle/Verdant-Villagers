@@ -7,6 +7,10 @@
     "search_distance_multiplier": 1,
     "structure_check_method": "count_villagers"
   },
+  "tree_farm": {
+    "search_distance_multiplier": 1,
+    "structure_check_method": "count_villagers"
+  },
   "plant_farm": {
     "search_distance_multiplier": 1,
     "structure_check_method": "count_villagers"

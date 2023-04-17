@@ -1,5 +1,5 @@
 {
   "standard": {
-    "structure_types_to_build": ["house", "storage", "plant_farm", "decorative_plant"]
+    "structure_types_to_build": ["house", "storage", "tree_farm", "plant_farm", "decorative_plant"]
   }
 }

@@ -2,6 +2,7 @@ package io.github.cosmic_terror_turtle.verdant_villagers.data.village;
 
 import com.google.gson.stream.JsonReader;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure.PointOfInterest;
+import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure.SaplingLocationPoint;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure.StructureAccessPoint;
 import net.minecraft.nbt.NbtCompound;
 
@@ -213,11 +214,12 @@ public class DataRegistry {
 
     private static void registerPointOfInterestSubclasses() {
         registerPointOfInterestConstructors("StructureAccessPoint", StructureAccessPoint::new, reader -> {
-            try {
-                return new RawStructureAccessPoint(reader);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            try { return new RawStructureAccessPoint(reader); }
+            catch (IOException e) { throw new RuntimeException(e); }
+        });
+        registerPointOfInterestConstructors("SaplingLocationPoint", SaplingLocationPoint::new, reader -> {
+            try { return new RawSaplingLocationPoint(reader); }
+            catch (IOException e) { throw new RuntimeException(e); }
         });
     }
 
