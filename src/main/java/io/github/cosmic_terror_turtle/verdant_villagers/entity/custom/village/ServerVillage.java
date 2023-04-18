@@ -15,12 +15,18 @@ import io.github.cosmic_terror_turtle.verdant_villagers.util.MathUtils;
 import io.github.cosmic_terror_turtle.verdant_villagers.util.ModTags;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.VillageHeartEntity;
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LargeEntitySpawnHelper;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -466,12 +472,12 @@ public class ServerVillage extends Village {
 
     /**
      * Calculates the time between update cycle steps. It is dependent on the number of villagers (representing the village size;
-     * a bigger village will need more frequent updates). The minimum time is 5 seconds, the maximum time 10 seconds.
+     * a bigger village will need more frequent updates). The minimum time is 5 seconds, the maximum time 20 seconds.
      * @return The time in ticks.
      */
     private double getTicksBetweenUpdates() {
         double seconds = 2 + 1 * Math.pow(1.03, -villagerCount);
-        return seconds*20;
+        return seconds * 20;
     }
 
     @Override
@@ -498,7 +504,18 @@ public class ServerVillage extends Village {
                 // Update position
                 pos = villageHeart.getBlockPos();
 
-                // Update villager count
+                // Spawn iron golems if necessary
+                int ironGolemCount = world.getEntitiesByClass(IronGolemEntity.class, new Box(pos).expand(200.0), entity -> true).size();
+                if (ironGolemCount*5 < villagerCount && random.nextDouble() < 0.1) {
+                    LargeEntitySpawnHelper.trySpawnAt(EntityType.IRON_GOLEM, SpawnReason.MOB_SUMMONED, (ServerWorld) world, pos,
+                            10, 50, 30, LargeEntitySpawnHelper.Requirements.IRON_GOLEM);
+                }
+
+                // Update villager count and spawn villagers if necessary
+                //villagerCount = world.getEntitiesByClass(...);
+                if (villagerCount < 5 && random.nextDouble() < 0.1) {
+
+                }
 
                 // Add new block palettes if necessary.
                 if (getUpdatedBlockPaletteLevel() > blockPaletteLevel) {
