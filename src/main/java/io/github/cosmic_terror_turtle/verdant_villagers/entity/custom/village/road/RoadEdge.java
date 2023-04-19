@@ -200,7 +200,7 @@ public class RoadEdge extends GeoFeature {
             spaceAfterLastDot += ROAD_STEP;
             if (spaceAfterLastDot > ROAD_DOT_SPACE) {
                 spaceAfterLastDot = 0;
-                for (double offset : new double[]{-radius, radius}) {
+                for (double offset : new double[]{0.5-radius, radius-0.5}) {
                     tmp = offset/Math.sqrt(1+f_slope*f_slope);
                     aCoord = a+f_slope*tmp;
                     faCoord = f_of_a-tmp;
@@ -358,7 +358,7 @@ public class RoadEdge extends GeoFeature {
                 }
             }
             // Final smooth
-            smoothOffsets(true);
+            //smoothOffsets(true);
         }
 
         private double getTerrainOffset(ServerVillage village, double angleAtFrom, double a, double yCoord, double maxOffset) {
@@ -367,7 +367,7 @@ public class RoadEdge extends GeoFeature {
                     (int) yCoord,
                     (int) (a*Math.sin(angleAtFrom) + getFunctionAt(a)*Math.cos(angleAtFrom))
             );
-            BlockPos surfaceBlock = village.getSurfaceBlock(startPosition, (int) (startPosition.getY()-maxOffset), (int) (startPosition.getY()+maxOffset));
+            BlockPos surfaceBlock = village.getSurfaceBlock(startPosition, (int) (startPosition.getY()-maxOffset), (int) (startPosition.getY()+maxOffset), false);
             double terrainOffset;
             if (surfaceBlock != null) {
                 terrainOffset = surfaceBlock.getY() - yCoord - from.pos.getY();

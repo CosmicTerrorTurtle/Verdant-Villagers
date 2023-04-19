@@ -1,5 +1,5 @@
 {
-  "village_types": ["standard"],
+  "village_types": ["standard", "coast", "under_ground", "sky"],
   "available_for_villager_count": [0, 1000],
   "data_per_structure_type": {
     "tree_farm_4": {
@@ -28,7 +28,7 @@
     [["gra","gra","gra","gra","gra","gra","gra","gra","gra","gra"],["fwe","air","air","air","air","air","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air"]],
     [["gra","gra","gra","gra","gra","gra","gra","gra","gra","gra"],["fwe","air","air","air","air","air","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air"]],
     [["gra","gra","gra","gra","gra","gra","gra","gra","gra","gra"],["fwe","air","air","air","sap","sap","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air"]],
-    [["gra","gra","gra","gra","gra","gra","gra","gra","gra","gra"],["fwe","air","air","air","sap","sap","air","sap","air","fwe"],["air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air"]],
+    [["gra","gra","gra","gra","gra","gra","gra","gra","gra","gra"],["fwe","air","air","air","sap","sap","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air"]],
     [["gra","gra","gra","gra","gra","gra","gra","gra","gra","gra"],["fwe","air","air","air","air","air","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air"]],
     [["gra","gra","gra","gra","gra","gra","gra","gra","gra","gra"],["fwe","air","air","air","air","air","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air"]],
     [["gra","gra","gra","gra","gra","gra","gra","gra","gra","gra"],["fse","fnw","air","air","air","air","air","air","fsw","fne"],["air","tor","air","air","air","air","air","air","tor","air"],["air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air"]],

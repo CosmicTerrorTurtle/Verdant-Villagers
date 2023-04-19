@@ -36,6 +36,7 @@ import java.util.*;
 public class ServerVillage extends Village {
 
     private enum UpdateCyclePhase {PAUSE, STRUCTURES, ROADS}
+    public enum SurfaceFluidMode {NONE, AS_GROUND, AS_AIR}
 
 
     // If true, the village will immediately place a feature once it is planned.
@@ -84,9 +85,9 @@ public class ServerVillage extends Village {
     private final float landBelow;
     private final float airAbove;
     private final float airBelow;
-    private final float waterAbove;
-    private final float waterBelow;
-    private final String villageType;
+    private final float fluidAbove;
+    private final float fluidBelow;
+    private String villageType;
     public final HashMap<Identifier, Integer> blockCounts; // Map that holds the number of blocks the mega chunks hold for each type.
     private final ArrayList<MegaChunk> megaChunks;
     private final HashMap<String, ArrayList<BlockPalette>> blockPalettes; // Map between block palette type and the list of palettes this village uses for that type.
@@ -111,21 +112,22 @@ public class ServerVillage extends Village {
 
         // Initialize persistent fields
 
+        // Misc values
         nextElementID = 0;
         name = DataRegistry.getRandomVillageName();
         villagerCount = 0;
         searchDistanceRoad = (int) getRand(SEARCH_DISTANCE_ROAD_AVG, SEARCH_DISTANCE_ROAD_FRACTION);
         searchDistanceStructure = (int) getRand(SEARCH_DISTANCE_STRUCTURE_AVG, SEARCH_DISTANCE_STRUCTURE_FRACTION);
 
-        // Analyze terrain and determine village type parameters
+        // Analyze terrain
         int terrainRadius = 64;
         BlockPos testPos;
         int landA = 0;
         int airA = 0;
-        int waterA = 0;
+        int fluidA = 0;
         int landB = 0;
         int airB = 0;
-        int waterB = 0;
+        int fluidB = 0;
         for (int i=-terrainRadius; i<terrainRadius; i++) {
             for (int j=-terrainRadius; j<terrainRadius; j++) {
                 for (int k=-terrainRadius; k<terrainRadius; k++) {
@@ -149,24 +151,54 @@ public class ServerVillage extends Village {
                     } else {
                         // Fluid
                         if (j<0) {
-                            waterB++;
+                            fluidB++;
                         } else {
-                            waterA++;
+                            fluidA++;
                         }
                     }
                 }
             }
         }
-        float halfVolume = (float) (Math.pow(terrainRadius, 3)/2);
+        float halfVolume = (float) (Math.pow(2*terrainRadius, 3)/2);
         landAbove = landA/halfVolume;
         landBelow = landB/halfVolume;
         airAbove = airA/halfVolume;
         airBelow = airB/halfVolume;
-        waterAbove = waterA/halfVolume;
-        waterBelow = waterB/halfVolume;
+        fluidAbove = fluidA/halfVolume;
+        fluidBelow = fluidB/halfVolume;
 
+        // Determine village type parameters
+        String terrainCategory;
+        if (airBelow > 0.6) {
+            terrainCategory = "sky";
+        } else if (landAbove > 0.5) {
+            terrainCategory = "under_ground";
+        } else if (fluidAbove > 0.5) {
+            terrainCategory = "under_fluid";
+        } else {
+            if (fluidBelow > 0.08) {
+                terrainCategory = "on_coast";
+            } else {
+                terrainCategory = "on_land";
+            }
+        }
+
+        // Determine village type
+        villageType = null;
         ArrayList<String> villageTypes = new ArrayList<>(DataRegistry.getVillageTypes());
-        villageType = villageTypes.get(random.nextInt(villageTypes.size()));
+        ArrayList<String> fittingVillageTypes = new ArrayList<>();
+        for (String vType : villageTypes) {
+            if (DataRegistry.getVillageTypeData(vType).terrainCategory.equals(terrainCategory)) {
+                fittingVillageTypes.add(vType);
+            }
+        }
+        if (fittingVillageTypes.isEmpty()) {
+            villageType = "standard";
+        } else {
+            villageType = fittingVillageTypes.get(random.nextInt(fittingVillageTypes.size()));
+        }
+
+        // Maps, lists and block palettes
 
         blockCounts = new HashMap<>();
 
@@ -199,8 +231,8 @@ public class ServerVillage extends Village {
         nbt.putFloat("landBelow", landBelow);
         nbt.putFloat("airAbove", airAbove);
         nbt.putFloat("airBelow", airBelow);
-        nbt.putFloat("waterAbove", waterAbove);
-        nbt.putFloat("waterBelow", waterBelow);
+        nbt.putFloat("fluidAbove", fluidAbove);
+        nbt.putFloat("fluidBelow", fluidBelow);
         nbt.putString("villageType", villageType);
 
         // Block counts
@@ -286,8 +318,8 @@ public class ServerVillage extends Village {
         landBelow = nbt.getFloat("landBelow");
         airAbove = nbt.getFloat("airAbove");
         airBelow = nbt.getFloat("airBelow");
-        waterAbove = nbt.getFloat("waterAbove");
-        waterBelow = nbt.getFloat("waterBelow");
+        fluidAbove = nbt.getFloat("fluidAbove");
+        fluidBelow = nbt.getFloat("fluidBelow");
         villageType = nbt.getString("villageType");
 
         // Block counts
@@ -566,6 +598,11 @@ public class ServerVillage extends Village {
                 // output name and villager count for testing
                 for (PlayerEntity player : world.getPlayers()) {
                     player.sendMessage(Text.literal(name+" ("+villagerCount+")"));
+                    if (random.nextDouble() < 0.2) {
+                        player.sendMessage(Text.literal(
+                                "type: "+villageType+", A/B, land: "+landAbove+"/"+landBelow+", fluid: "+fluidAbove+"/"+fluidBelow+", air: "+airAbove+"/"+airBelow
+                        ));
+                    }
                 }
 
                 cyclePhase = UpdateCyclePhase.PAUSE;
@@ -635,9 +672,28 @@ public class ServerVillage extends Village {
      * @param startPosition The position of the block from which the search should start (+/- a small random offset).
      * @param minY The minimum Y value checked.
      * @param maxY The maximum Y value checked.
+     * @param isForGeoFeature Whether the return value will be used for determining the center of a {@link GeoFeature}.
+     *                        For road edge terrain adjustments, select false.
      * @return The block position of the surface block or null if no surface block was found.
      */
-    public BlockPos getSurfaceBlock(BlockPos startPosition, int minY, int maxY) {
+    public BlockPos getSurfaceBlock(BlockPos startPosition, int minY, int maxY, boolean isForGeoFeature) {
+        // For underground or sky terrain categories, sometimes return random position in the given range.
+        String terrainCategory = DataRegistry.getVillageTypeData(villageType).terrainCategory;
+        if (isForGeoFeature && random.nextDouble() < 0.2 && (
+                terrainCategory.equals("under_ground")
+                || terrainCategory.equals("sky")
+        )) {
+            return startPosition.withY(MathUtils.nextInt(minY, maxY));
+        }
+
+        // Determine the surface fluid mode depending on the village's terrain category.
+        SurfaceFluidMode surfaceFluidMode = SurfaceFluidMode.NONE;
+        if (terrainCategory.equals("on_coast")) {
+            surfaceFluidMode = SurfaceFluidMode.AS_GROUND;
+        } else if (terrainCategory.equals("under_fluid")) {
+            surfaceFluidMode = SurfaceFluidMode.AS_AIR;
+        }
+
         // Increase starting height for accessing different heights
         int maxStartOffset = 20;
         int minStartHeight = Math.max(minY, startPosition.getY()-maxStartOffset);
@@ -648,13 +704,13 @@ public class ServerVillage extends Village {
         BlockPos result = null;
         if (world != null) {
             for (int yCoord=startPosition.getY(); yCoord>=minY; yCoord--) {
-                if (positionIsValidGroundLevel(startPosition.withY(yCoord))) {
+                if (positionIsValidSurfaceLevel(startPosition.withY(yCoord), surfaceFluidMode)) {
                     result = startPosition.withY(yCoord);
                     break;
                 }
             }
             for (int yCoord=startPosition.getY(); yCoord<=maxY; yCoord++) {
-                if (positionIsValidGroundLevel(startPosition.withY(yCoord))) {
+                if (positionIsValidSurfaceLevel(startPosition.withY(yCoord), surfaceFluidMode)) {
                     if (result!=null && yCoord-startPosition.getY() > startPosition.getY()-result.getY()) {
                         return result;
                     } else {
@@ -669,15 +725,29 @@ public class ServerVillage extends Village {
     /**
      * Checks if a position is valid.
      * @param position The position that should be checked.
+     * @param surfaceFluidMode Whether position, the block above it or none of them can have fluids. {@link SurfaceFluidMode#NONE}
+     *                         is for normal positions on land, {@link SurfaceFluidMode#AS_GROUND} is for positions on land
+     *                         and on the fluid surface, and {@link SurfaceFluidMode#AS_AIR} is for positions on land and
+     *                         on the fluid ground (for example, the sea floor).
      * @return True if the position is an (upwards) surface block.
      */
-    private boolean positionIsValidGroundLevel(BlockPos position) {
+    private boolean positionIsValidSurfaceLevel(BlockPos position, SurfaceFluidMode surfaceFluidMode) {
         if (world == null) {
             return false;
         } else {
-            return world.getBlockState(position).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)
-                   && !world.getBlockState(position.up()).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)
-                   && world.getFluidState(position.up()).isEmpty();
+            return switch (surfaceFluidMode) {
+                case NONE ->
+                        world.getBlockState(position).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)
+                        && !world.getBlockState(position.up()).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)
+                        && world.getFluidState(position.up()).isEmpty();
+                case AS_GROUND ->
+                        (world.getBlockState(position).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS) || !world.getFluidState(position).isEmpty())
+                        && !world.getBlockState(position.up()).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)
+                        && world.getFluidState(position.up()).isEmpty();
+                case AS_AIR ->
+                        world.getBlockState(position).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)
+                        && !world.getBlockState(position.up()).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS);
+            };
         }
     }
 
@@ -722,7 +792,7 @@ public class ServerVillage extends Village {
             addAngle = 0;
             do {
                 testPos = pos.add((int) (searchRadius*Math.cos(startAngle+addAngle)), -1, (int) (searchRadius*Math.sin(startAngle+addAngle)));
-                testPos = getSurfaceBlock(testPos, testPos.getY()-50, testPos.getY()+50);
+                testPos = getSurfaceBlock(testPos, testPos.getY()-50, testPos.getY()+50, true);
                 if (testPos!= null) {
                     testPosIsValid = true;
                     for (MegaChunk megaChunk : megaChunks) {
@@ -927,7 +997,7 @@ public class ServerVillage extends Village {
             addAngle = 0;
             do {
                 testPos = pos.add((int) (searchRadius*Math.cos(startAngle+addAngle)), -1, (int) (searchRadius*Math.sin(startAngle+addAngle)));
-                testPos = getSurfaceBlock(testPos, testPos.getY()-50, testPos.getY()+50);
+                testPos = getSurfaceBlock(testPos, testPos.getY()-50, testPos.getY()+50, true);
                 if (testPos != null) {
                     for (MegaChunk megaChunk : megaChunks) {
                         // Find the mega chunk that this position is a part of.
