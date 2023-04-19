@@ -23,8 +23,8 @@
     "dle": "palette:0:verdant_villagers:wood___minecraft:oak_door:half:lower:facing:east:hinge:left:open:false",
     "due": "palette:0:verdant_villagers:wood___minecraft:oak_door:half:upper:facing:east:hinge:left:open:false",
     "crt": "state:minecraft:crafting_table",
-    "bhe": "state:minecraft:white_bed:facing:east:part:head",
-    "bfe": "state:minecraft:white_bed:facing:east:part:foot",
+    "bhe": "palette:0:verdant_villagers:color___minecraft:white_bed:facing:east:part:head",
+    "bfe": "palette:0:verdant_villagers:color___minecraft:white_bed:facing:east:part:foot",
     "gns": "state:minecraft:glass_pane:north:true:south:true",
     "gwe": "state:minecraft:glass_pane:west:true:east:true",
     "tor": "state:minecraft:torch"
