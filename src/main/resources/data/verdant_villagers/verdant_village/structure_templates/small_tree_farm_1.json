@@ -2,8 +2,8 @@
   "village_types": ["standard"],
   "available_for_villager_count": [0, 1000],
   "data_per_structure_type": {
-    "tree_farm": {
-      "villagers_accounted_for": "5"
+    "tree_farm_1": {
+      "villagers_accounted_for": "7"
     }
   },
   "abbreviation_map": {
@@ -11,6 +11,7 @@
     "air": "state:minecraft:air",
     "gra": "state:minecraft:grass_block",
     "pth": "state:minecraft:dirt_path",
+    "tor": "state:minecraft:torch",
     "sap": "palette:0:verdant_villagers:wood___minecraft:oak_sapling",
     "fcn": "palette:0:verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:true:south:false:west:false:east:false",
     "fcs": "palette:0:verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:false:south:true:west:false:east:false",
@@ -26,7 +27,7 @@
     [["gra","gra","gra","gra","gra","gra","gra","gra","gra"],["fsw","fne","air","air","air","air","air","fse","fnw"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"]],
     [["gra","gra","gra","gra","gra","gra","gra","gra","gra"],["fwe","air","air","air","sap","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"]],
     [["gra","gra","gra","gra","gra","gra","gra","gra","gra"],["fwe","air","air","air","air","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"]],
-    [["gra","gra","gra","gra","gra","gra","gra","gra","gra"],["fwe","air","sap","air","air","air","sap","air","fwe"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"]],
+    [["gra","gra","gra","gra","gra","gra","gra","gra","gra"],["fwe","air","sap","air","tor","air","sap","air","fwe"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"]],
     [["gra","gra","gra","gra","gra","gra","gra","gra","gra"],["fwe","air","air","air","air","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"]],
     [["gra","gra","gra","gra","gra","gra","gra","gra","gra"],["fwe","air","air","air","sap","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"]],
     [["gra","gra","gra","gra","gra","gra","gra","gra","gra"],["fse","fnw","air","air","air","air","air","fsw","fne"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"]],
@@ -53,28 +54,28 @@
     {
       "subclass_name": "SaplingLocationPoint",
       "subclass_data": {
-        "pos": [2, 0, 0],
+        "pos": [2, 1, 0],
         "saplings": "1"
       }
     },
     {
       "subclass_name": "SaplingLocationPoint",
       "subclass_data": {
-        "pos": [-2, 0, 0],
+        "pos": [-2, 1, 0],
         "saplings": "1"
       }
     },
     {
       "subclass_name": "SaplingLocationPoint",
       "subclass_data": {
-        "pos": [0, 0, 2],
+        "pos": [0, 1, 2],
         "saplings": "1"
       }
     },
     {
       "subclass_name": "SaplingLocationPoint",
       "subclass_data": {
-        "pos": [0, 0, -2],
+        "pos": [0, 1, -2],
         "saplings": "1"
       }
     }
