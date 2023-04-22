@@ -1,0 +1,27 @@
+{
+  "village_types": ["standard", "coast", "under_ground", "sky"],
+  "available_for_villager_count": [0, 1000],
+  "data_per_structure_type": {
+    "decoration": {
+      "villagers_accounted_for": "1"
+    }
+  },
+  "abbreviation_map": {
+    "nul": "null",
+    "csp": "collision_space",
+    "air": "state:minecraft:air",
+    "fnc": "palette:0:verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:false:south:false:west:false:east:false",
+    "woo": "palette:0:verdant_villagers:color___minecraft:white_wool",
+    "ton": "state:minecraft:wall_torch:facing:north",
+    "tos": "state:minecraft:wall_torch:facing:south",
+    "tow": "state:minecraft:wall_torch:facing:west",
+    "toe": "state:minecraft:wall_torch:facing:east"
+  },
+  "block_state_cube": [
+    [["nul","nul","nul"],["csp","air","csp"],["csp","air","csp"],["csp","air","csp"],["csp","toe","csp"],["csp","air","csp"]],
+    [["nul","csp","nul"],["air","fnc","air"],["air","fnc","air"],["air","fnc","air"],["ton","woo","tos"],["air","air","air"]],
+    [["nul","nul","nul"],["csp","air","csp"],["csp","air","csp"],["csp","air","csp"],["csp","tow","csp"],["csp","air","csp"]]
+  ],
+  "center": [1, 0, 1],
+  "points_of_interest": []
+}

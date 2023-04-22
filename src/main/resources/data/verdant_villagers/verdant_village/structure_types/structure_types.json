@@ -19,7 +19,7 @@
     "search_distance_multiplier": 1,
     "structure_check_method": "count_villagers"
   },
-  "decorative_plant": {
+  "decoration": {
     "search_distance_multiplier": 4,
     "structure_check_method": "count_villagers"
   }

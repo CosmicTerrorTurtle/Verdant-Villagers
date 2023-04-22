@@ -2,7 +2,7 @@
   "village_types": ["standard", "coast", "under_ground", "sky"],
   "available_for_villager_count": [0, 1000],
   "data_per_structure_type": {
-    "decorative_plant": {
+    "decoration": {
       "villagers_accounted_for": "2"
     }
   },
@@ -14,9 +14,9 @@
     "wlv": "palette:0:verdant_villagers:wood___minecraft:oak_leaves:persistent:true"
   },
   "block_state_cube": [
-    [["nul","nul","nul"],["csp","csp","csp"],["csp","csp","csp"],["csp","csp","csp"]],
-    [["nul","gra","nul"],["csp","fnc","csp"],["csp","wlv","csp"],["csp","wlv","csp"]],
-    [["nul","nul","nul"],["csp","csp","csp"],["csp","csp","csp"],["csp","csp","csp"]]
+    [["nul","nul","nul"],["csp","air","csp"],["csp","air","csp"],["csp","air","csp"],["csp","air","csp"]],
+    [["nul","gra","nul"],["air","fnc","air"],["air","wlv","air"],["air","wlv","air"],["air","air","air"]],
+    [["nul","nul","nul"],["csp","air","csp"],["csp","air","csp"],["csp","air","csp"],["csp","air","csp"]]
   ],
   "center": [1, 0, 1],
   "points_of_interest": []

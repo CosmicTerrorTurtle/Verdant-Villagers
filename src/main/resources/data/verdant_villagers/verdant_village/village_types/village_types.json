@@ -1,22 +1,22 @@
 {
   "standard": {
     "terrain_category": "on_land",
-    "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "plant_farm", "decorative_plant"]
+    "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "plant_farm", "decoration"]
   },
   "coast": {
     "terrain_category": "on_coast",
-    "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "plant_farm", "decorative_plant"]
+    "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "plant_farm", "decoration"]
   },
   "under_water": {
     "terrain_category": "under_fluid",
-    "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "plant_farm", "decorative_plant"]
+    "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "plant_farm", "decoration"]
   },
   "under_ground": {
     "terrain_category": "under_ground",
-    "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "plant_farm", "decorative_plant"]
+    "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "plant_farm", "decoration"]
   },
   "sky": {
     "terrain_category": "sky",
-    "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "plant_farm", "decorative_plant"]
+    "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "plant_farm", "decoration"]
   }
 }

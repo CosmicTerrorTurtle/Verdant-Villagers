@@ -15,6 +15,7 @@ import io.github.cosmic_terror_turtle.verdant_villagers.util.MathUtils;
 import io.github.cosmic_terror_turtle.verdant_villagers.util.ModTags;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.VillageHeartEntity;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LargeEntitySpawnHelper;
 import net.minecraft.entity.SpawnReason;
@@ -122,6 +123,9 @@ public class ServerVillage extends Village {
         // Analyze terrain
         int terrainRadius = 64;
         BlockPos testPos;
+        // Start total at 1 to avoid zero division
+        int totalA = 1;
+        int totalB = 1;
         int landA = 0;
         int airA = 0;
         int fluidA = 0;
@@ -132,44 +136,36 @@ public class ServerVillage extends Village {
             for (int j=-terrainRadius; j<terrainRadius; j++) {
                 for (int k=-terrainRadius; k<terrainRadius; k++) {
                     testPos = pos.add(i, j, k);
+                    // Ignore positions outside the height limit
+                    if (world.getBlockState(testPos).isOf(Blocks.VOID_AIR)) {
+                        continue;
+                    }
+                    if (j<0) totalB++; else totalA++;
                     if (world.getFluidState(testPos).isEmpty()) {
                         if (world.getBlockState(testPos).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)) {
                             // Ground
-                            if (j<0) {
-                                landB++;
-                            } else {
-                                landA++;
-                            }
+                            if (j<0) landB++; else landA++;
                         } else {
                             // Neither ground nor fluid
-                            if (j<0) {
-                                airB++;
-                            } else {
-                                airA++;
-                            }
+                            if (j<0) airB++; else airA++;
                         }
                     } else {
                         // Fluid
-                        if (j<0) {
-                            fluidB++;
-                        } else {
-                            fluidA++;
-                        }
+                        if (j<0) fluidB++; else fluidA++;
                     }
                 }
             }
         }
-        float halfVolume = (float) (Math.pow(2*terrainRadius, 3)/2);
-        landAbove = landA/halfVolume;
-        landBelow = landB/halfVolume;
-        airAbove = airA/halfVolume;
-        airBelow = airB/halfVolume;
-        fluidAbove = fluidA/halfVolume;
-        fluidBelow = fluidB/halfVolume;
+        landAbove = (float) landA / totalA;
+        landBelow = (float) landB / totalB;
+        airAbove = (float) airA / totalA;
+        airBelow = (float) airB / totalB;
+        fluidAbove = (float) fluidA / totalA;
+        fluidBelow = (float) fluidB / totalB;
 
         // Determine village type parameters
         String terrainCategory;
-        if (airBelow > 0.6) {
+        if (airBelow > 0.5) {
             terrainCategory = "sky";
         } else if (landAbove > 0.5) {
             terrainCategory = "under_ground";
@@ -212,7 +208,7 @@ public class ServerVillage extends Village {
         }
         HashMap<Identifier, Integer> tmpBlockCounts = new HashMap<>(); // Map used for initial terrain scan close to the center
         Identifier blockId;
-        int xzRadius = 50;
+        int xzRadius = 80;
         int yRadius = 15;
         for (int i=-xzRadius; i<xzRadius; i++) {
             for (int j=-yRadius; j<yRadius; j++) {
@@ -416,10 +412,12 @@ public class ServerVillage extends Village {
      * @return The number of block palettes.
      */
     private int getUpdatedBlockPaletteLevel() {
-        if (villagerCount < 25) {
+        if (villagerCount < 20) {
             return 0;
+        } else if (villagerCount < 40) {
+            return 1;
         }
-        return 1;
+        return 2;
     }
 
     /**
@@ -482,7 +480,7 @@ public class ServerVillage extends Village {
         }
 
         // Add palette with the highest points or a random default palette, if the highscore was not higher than the threshold.
-        int threshold = 30;
+        int threshold = 25;
         if (highscore > threshold) {
             blockPalettes.get(typeKey).add(bestNewPalette);
         } else {
@@ -552,7 +550,7 @@ public class ServerVillage extends Village {
 
                 // Spawn iron golems if necessary
                 int ironGolemCount = world.getEntitiesByClass(IronGolemEntity.class, new Box(pos).expand(200.0), entity -> true).size();
-                if (ironGolemCount*5 < villagerCount && random.nextDouble() < 0.1) {
+                if (ironGolemCount*8 < villagerCount && random.nextDouble() < 0.1) {
                     LargeEntitySpawnHelper.trySpawnAt(EntityType.IRON_GOLEM, SpawnReason.MOB_SUMMONED, (ServerWorld) world, pos,
                             10, 50, 30, LargeEntitySpawnHelper.Requirements.IRON_GOLEM);
                 }
@@ -693,7 +691,7 @@ public class ServerVillage extends Village {
     public BlockPos getSurfaceBlock(BlockPos startPosition, int minY, int maxY, boolean isForGeoFeature) {
         // For underground or sky terrain categories, sometimes return random position in the given range.
         String terrainCategory = DataRegistry.getVillageTypeData(villageType).terrainCategory;
-        if (isForGeoFeature && random.nextDouble() < 0.2 && (
+        if (isForGeoFeature && random.nextDouble() < 0.3 && (
                 terrainCategory.equals("under_ground")
                 || terrainCategory.equals("sky")
         )) {
