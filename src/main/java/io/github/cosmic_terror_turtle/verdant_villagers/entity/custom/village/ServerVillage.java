@@ -88,7 +88,7 @@ public class ServerVillage extends Village {
     private final float fluidAbove;
     private final float fluidBelow;
     private String villageType;
-    public final HashMap<Identifier, Integer> blockCounts; // Map that holds the number of blocks the mega chunks hold for each type.
+    public final HashMap<Identifier, Integer> blockCounts; // Map that holds the number of blocks contained in the mega chunks for each type.
     private final ArrayList<MegaChunk> megaChunks;
     private final HashMap<String, ArrayList<BlockPalette>> blockPalettes; // Map between block palette type and the list of palettes this village uses for that type.
     private int blockPaletteLevel; // Current level for the block palettes.
@@ -210,7 +210,19 @@ public class ServerVillage extends Village {
         for (String typeKey : DataRegistry.getBlockPaletteTypeKeys()) {
             blockPalettes.put(typeKey, new ArrayList<>());
         }
-        addBlockPalettesForAllTypes();
+        HashMap<Identifier, Integer> tmpBlockCounts = new HashMap<>(); // Map used for initial terrain scan close to the center
+        Identifier blockId;
+        int xzRadius = 50;
+        int yRadius = 15;
+        for (int i=-xzRadius; i<xzRadius; i++) {
+            for (int j=-yRadius; j<yRadius; j++) {
+                for (int k=-xzRadius; k<xzRadius; k++) {
+                    blockId = Registries.BLOCK.getId(world.getBlockState(pos.add(i, j, k)).getBlock());
+                    tmpBlockCounts.put(blockId, tmpBlockCounts.getOrDefault(blockId, 0)+1);
+                }
+            }
+        }
+        addBlockPalettesForAllTypes(tmpBlockCounts);
 
         roadJunctions = new ArrayList<>();
         roadEdges = new ArrayList<>();
@@ -346,7 +358,7 @@ public class ServerVillage extends Village {
                     blockPalettes.get(typeKey).add(DataRegistry.getBlockPalette(typeKey, paletteId));
                 }
             } else {
-                addBlockPaletteFor(typeKey);
+                addBlockPaletteFor(typeKey, blockCounts);
             }
         }
         blockPaletteLevel = nbt.getInt("blockPaletteLevel");
@@ -412,10 +424,11 @@ public class ServerVillage extends Village {
 
     /**
      * Calls addBlockPaletteFor() for all palette types and resets the template manager afterwards.
+     * @param blockCountMap The block count map that shall be used for evaluating a palette.
      */
-    private void addBlockPalettesForAllTypes() {
+    private void addBlockPalettesForAllTypes(HashMap<Identifier, Integer> blockCountMap) {
         for (String typeKey : DataRegistry.getBlockPaletteTypeKeys()) {
-            addBlockPaletteFor(typeKey);
+            addBlockPaletteFor(typeKey, blockCountMap);
         }
         structureProvider.resetTemplates();
     }
@@ -425,8 +438,9 @@ public class ServerVillage extends Village {
      * of each palette and adds the block palette that matches the village terrain the most. If no new palette
      * fits the terrain sufficiently, a random default palette is added.
      * @param typeKey The palette type.
+     * @param blockCountMap The block count map that shall be used for evaluating a palette.
      */
-    private void addBlockPaletteFor(String typeKey) {
+    private void addBlockPaletteFor(String typeKey, HashMap<Identifier, Integer> blockCountMap) {
         // Get all palettes of the given type and add them to the list of candidates if the palette is not in the village's list.
         ArrayList<BlockPalette> newPalettes = new ArrayList<>();
         boolean paletteIsNew;
@@ -448,7 +462,7 @@ public class ServerVillage extends Village {
         }
         // Count points for all new palettes.
         HashMap<Identifier, Integer> pointsPerPalette = new HashMap<>();
-        for (Map.Entry<Identifier, Integer> entry : blockCounts.entrySet()) {
+        for (Map.Entry<Identifier, Integer> entry : blockCountMap.entrySet()) {
             for (BlockPalette newPalette : newPalettes) {
                 for (Block block : newPalette.indicatorBlocks) {
                     if (entry.getKey().equals(Registries.BLOCK.getId(block))) {
@@ -552,7 +566,7 @@ public class ServerVillage extends Village {
                 // Add new block palettes if necessary.
                 if (getUpdatedBlockPaletteLevel() > blockPaletteLevel) {
                     blockPaletteLevel = getUpdatedBlockPaletteLevel();
-                    addBlockPalettesForAllTypes();
+                    addBlockPalettesForAllTypes(blockCounts);
                 }
 
                 // Update road type
