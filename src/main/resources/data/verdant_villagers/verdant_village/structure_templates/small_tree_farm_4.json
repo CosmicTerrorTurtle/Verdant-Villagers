@@ -31,7 +31,7 @@
     [["gra","gra","gra","gra","gra","gra","gra","gra","gra","gra"],["fwe","air","air","air","sap","sap","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air"]],
     [["gra","gra","gra","gra","gra","gra","gra","gra","gra","gra"],["fwe","air","air","air","air","air","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air"]],
     [["gra","gra","gra","gra","gra","gra","gra","gra","gra","gra"],["fwe","air","air","air","air","air","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air"]],
-    [["gra","gra","gra","gra","gra","gra","gra","gra","gra","gra"],["fse","fnw","air","air","air","air","air","air","fsw","fne"],["air","tor","air","air","air","air","air","air","tor","air"],["air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air"]],
+    [["gra","gra","gra","gra","pth","pth","gra","gra","gra","gra"],["fse","fnw","air","air","air","air","air","air","fsw","fne"],["air","tor","air","air","air","air","air","air","tor","air"],["air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air"]],
     [["nul","gra","gra","pth","pth","pth","gra","gra","gra","nul"],["nul","fse","fcn","air","air","air","fcs","fns","fne","nul"],["nul","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","nul"]]
   ],
   "center": [4, 0, 4],
@@ -39,7 +39,7 @@
     {
       "subclass_name": "StructureAccessPoint",
       "subclass_data": {
-        "pos": [-5, 0, 0],
+        "pos": [-4, 0, 0],
         "radius": 0.6,
         "template_column": {
           "base_level_index": 1,

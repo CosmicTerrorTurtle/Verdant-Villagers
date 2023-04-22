@@ -358,7 +358,7 @@ public class RoadEdge extends GeoFeature {
                 }
             }
             // Final smooth
-            //smoothOffsets(true);
+            smoothOffsets(true);
         }
 
         private double getTerrainOffset(ServerVillage village, double angleAtFrom, double a, double yCoord, double maxOffset) {

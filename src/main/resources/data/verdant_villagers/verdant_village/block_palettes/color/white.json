@@ -3,8 +3,8 @@
   "palette_id": "verdant_villagers:white",
   "add_to_defaults": true,
   "indicator_blocks": [
-    "minecraft:white_wool",
-    "minecraft:bone_block"
+    "minecraft:bone_block",
+    "minecraft:lily_of_the_valley"
   ],
   "replacement_rules": []
 }

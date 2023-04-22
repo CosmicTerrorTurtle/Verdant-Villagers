@@ -3,8 +3,7 @@
   "palette_id": "verdant_villagers:blue",
   "add_to_defaults": true,
   "indicator_blocks": [
-    "minecraft:blue_wool",
-    "minecraft:lapis_block"
+    "minecraft:cornflower"
   ],
   "replacement_rules": [
     {"replace_block": "minecraft:white_bed", "with_block_and_copy_states":  "minecraft:blue_bed"},

@@ -1,0 +1,24 @@
+{
+  "palette_type_id": "verdant_villagers:color",
+  "palette_id": "verdant_villagers:light_blue",
+  "add_to_defaults": true,
+  "indicator_blocks": [
+    "minecraft:blue_orchid"
+  ],
+  "replacement_rules": [
+    {"replace_block": "minecraft:white_bed", "with_block_and_copy_states":  "minecraft:light_blue_bed"},
+    {"replace_block": "minecraft:white_wool", "with_state": "minecraft:light_blue_wool"},
+    {"replace_block": "minecraft:white_carpet", "with_state": "minecraft:light_blue_carpet"},
+    {"replace_block": "minecraft:white_stained_glass", "with_state": "minecraft:light_blue_stained_glass"},
+    {"replace_block": "minecraft:white_stained_glass_pane", "with_block_and_copy_states": "minecraft:light_blue_stained_glass_pane"},
+    {"replace_block": "minecraft:white_terracotta", "with_state": "minecraft:light_blue_terracotta"},
+    {"replace_block": "minecraft:white_glazed_terracotta", "with_block_and_copy_states": "minecraft:light_blue_glazed_terracotta"},
+    {"replace_block": "minecraft:white_banner", "with_block_and_copy_states": "minecraft:light_blue_banner"},
+    {"replace_block": "minecraft:white_wall_banner", "with_block_and_copy_states": "minecraft:light_blue_wall_banner"},
+    {"replace_block": "minecraft:white_shulker_box", "with_block_and_copy_states": "minecraft:light_blue_shulker_box"},
+    {"replace_block": "minecraft:white_concrete", "with_state": "minecraft:light_blue_concrete"},
+    {"replace_block": "minecraft:white_concrete_powder", "with_state": "minecraft:light_blue_concrete_powder"},
+    {"replace_block": "minecraft:white_candle", "with_block_and_copy_states": "minecraft:light_blue_candle"},
+    {"replace_block": "minecraft:white_candle_cake", "with_state": "minecraft:light_blue_candle_cake"}
+  ]
+}

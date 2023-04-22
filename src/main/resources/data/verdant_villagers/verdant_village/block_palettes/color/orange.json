@@ -1,0 +1,24 @@
+{
+  "palette_type_id": "verdant_villagers:color",
+  "palette_id": "verdant_villagers:orange",
+  "add_to_defaults": true,
+  "indicator_blocks": [
+    "minecraft:orange_tulip"
+  ],
+  "replacement_rules": [
+    {"replace_block": "minecraft:white_bed", "with_block_and_copy_states":  "minecraft:orange_bed"},
+    {"replace_block": "minecraft:white_wool", "with_state": "minecraft:orange_wool"},
+    {"replace_block": "minecraft:white_carpet", "with_state": "minecraft:orange_carpet"},
+    {"replace_block": "minecraft:white_stained_glass", "with_state": "minecraft:orange_stained_glass"},
+    {"replace_block": "minecraft:white_stained_glass_pane", "with_block_and_copy_states": "minecraft:orange_stained_glass_pane"},
+    {"replace_block": "minecraft:white_terracotta", "with_state": "minecraft:orange_terracotta"},
+    {"replace_block": "minecraft:white_glazed_terracotta", "with_block_and_copy_states": "minecraft:orange_glazed_terracotta"},
+    {"replace_block": "minecraft:white_banner", "with_block_and_copy_states": "minecraft:orange_banner"},
+    {"replace_block": "minecraft:white_wall_banner", "with_block_and_copy_states": "minecraft:orange_wall_banner"},
+    {"replace_block": "minecraft:white_shulker_box", "with_block_and_copy_states": "minecraft:orange_shulker_box"},
+    {"replace_block": "minecraft:white_concrete", "with_state": "minecraft:orange_concrete"},
+    {"replace_block": "minecraft:white_concrete_powder", "with_state": "minecraft:orange_concrete_powder"},
+    {"replace_block": "minecraft:white_candle", "with_block_and_copy_states": "minecraft:orange_candle"},
+    {"replace_block": "minecraft:white_candle_cake", "with_state": "minecraft:orange_candle_cake"}
+  ]
+}

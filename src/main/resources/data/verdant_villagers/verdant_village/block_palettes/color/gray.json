@@ -1,0 +1,26 @@
+{
+  "palette_type_id": "verdant_villagers:color",
+  "palette_id": "verdant_villagers:gray",
+  "add_to_defaults": true,
+  "indicator_blocks": [
+    "minecraft:wither_rose",
+    "minecraft:bone_block",
+    "minecraft:lily_of_the_valley"
+  ],
+  "replacement_rules": [
+    {"replace_block": "minecraft:white_bed", "with_block_and_copy_states":  "minecraft:gray_bed"},
+    {"replace_block": "minecraft:white_wool", "with_state": "minecraft:gray_wool"},
+    {"replace_block": "minecraft:white_carpet", "with_state": "minecraft:gray_carpet"},
+    {"replace_block": "minecraft:white_stained_glass", "with_state": "minecraft:gray_stained_glass"},
+    {"replace_block": "minecraft:white_stained_glass_pane", "with_block_and_copy_states": "minecraft:gray_stained_glass_pane"},
+    {"replace_block": "minecraft:white_terracotta", "with_state": "minecraft:gray_terracotta"},
+    {"replace_block": "minecraft:white_glazed_terracotta", "with_block_and_copy_states": "minecraft:gray_glazed_terracotta"},
+    {"replace_block": "minecraft:white_banner", "with_block_and_copy_states": "minecraft:gray_banner"},
+    {"replace_block": "minecraft:white_wall_banner", "with_block_and_copy_states": "minecraft:gray_wall_banner"},
+    {"replace_block": "minecraft:white_shulker_box", "with_block_and_copy_states": "minecraft:gray_shulker_box"},
+    {"replace_block": "minecraft:white_concrete", "with_state": "minecraft:gray_concrete"},
+    {"replace_block": "minecraft:white_concrete_powder", "with_state": "minecraft:gray_concrete_powder"},
+    {"replace_block": "minecraft:white_candle", "with_block_and_copy_states": "minecraft:gray_candle"},
+    {"replace_block": "minecraft:white_candle_cake", "with_state": "minecraft:gray_candle_cake"}
+  ]
+}
