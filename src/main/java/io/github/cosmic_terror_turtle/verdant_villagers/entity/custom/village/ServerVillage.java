@@ -41,7 +41,9 @@ public class ServerVillage extends Village {
 
 
     // If true, the village will immediately place a feature once it is planned.
-    public static final boolean PLACE_BLOCKS_DIRECTLY = true;
+    public static boolean PLACE_BLOCKS_DIRECTLY = true;
+    // If true, the village will speed up its planning process.
+    public static boolean PLAN_FAST = true;
 
     // The side length of an L*L*L volume of blocks called mega block.
     public static final int MEGA_BLOCK_LENGTH = 2;
@@ -516,12 +518,15 @@ public class ServerVillage extends Village {
 
     /**
      * Calculates the time between update cycle steps. It is dependent on the number of villagers (representing the village size;
-     * a bigger village will need more frequent updates). The minimum time is 5 seconds, the maximum time 20 seconds.
+     * a bigger village will need more frequent updates). The minimum time is 5 seconds at >>1000 villagers, the maximum time 20 seconds at 0 villagers. If
+     * {@link ServerVillage#PLAN_FAST} is true, the return value will always be 2 seconds.
      * @return The time in ticks.
      */
     private double getTicksBetweenUpdates() {
-        double seconds = 2 + 1 * Math.pow(1.03, -villagerCount);
-        return seconds * 20;
+        if (PLAN_FAST) {
+            return 20 * 2;
+        }
+        return 20 * (5 + 15 * Math.pow(1.03, -villagerCount));
     }
 
     @Override

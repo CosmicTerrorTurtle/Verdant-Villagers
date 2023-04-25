@@ -178,10 +178,10 @@ public class RoadEdge extends GeoFeature {
                         break;
                     }
                 }
-                addToColumns(normalColumns, templateColumn.copyWith(new BlockPos(
-                        (int) (aCoord*Math.cos(angleAtFrom) - faCoord*Math.sin(angleAtFrom) + ROUNDING_OFFSET),
-                        (int) (yCoord + yAdjustingOffset + ROUNDING_OFFSET),
-                        (int) (aCoord*Math.sin(angleAtFrom) + faCoord*Math.cos(angleAtFrom) + ROUNDING_OFFSET)
+                addToColumns(normalColumns, templateColumn.copyWith(BlockPos.ofFloored(
+                        aCoord*Math.cos(angleAtFrom) - faCoord*Math.sin(angleAtFrom) + ROUNDING_OFFSET,
+                        yCoord + yAdjustingOffset + ROUNDING_OFFSET,
+                        aCoord*Math.sin(angleAtFrom) + faCoord*Math.cos(angleAtFrom) + ROUNDING_OFFSET
                 )), true);
             }
             // Middle column bits
@@ -189,10 +189,10 @@ public class RoadEdge extends GeoFeature {
             if (spaceAfterLastMiddleColumn > middleColumnSpace) {
                 spaceAfterLastMiddleColumn = 0;
                 if (templateMiddleColumn != null && a>from.radius && a<d-to.radius) {
-                    middleColumns.add(templateMiddleColumn.copyWith(new BlockPos(
-                            (int) (a*Math.cos(angleAtFrom) - f_of_a*Math.sin(angleAtFrom) + ROUNDING_OFFSET),
-                            (int) (yCoord + yAdjustingOffset + ROUNDING_OFFSET),
-                            (int) (a*Math.sin(angleAtFrom) + f_of_a*Math.cos(angleAtFrom) + ROUNDING_OFFSET)
+                    middleColumns.add(templateMiddleColumn.copyWith(BlockPos.ofFloored(
+                            a*Math.cos(angleAtFrom) - f_of_a*Math.sin(angleAtFrom) + ROUNDING_OFFSET,
+                            yCoord + yAdjustingOffset + ROUNDING_OFFSET,
+                            a*Math.sin(angleAtFrom) + f_of_a*Math.cos(angleAtFrom) + ROUNDING_OFFSET
                     )));
                 }
             }
@@ -204,11 +204,11 @@ public class RoadEdge extends GeoFeature {
                     tmp = offset/Math.sqrt(1+f_slope*f_slope);
                     aCoord = a+f_slope*tmp;
                     faCoord = f_of_a-tmp;
-                    roadDots.add(new RoadDot(this, from.pos.add(
-                            (int) (aCoord*Math.cos(angleAtFrom) - faCoord*Math.sin(angleAtFrom) + ROUNDING_OFFSET),
-                            (int) (yCoord + yAdjustingOffset + ROUNDING_OFFSET),
-                            (int) (aCoord*Math.sin(angleAtFrom) + faCoord*Math.cos(angleAtFrom) + ROUNDING_OFFSET)
-                    )));
+                    roadDots.add(new RoadDot(this, from.pos.add(BlockPos.ofFloored(
+                            aCoord*Math.cos(angleAtFrom) - faCoord*Math.sin(angleAtFrom) + ROUNDING_OFFSET,
+                            yCoord + yAdjustingOffset + ROUNDING_OFFSET,
+                            aCoord*Math.sin(angleAtFrom) + faCoord*Math.cos(angleAtFrom) + ROUNDING_OFFSET
+                    ))));
                 }
             }
         }
@@ -324,7 +324,7 @@ public class RoadEdge extends GeoFeature {
         return nbt;
     }
 
-    private class TerrainAdjustment {
+    public class TerrainAdjustment {
 
         public static final double TERRAIN_ADJUSTING_SPACE = 2.0; // Space between terrain adjusting points
         public static final double MAX_SLOPE_DEVIATION = 0.15; // Maximum difference between overall slope and the slopes from the adjusted points
