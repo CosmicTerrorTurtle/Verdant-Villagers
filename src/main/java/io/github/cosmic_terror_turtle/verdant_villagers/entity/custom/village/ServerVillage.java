@@ -545,8 +545,7 @@ public class ServerVillage extends Village {
     private void update() {
 
         switch (cyclePhase) {
-            default:
-            case PAUSE:
+            case PAUSE -> {
 
                 // Reset variables
                 needForRoads = 0;
@@ -554,17 +553,25 @@ public class ServerVillage extends Village {
                 // Update position
                 pos = villageHeart.getBlockPos();
 
+                // Count iron golems and villagers
+                Box box;
+                int ironGolemCount = 0;
+                //villagerCount = 0;
+                for (MegaChunk megaChunk : megaChunks) {
+                    box = megaChunk.getBox();
+                    ironGolemCount += world.getEntitiesByClass(IronGolemEntity.class, box, entity -> true).size();
+                    //villagerCount += world.getEntitiesByClass(XXXEntity.class, box, entity -> true).size();
+                }
+
                 // Spawn iron golems if necessary
-                int ironGolemCount = world.getEntitiesByClass(IronGolemEntity.class, new Box(pos).expand(200.0), entity -> true).size();
-                if (ironGolemCount*8 < villagerCount && random.nextDouble() < 0.1) {
+                if (ironGolemCount * 8 < villagerCount && random.nextDouble() < 0.1) {
                     LargeEntitySpawnHelper.trySpawnAt(EntityType.IRON_GOLEM, SpawnReason.MOB_SUMMONED, (ServerWorld) world, pos,
                             10, 50, 30, LargeEntitySpawnHelper.Requirements.IRON_GOLEM);
                 }
 
-                // Update villager count and spawn villagers if necessary
-                //villagerCount = world.getEntitiesByClass(...);
+                // Spawn villagers if necessary
                 if (villagerCount < 5 && random.nextDouble() < 0.1) {
-
+                    // try to spawn villager
                 }
 
                 // Add new block palettes if necessary.
@@ -575,11 +582,9 @@ public class ServerVillage extends Village {
 
                 // Update road type
                 roadType = getRoadType();
-
                 cyclePhase = UpdateCyclePhase.STRUCTURES;
-                break;
-
-            case STRUCTURES:
+            }
+            case STRUCTURES -> {
 
                 // Plan structures (select one type at random).
 
@@ -588,6 +593,7 @@ public class ServerVillage extends Village {
 
                 // Determine whether there are enough structures of the selected structure type present
                 switch (DataRegistry.getStructureTypeData(selectedStructureType).structureCheckMethod) {
+                    default -> {}
                     case "count_villagers" -> {
 
                         int villagersAccountedFor = 0;
@@ -604,11 +610,9 @@ public class ServerVillage extends Village {
 
                     }
                 }
-
                 cyclePhase = UpdateCyclePhase.ROADS;
-                break;
-
-            case ROADS:
+            }
+            case ROADS -> {
 
                 // Based on the need for roads, attempt to plan new road junctions and edges.
                 planNewRoads(needForRoads);
@@ -618,13 +622,12 @@ public class ServerVillage extends Village {
                     player.sendMessage(Text.literal(name+" ("+villagerCount+")"));
                     if (random.nextDouble() < 0.2) {
                         player.sendMessage(Text.literal(
-                                "type: "+villageType+", A/B, land: "+landAbove+"/"+landBelow+", fluid: "+fluidAbove+"/"+fluidBelow+", air: "+airAbove+"/"+airBelow
+                                "type: "+villageType+", A/B land: "+landAbove+"/"+landBelow+", fluid: "+fluidAbove+"/"+fluidBelow+", air: "+airAbove+"/"+airBelow
                         ));
                     }
                 }
-
                 cyclePhase = UpdateCyclePhase.PAUSE;
-                break;
+            }
         }
     }
 

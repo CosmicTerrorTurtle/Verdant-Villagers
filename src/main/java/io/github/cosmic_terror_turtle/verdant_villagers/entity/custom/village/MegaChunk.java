@@ -5,6 +5,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,6 +59,14 @@ public class MegaChunk {
         return lowerTip.getX()<=pos.getX() && pos.getX()<lowerTip.getX()+LENGTH
                 && lowerTip.getY()<=pos.getY() && pos.getY()<lowerTip.getY()+LENGTH
                 && lowerTip.getZ()<=pos.getZ() && pos.getZ()<lowerTip.getZ()+LENGTH;
+    }
+
+    /**
+     * Creates a {@link Box} which encompasses the entire {@link MegaChunk}.
+     * @return The {@link Box}.
+     */
+    public Box getBox() {
+        return new Box(lowerTip, lowerTip.add(LENGTH, LENGTH, LENGTH));
     }
 
     /**
