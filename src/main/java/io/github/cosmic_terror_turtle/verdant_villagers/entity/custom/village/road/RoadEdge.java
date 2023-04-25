@@ -14,7 +14,7 @@ import java.util.Random;
 public class RoadEdge extends GeoFeature {
 
     public static final double ROUNDING_OFFSET = 0.5; // Makes the block position coordinates be centered in a block.
-    public static final double ROAD_STEP = 0.08; // Lower step -> higher precision in placing the road blocks
+    public static final double ROAD_STEP = 0.1; // Lower step -> higher precision in placing the road blocks
     public static final double ROAD_DOT_SPACE = 2.5; // Space between road dots
 
     public static final int FIRST = 1;
@@ -328,7 +328,7 @@ public class RoadEdge extends GeoFeature {
 
         public static final double TERRAIN_ADJUSTING_SPACE = 2.0; // Space between terrain adjusting points
         public static final double MAX_SLOPE_DEVIATION = 0.15; // Maximum difference between overall slope and the slopes from the adjusted points
-        public static final double SMOOTHING_FACTOR = 0.1; // Factor by which a point gets adjusted towards its neighbors
+        public static final double SMOOTHING_FACTOR = 0.15; // Factor by which a point gets adjusted towards its neighbors
         public static final int MAX_SMOOTHING_ITERATIONS = 40; // The maximum number of iterations that smooth the adjusting offsets.
 
 
@@ -422,10 +422,10 @@ public class RoadEdge extends GeoFeature {
         }
 
         private double interpolateOffset(int leftIndex, double percentageToRightPoint) {
-            if (leftIndex < 0) {
+            if (leftIndex < -1) {
                 leftIndex = -1;
             }
-            if (leftIndex >= yOffsetValues.size()-1) {
+            if (leftIndex > yOffsetValues.size()-1) {
                 leftIndex = yOffsetValues.size()-1;
             }
             return (1-percentageToRightPoint) * getYOffsetFromIndex(leftIndex) + percentageToRightPoint * getYOffsetFromIndex(leftIndex+1);
