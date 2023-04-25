@@ -9,7 +9,7 @@
   "abbreviation_map": {
     "nul": "null",
     "air": "state:minecraft:air",
-    "gra": "state:minecraft:grass_block",
+    "gra": "palette:0:verdant_villagers:wood___minecraft:grass_block",
     "dir": "state:minecraft:dirt",
     "stf": "palette:0:verdant_villagers:stone___minecraft:stone_bricks",
     "wlo": "palette:0:verdant_villagers:wood___minecraft:oak_log:axis:y",

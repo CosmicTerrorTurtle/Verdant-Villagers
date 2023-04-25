@@ -20,6 +20,8 @@
     {"replace_block": "minecraft:oak_slab", "with_block_and_copy_states":  "minecraft:dark_oak_slab"},
     {"replace_block": "minecraft:oak_sign", "with_block_and_copy_states":  "minecraft:dark_oak_sign"},
     {"replace_block": "minecraft:oak_wall_sign", "with_block_and_copy_states":  "minecraft:dark_oak_wall_sign"},
+    {"replace_block": "minecraft:oak_hanging_sign", "with_block_and_copy_states":  "minecraft:dark_oak_hanging_sign"},
+    {"replace_block": "minecraft:oak_wall_hanging_sign", "with_block_and_copy_states":  "minecraft:dark_oak_wall_hanging_sign"},
     {"replace_block": "minecraft:oak_fence", "with_block_and_copy_states":  "minecraft:dark_oak_fence"},
     {"replace_block": "minecraft:oak_fence_gate", "with_block_and_copy_states":  "minecraft:dark_oak_fence_gate"},
     {"replace_block": "minecraft:oak_door", "with_block_and_copy_states":  "minecraft:dark_oak_door"},

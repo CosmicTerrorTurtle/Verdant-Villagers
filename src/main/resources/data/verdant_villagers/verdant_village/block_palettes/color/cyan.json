@@ -4,6 +4,9 @@
   "add_to_defaults": true,
   "indicator_blocks": [
     "minecraft:cornflower",
+    "minecraft:lapis_ore",
+    "minecraft:deepslate_lapis_ore",
+    "minecraft:lapis_block",
     "minecraft:cactus"
   ],
   "replacement_rules": [

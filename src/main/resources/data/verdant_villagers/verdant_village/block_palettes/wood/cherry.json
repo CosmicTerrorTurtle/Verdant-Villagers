@@ -1,0 +1,32 @@
+{
+  "palette_type_id": "verdant_villagers:wood",
+  "palette_id": "verdant_villagers:cherry",
+  "add_to_defaults": true,
+  "indicator_blocks": [
+    "minecraft:cherry_wood",
+    "minecraft:cherry_log",
+    "minecraft:cherry_planks"
+  ],
+  "replacement_rules": [
+    {"replace_block": "minecraft:oak_sapling", "with_state": "minecraft:cherry_sapling"},
+    {"replace_block": "minecraft:potted_oak_sapling", "with_state":  "minecraft:potted_cherry_sapling"},
+    {"replace_block": "minecraft:oak_leaves", "with_block_and_copy_states":  "minecraft:cherry_leaves"},
+    {"replace_block": "minecraft:oak_wood", "with_block_and_copy_states":  "minecraft:cherry_wood"},
+    {"replace_block": "minecraft:stripped_oak_wood", "with_block_and_copy_states":  "minecraft:stripped_cherry_wood"},
+    {"replace_block": "minecraft:oak_log", "with_block_and_copy_states":  "minecraft:cherry_log"},
+    {"replace_block": "minecraft:stripped_oak_log", "with_block_and_copy_states":  "minecraft:stripped_cherry_log"},
+    {"replace_block": "minecraft:oak_planks", "with_state":  "minecraft:cherry_planks"},
+    {"replace_block": "minecraft:oak_stairs", "with_block_and_copy_states":  "minecraft:cherry_stairs"},
+    {"replace_block": "minecraft:oak_slab", "with_block_and_copy_states":  "minecraft:cherry_slab"},
+    {"replace_block": "minecraft:oak_sign", "with_block_and_copy_states":  "minecraft:cherry_sign"},
+    {"replace_block": "minecraft:oak_wall_sign", "with_block_and_copy_states":  "minecraft:cherry_wall_sign"},
+    {"replace_block": "minecraft:oak_hanging_sign", "with_block_and_copy_states":  "minecraft:cherry_hanging_sign"},
+    {"replace_block": "minecraft:oak_wall_hanging_sign", "with_block_and_copy_states":  "minecraft:cherry_wall_hanging_sign"},
+    {"replace_block": "minecraft:oak_fence", "with_block_and_copy_states":  "minecraft:cherry_fence"},
+    {"replace_block": "minecraft:oak_fence_gate", "with_block_and_copy_states":  "minecraft:cherry_fence_gate"},
+    {"replace_block": "minecraft:oak_door", "with_block_and_copy_states":  "minecraft:cherry_door"},
+    {"replace_block": "minecraft:oak_trapdoor", "with_block_and_copy_states":  "minecraft:cherry_trapdoor"},
+    {"replace_block": "minecraft:oak_pressure_plate", "with_state":  "minecraft:cherry_pressure_plate"},
+    {"replace_block": "minecraft:oak_button", "with_block_and_copy_states":  "minecraft:cherry_button"}
+  ]
+}

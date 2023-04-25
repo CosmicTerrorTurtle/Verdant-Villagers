@@ -1,0 +1,15 @@
+{
+  "palette_type_id": "verdant_villagers:stone",
+  "palette_id": "verdant_villagers:polished_deepslate",
+  "add_to_defaults": true,
+  "indicator_blocks": [
+    "minecraft:deepslate"
+  ],
+  "replacement_rules": [
+    {"replace_block": "minecraft:stone_bricks", "with_state": "minecraft:polished_deepslate"},
+    {"replace_block": "minecraft:chiseled_stone_bricks", "with_state": "minecraft:chiseled_deepslate"},
+    {"replace_block": "minecraft:stone_brick_stairs", "with_block_and_copy_states":  "minecraft:polished_deepslate_stairs"},
+    {"replace_block": "minecraft:stone_brick_slab", "with_block_and_copy_states":  "minecraft:polished_deepslate_slab"},
+    {"replace_block": "minecraft:stone_brick_wall", "with_block_and_copy_states":  "minecraft:polished_deepslate_wall"}
+  ]
+}

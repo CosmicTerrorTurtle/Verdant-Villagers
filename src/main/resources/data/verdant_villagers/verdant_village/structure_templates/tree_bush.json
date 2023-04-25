@@ -9,7 +9,7 @@
   "abbreviation_map": {
     "nul": "null",
     "csp": "collision_space",
-    "gra": "state:minecraft:grass_block",
+    "gra": "palette:0:verdant_villagers:wood___minecraft:grass_block",
     "fnc": "palette:0:verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:false:south:false:west:false:east:false",
     "wlv": "palette:0:verdant_villagers:wood___minecraft:oak_leaves:persistent:true"
   },
