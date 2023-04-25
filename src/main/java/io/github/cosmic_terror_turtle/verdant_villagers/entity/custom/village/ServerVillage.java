@@ -123,7 +123,8 @@ public class ServerVillage extends Village {
         searchDistanceStructure = (int) getRand(SEARCH_DISTANCE_STRUCTURE_AVG, SEARCH_DISTANCE_STRUCTURE_FRACTION);
 
         // Analyze terrain
-        int terrainRadius = 64;
+        int xzTerrainRadius = 64;
+        int yTerrainRadius = 20;
         BlockPos testPos;
         // Start total at 1 to avoid zero division
         int totalA = 1;
@@ -134,9 +135,9 @@ public class ServerVillage extends Village {
         int landB = 0;
         int airB = 0;
         int fluidB = 0;
-        for (int i=-terrainRadius; i<terrainRadius; i++) {
-            for (int j=-terrainRadius; j<terrainRadius; j++) {
-                for (int k=-terrainRadius; k<terrainRadius; k++) {
+        for (int i=-xzTerrainRadius; i<xzTerrainRadius; i++) {
+            for (int j=-yTerrainRadius; j<yTerrainRadius; j++) {
+                for (int k=-xzTerrainRadius; k<xzTerrainRadius; k++) {
                     testPos = pos.add(i, j, k);
                     // Ignore positions outside the height limit
                     if (world.getBlockState(testPos).isOf(Blocks.VOID_AIR)) {
@@ -174,7 +175,7 @@ public class ServerVillage extends Village {
         } else if (fluidAbove > 0.5) {
             terrainCategory = "under_fluid";
         } else {
-            if (fluidBelow > 0.08) {
+            if (fluidBelow > 0.25) {
                 terrainCategory = "on_coast";
             } else {
                 terrainCategory = "on_land";
@@ -210,11 +211,11 @@ public class ServerVillage extends Village {
         }
         HashMap<Identifier, Integer> tmpBlockCounts = new HashMap<>(); // Map used for initial terrain scan close to the center
         Identifier blockId;
-        int xzRadius = 80;
-        int yRadius = 15;
-        for (int i=-xzRadius; i<xzRadius; i++) {
-            for (int j=-yRadius; j<yRadius; j++) {
-                for (int k=-xzRadius; k<xzRadius; k++) {
+        int xzPaletteRadius = 80;
+        int yPaletteRadius = 15;
+        for (int i=-xzPaletteRadius; i<xzPaletteRadius; i++) {
+            for (int j=-yPaletteRadius; j<yPaletteRadius; j++) {
+                for (int k=-xzPaletteRadius; k<xzPaletteRadius; k++) {
                     blockId = Registries.BLOCK.getId(world.getBlockState(pos.add(i, j, k)).getBlock());
                     tmpBlockCounts.put(blockId, tmpBlockCounts.getOrDefault(blockId, 0)+1);
                 }

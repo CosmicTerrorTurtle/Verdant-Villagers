@@ -328,7 +328,7 @@ public class RoadEdge extends GeoFeature {
 
         public static final double TERRAIN_ADJUSTING_SPACE = 2.0; // Space between terrain adjusting points
         public static final double MAX_SLOPE_DEVIATION = 0.15; // Maximum difference between overall slope and the slopes from the adjusted points
-        public static final double SMOOTHING_FACTOR = 0.15; // Factor by which a point gets adjusted towards its neighbors
+        public static final double SMOOTHING_FACTOR = 0.2; // Factor by which a point gets adjusted towards its neighbors
         public static final int MAX_SMOOTHING_ITERATIONS = 40; // The maximum number of iterations that smooth the adjusting offsets.
 
 
@@ -352,7 +352,7 @@ public class RoadEdge extends GeoFeature {
             }
 
             // Smooth offset values
-            for (int i = 0; i< MAX_SMOOTHING_ITERATIONS; i++) {
+            for (int i=0; i<MAX_SMOOTHING_ITERATIONS; i++) {
                 if (!smoothOffsets(false)) {
                     break;
                 }
