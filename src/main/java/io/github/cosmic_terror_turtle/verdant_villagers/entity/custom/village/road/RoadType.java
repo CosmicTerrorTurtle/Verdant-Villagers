@@ -28,11 +28,11 @@ public class RoadType {
         return new RoadType(
                 1.0, 2.0,
                 new double[]{2.0},
-                new VerticalBlockColumn[]{new VerticalBlockColumn(new BlockState[]{dirt, dirtPath}, 1, air, 4)},
+                new VerticalBlockColumn[]{new VerticalBlockColumn(new BlockState[]{dirt, dirtPath}, 1, air, 5)},
                 1000000.0,
                 null,
                 new double[]{getJunctionRadius(2.0)},
-                new VerticalBlockColumn[]{new VerticalBlockColumn(new BlockState[]{dirt, dirtPath}, 1, air, 6)}
+                new VerticalBlockColumn[]{new VerticalBlockColumn(new BlockState[]{dirt, dirtPath}, 1, air, 7)}
         );
     }
     public static RoadType getMediumPath(ServerVillage village) {
@@ -122,11 +122,13 @@ public class RoadType {
                 // Lamp post
                 junctionBlockColumnRadii = new double[]{
                         0.0,
+                        getJunctionRadius(3.5)-1.0,
                         getJunctionRadius(3.5)
                 };
                 junctionTemplateBlockColumns = new VerticalBlockColumn[]{
                         new VerticalBlockColumn(new BlockState[]{full0, full1, full1, full1, wall, torch}, 1, air, 5),
-                        new VerticalBlockColumn(new BlockState[]{full0, full0}, 1, air, 9)
+                        new VerticalBlockColumn(new BlockState[]{full0, full0}, 1, air, 9),
+                        new VerticalBlockColumn(new BlockState[]{full0, full1, half1}, new int[]{0, 1, 1}, 1, air, 8)
                 };
                 break;
             case 1:
@@ -135,24 +137,28 @@ public class RoadType {
                         0.0,
                         1.0,
                         2.0,
+                        getJunctionRadius(3.5)-1.0,
                         getJunctionRadius(3.5)
                 };
                 junctionTemplateBlockColumns = new VerticalBlockColumn[]{
                         new VerticalBlockColumn(new BlockState[]{full0, full0, water}, 1, air, 8),
                         new VerticalBlockColumn(new BlockState[]{full0, full0, full1}, 1, air, 8),
                         new VerticalBlockColumn(new BlockState[]{full0, full0, half1}, 1, air, 8),
-                        new VerticalBlockColumn(new BlockState[]{full0, full0}, 1, air, 9)
+                        new VerticalBlockColumn(new BlockState[]{full0, full0}, 1, air, 9),
+                        new VerticalBlockColumn(new BlockState[]{full0, full1, half1}, new int[]{0, 1, 1}, 1, air, 8)
                 };
                 break;
             case 2:
                 // Bush
                 junctionBlockColumnRadii = new double[]{
                         0.0,
+                        getJunctionRadius(3.5)-1.0,
                         getJunctionRadius(3.5)
                 };
                 junctionTemplateBlockColumns = new VerticalBlockColumn[]{
                         new VerticalBlockColumn(new BlockState[]{full0, dirt, leaves, leaves, leaves}, 1, air, 6),
-                        new VerticalBlockColumn(new BlockState[]{full0, full0}, 1, air, 9)
+                        new VerticalBlockColumn(new BlockState[]{full0, full0}, 1, air, 9),
+                        new VerticalBlockColumn(new BlockState[]{full0, full1, half1}, new int[]{0, 1, 1}, 1, air, 8)
                 };
                 break;
             case 3:
@@ -160,12 +166,14 @@ public class RoadType {
                 junctionBlockColumnRadii = new double[]{
                         0.0,
                         1.0,
+                        getJunctionRadius(3.5)-1.0,
                         getJunctionRadius(3.5)
                 };
                 junctionTemplateBlockColumns = new VerticalBlockColumn[]{
                         new VerticalBlockColumn(new BlockState[]{full0, dirt, log, log, log, leaves, leaves, leaves}, 1, air, 3),
                         new VerticalBlockColumn(new BlockState[]{full0, full0, air, air, leaves, leaves}, 1, air, 5),
-                        new VerticalBlockColumn(new BlockState[]{full0, full0}, 1, air, 9)
+                        new VerticalBlockColumn(new BlockState[]{full0, full0}, 1, air, 9),
+                        new VerticalBlockColumn(new BlockState[]{full0, full1, half1}, new int[]{0, 1, 1}, 1, air, 8)
                 };
         }
         return new RoadType(
@@ -176,7 +184,7 @@ public class RoadType {
                 },
                 new VerticalBlockColumn[]{
                         new VerticalBlockColumn(new BlockState[]{full0, full0}, 1, air, 7),
-                        new VerticalBlockColumn(new BlockState[]{full0, full1}, 1, air, 7)
+                        new VerticalBlockColumn(new BlockState[]{full0, full1, half1}, new int[]{0, 1, 1}, 1, air, 6)
                 },
                 8.0,
                 new VerticalBlockColumn(new BlockState[]{full0, full1, full1, full1, wall, torch}, 1, air, 3),

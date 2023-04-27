@@ -13,12 +13,14 @@ import java.util.HashMap;
 public class RawVerticalBlockColumn {
 
     public String[] blockStateStrings;
+    public int[] ints;
     public int baseLevelIndex;
 
     public RawVerticalBlockColumn(JsonReader reader) throws IOException {
         baseLevelIndex = 0;
         HashMap<String, String> abbreviationMap = null;
         ArrayList<String> blockStateList = null;
+        ArrayList<Integer> intsArray = null;
 
         reader.beginObject();
         while (reader.hasNext()) {
@@ -27,11 +29,12 @@ public class RawVerticalBlockColumn {
                 case "base_level_index" -> baseLevelIndex = reader.nextInt();
                 case "abbreviation_map" -> abbreviationMap = JsonUtils.readMap(reader);
                 case "block_states" -> blockStateList = JsonUtils.readStringArray(reader);
+                case "ints" -> intsArray = JsonUtils.readIntArray(reader);
             }
         }
         reader.endObject();
 
-        if (abbreviationMap == null || blockStateList == null) {
+        if (abbreviationMap == null || blockStateList == null || intsArray == null || blockStateList.size() != intsArray.size()) {
             throw new IOException();
         }
 
@@ -48,6 +51,10 @@ public class RawVerticalBlockColumn {
                 blockStateStrings[i] = null;
             }
         }
+        ints = new int[intsArray.size()];
+        for (int i=0; i<ints.length; i++) {
+            ints[i] = intsArray.get(i);
+        }
     }
 
     public VerticalBlockColumn toVerticalBlockColumn(ServerVillage village) {
@@ -55,6 +62,6 @@ public class RawVerticalBlockColumn {
         for (int i=0; i< states.length; i++) {
             states[i] = BlockStateParsing.parseBlockState(blockStateStrings[i], village);
         }
-        return new VerticalBlockColumn(states, baseLevelIndex);
+        return new VerticalBlockColumn(states, ints, baseLevelIndex);
     }
 }

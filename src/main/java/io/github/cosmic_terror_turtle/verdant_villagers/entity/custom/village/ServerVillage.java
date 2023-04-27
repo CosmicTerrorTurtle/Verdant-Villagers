@@ -64,7 +64,7 @@ public class ServerVillage extends Village {
     private static final int ROAD_EDGE_BASE_MIN_LENGTH = ROAD_JUNCTION_BASE_SPACE;
     private static final int ROAD_EDGE_BASE_MAX_LENGTH = 66;
     // The maximum slope angle that a road edge can have.
-    private static final double ROAD_EDGE_MAX_Y_SLOPE = 0.5;
+    private static final double ROAD_EDGE_MAX_Y_SLOPE = 0.45;
     // The maximum length that an access point path can have.
     private static final int ACCESS_POINT_PATH_MAX_LENGTH = 24;
 
@@ -124,7 +124,7 @@ public class ServerVillage extends Village {
 
         // Analyze terrain
         int xzTerrainRadius = 64;
-        int yTerrainRadius = 20;
+        int yTerrainRadius = 25;
         BlockPos testPos;
         // Start total at 1 to avoid zero division
         int totalA = 1;
@@ -168,14 +168,14 @@ public class ServerVillage extends Village {
 
         // Determine village type parameters
         String terrainCategory;
-        if (airBelow > 0.5) {
+        if (airBelow > 0.7) {
             terrainCategory = "sky";
         } else if (landAbove > 0.5) {
             terrainCategory = "under_ground";
         } else if (fluidAbove > 0.5) {
             terrainCategory = "under_fluid";
         } else {
-            if (fluidBelow > 0.25) {
+            if (fluidBelow > 0.15) {
                 terrainCategory = "on_coast";
             } else {
                 terrainCategory = "on_land";
@@ -1141,7 +1141,7 @@ public class ServerVillage extends Village {
                 nearDots = new ArrayList<>();
                 for (RoadEdge edge : roadEdges) {
                     for (RoadDot dot : edge.roadDots) {
-                        if (dot.pos.isWithinDistance(accessPoint.pos, ACCESS_POINT_PATH_MAX_LENGTH)
+                        if (dot.pos.isWithinDistance(accessPoint.pos, ACCESS_POINT_PATH_MAX_LENGTH*roadType.edgeMinMaxLengthMultiplier)
                                 && 1 < MathHelper.square(dot.pos.getX()-accessPoint.pos.getX()) + MathHelper.square(dot.pos.getZ()-accessPoint.pos.getZ())) {
                             nearDots.add(dot);
                         }
@@ -1180,7 +1180,7 @@ public class ServerVillage extends Village {
                                         break;
                                     }
                                 }
-                                if (GeoFeatureCollision.featuresOverlapIgnoreMatchingBlocks(testEdge, structure)) {
+                                if (GeoFeatureCollision.featuresOverlapIgnoreMatchingBlockStates(testEdge, structure)) {
                                     noCollision = false;
                                 }
                             }

@@ -48,7 +48,8 @@
             "pth": "state:minecraft:dirt_path",
             "dir": "state:minecraft:dirt"
           },
-          "block_states": ["dir", "pth", "air", "air", "air", "air"]
+          "block_states": ["dir", "pth", "air", "air", "air", "air"],
+          "ints": [0, 0, 0, 0, 0, 0]
         }
       }
     },

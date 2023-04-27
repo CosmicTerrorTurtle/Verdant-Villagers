@@ -43,7 +43,7 @@ public class GeoFeatureCollision {
         return false;
     }
 
-    static boolean featuresOverlapIgnoreMatchingBlocks(GeoFeature feature1, GeoFeature feature2) {
+    static boolean featuresOverlapIgnoreMatchingBlockStates(GeoFeature feature1, GeoFeature feature2) {
         // Check bounds.
         if (!feature1.boundsCollideWith(feature2)) {
             return false;
@@ -54,7 +54,7 @@ public class GeoFeatureCollision {
             for (GeoFeatureBit feature2Bit : feature2.getBits()) {
                 if (feature1Bit.blockPos.equals(feature2Bit.blockPos)
                         && feature1Bit.blockState!=null && feature2Bit.blockState!=null
-                        && !feature1Bit.blockState.isOf(feature2Bit.blockState.getBlock())) {
+                        && !feature1Bit.blockState.equals(feature2Bit.blockState)) {
                     return true;
                 }
             }
@@ -64,29 +64,52 @@ public class GeoFeatureCollision {
 
     /**
      * Determines whether two edges overlap, but ignores block positions that are within the same height radius of
-     * the junctions that the edges share.
-     * @param edge1 The first edge.
-     * @param edge2 The second Edge.
+     * the junctions that the edges share. Those overlaps are then removed from {@code newEdge}.
+     * @param newEdge The first edge.
+     * @param oldEdge The already existing Edge.
      * @return True if the edges overlap.
      */
-    static boolean edgesOverlap(RoadEdge edge1, RoadEdge edge2) {
+    static boolean edgesOverlap(RoadEdge newEdge, RoadEdge oldEdge) {
         // Check bounds.
-        if (!edge1.boundsCollideWith(edge2)) {
+        if (!newEdge.boundsCollideWith(oldEdge)) {
             return false;
         }
-
+        // Determine shared junctions.
+        ArrayList<RoadJunction> sharedJunctions = new ArrayList<>();
+        if (newEdge.from.elementID == oldEdge.from.elementID || newEdge.from.elementID == oldEdge.to.elementID) {
+            sharedJunctions.add(newEdge.from);
+        }
+        if (newEdge.to.elementID == oldEdge.from.elementID || newEdge.to.elementID == oldEdge.to.elementID) {
+            sharedJunctions.add(newEdge.to);
+        }
         // Check the bits for collision.
-        for (GeoFeatureBit bit1 : edge1.getBits()) {
-            for (GeoFeatureBit bit2 : edge2.getBits()) {
-                if (!posIsInSameHeightRadius(bit1.blockPos, edge1.from) && !posIsInSameHeightRadius(bit1.blockPos, edge1.to)
-                    && bit1.blockPos.equals(bit2.blockPos)) {
-                   return true;
+        ArrayList<GeoFeatureBit> toBeRemoved = new ArrayList<>();
+        for (GeoFeatureBit newBit : newEdge.getBits()) {
+            for (GeoFeatureBit oldBit : oldEdge.getBits()) {
+                // If the bits collide and their position is not close to one of the shared junctions, return true.
+                if (newBit.blockPos.equals(oldBit.blockPos)) {
+                    if (posIsInSameHeightRadii(newBit.blockPos, sharedJunctions)) {
+                        toBeRemoved.add(oldBit);
+                    } else {
+                        return true;
+                    }
                 }
+            }
+        }
+        // No collision; remove the overlapping bits.
+        for (GeoFeatureBit bit : toBeRemoved) {
+            newEdge.getBits().remove(bit);
+        }
+        return false;
+    }
+    private static boolean posIsInSameHeightRadii(BlockPos pos, ArrayList<RoadJunction> junctions) {
+        for (RoadJunction junction : junctions) {
+            if (posIsInSameHeightRadius(pos, junction)) {
+                return true;
             }
         }
         return false;
     }
-
     private static boolean posIsInSameHeightRadius(BlockPos pos, RoadJunction junction) {
         return Math.pow(pos.getX()-junction.pos.getX(), 2) + Math.pow(pos.getZ()-junction.pos.getZ(), 2) <= junction.sameHeightRadius*junction.sameHeightRadius;
     }
@@ -108,15 +131,17 @@ public class GeoFeatureCollision {
         ArrayList<GeoFeatureBit> toBeRemoved = new ArrayList<>();
         for (GeoFeatureBit accessPathBit : accessPath.getBits()) {
             for (GeoFeatureBit edgeBit : edge.getBits()) {
-                if (accessPathBit.blockPos.equals(edgeBit.blockPos)) {
-                    if (accessPathBit.blockState!=null && edgeBit.blockState!=null) {
-                        // Are both bits air or both bits non-air?
-                        if ((accessPathBit.blockState.isOf(Blocks.AIR) && edgeBit.blockState.isOf(Blocks.AIR))
-                                || (!accessPathBit.blockState.isOf(Blocks.AIR) && !edgeBit.blockState.isOf(Blocks.AIR))) {
-                            toBeRemoved.add(accessPathBit);
-                        } else {
-                            return true;
-                        }
+                if (accessPathBit.blockPos.equals(edgeBit.blockPos) && accessPathBit.blockState!=null && edgeBit.blockState!=null) {
+                    // If the position is part of edge's sidewalk, continue (this way, it will be overwritten by the access path).
+                    if (edge.positionIsSidewalk(edgeBit.blockPos)) {
+                        continue;
+                    }
+                    // Are both bits air or both bits non-air?
+                    if ((accessPathBit.blockState.isOf(Blocks.AIR) && edgeBit.blockState.isOf(Blocks.AIR))
+                            || (!accessPathBit.blockState.isOf(Blocks.AIR) && !edgeBit.blockState.isOf(Blocks.AIR))) {
+                        toBeRemoved.add(accessPathBit);
+                    } else {
+                        return true;
                     }
                 }
             }

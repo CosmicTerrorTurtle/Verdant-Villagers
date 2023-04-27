@@ -14,6 +14,7 @@ import java.util.ArrayList;
 public class RoadJunction extends GeoFeature {
 
     public BlockPos pos;
+    public ArrayList<BlockPos> sidewalkPositions = new ArrayList<>();
     public double radius;
     public double sameHeightRadius;
 
@@ -48,12 +49,32 @@ public class RoadJunction extends GeoFeature {
                         }
                     }
                     for (int i=0; i<templateColumn.states.length; i++) {
-                        relativeBits.add(new GeoFeatureBit(templateColumn.states[i], position.up(i-templateColumn.baseLevelIndex)));
+                        // Add bit.
+                        GeoFeatureBit bit = new GeoFeatureBit(templateColumn.states[i], position.up(i-templateColumn.baseLevelIndex));
+                        relativeBits.add(bit);
+                        // If the bit is part of the sidewalk (int = 1 for that index), add its position.
+                        if (templateColumn.ints[i] == 1) {
+                            sidewalkPositions.add(pos.add(bit.blockPos));
+                        }
                     }
                 }
             }
         }
         setBits(relativeBits, pos, ROTATE_NOT);
+    }
+
+    /**
+     * Tests if a {@link BlockPos} is part of this {@link RoadJunction}'s sidewalk.
+     * @param pos The {@link BlockPos} to test.
+     * @return True if {@code pos} is a sidewalk position.
+     */
+    public boolean positionIsSidewalk(BlockPos pos) {
+        for (BlockPos sidewalkPos : sidewalkPositions) {
+            if (pos.equals(sidewalkPos)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -63,6 +84,10 @@ public class RoadJunction extends GeoFeature {
     public RoadJunction(@NotNull NbtCompound nbt) {
         super(nbt);
         pos = NbtUtils.blockPosFromNbt(nbt.getCompound("pos"));
+        NbtCompound sidewalkNbt = nbt.getCompound("sidewalk");
+        for (String key : sidewalkNbt.getKeys()) {
+            sidewalkPositions.add(NbtUtils.blockPosFromNbt(sidewalkNbt.getCompound(key)));
+        }
         radius = nbt.getDouble("radius");
         sameHeightRadius = nbt.getDouble("sameHeightRadius");
     }
@@ -72,7 +97,15 @@ public class RoadJunction extends GeoFeature {
      */
     public NbtCompound toNbt() {
         NbtCompound nbt = super.toNbt();
+        int i;
         nbt.put("pos", NbtUtils.blockPosToNbt(pos));
+        NbtCompound sidewalkNbt = new NbtCompound();
+        i=0;
+        for (BlockPos pos : sidewalkPositions) {
+            sidewalkNbt.put(Integer.toString(i), NbtUtils.blockPosToNbt(pos));
+            i++;
+        }
+        nbt.put("sidewalk", sidewalkNbt);
         nbt.putDouble("radius", radius);
         nbt.putDouble("sameHeightRadius", sameHeightRadius);
         return nbt;

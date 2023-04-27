@@ -2,6 +2,7 @@ package io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.r
 
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.*;
 import io.github.cosmic_terror_turtle.verdant_villagers.util.MathUtils;
+import io.github.cosmic_terror_turtle.verdant_villagers.util.NbtUtils;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -24,6 +25,7 @@ public class RoadEdge extends GeoFeature {
 
     public RoadJunction from;
     public RoadJunction to;
+    public ArrayList<BlockPos> sidewalkPositions = new ArrayList<>();
     public ArrayList<RoadDot> roadDots = new ArrayList<>();
     public final double radius;
     private int polynomialDegree;
@@ -200,7 +202,7 @@ public class RoadEdge extends GeoFeature {
             spaceAfterLastDot += ROAD_STEP;
             if (spaceAfterLastDot > ROAD_DOT_SPACE) {
                 spaceAfterLastDot = 0;
-                for (double offset : new double[]{0.5-radius, radius-0.5}) {
+                for (double offset : new double[]{1.0-radius, radius-1.0}) {
                     tmp = offset/Math.sqrt(1+f_slope*f_slope);
                     aCoord = a+f_slope*tmp;
                     faCoord = f_of_a-tmp;
@@ -215,12 +217,31 @@ public class RoadEdge extends GeoFeature {
         for (VerticalBlockColumn middleColumn : middleColumns) {
             addToColumns(normalColumns, middleColumn, true);
         }
+        boolean columnOverlapsFrom;
+        boolean columnOverlapsTo;
+        boolean writeEntireColumn;
+        BlockPos relPos;
+        GeoFeatureBit bit;
         ArrayList<GeoFeatureBit> relativeBits = new ArrayList<>();
         for (VerticalBlockColumn column : normalColumns) {
+            columnOverlapsFrom = Math.pow(column.anchor.getX(), 2) + Math.pow(column.anchor.getZ(), 2) <= Math.pow(from.radius, 2);
+            columnOverlapsTo = Math.pow(column.anchor.getX()+from.pos.getX()-to.pos.getX(), 2) + Math.pow(column.anchor.getZ()+from.pos.getZ()-to.pos.getZ(), 2) <= Math.pow(to.radius, 2);
+            writeEntireColumn = overwriteJunctions || !columnOverlapsFrom && !columnOverlapsTo;
             for (int i=0; i<column.states.length; i++) {
-                if (overwriteJunctions || Math.pow(column.anchor.getX(), 2) + Math.pow(column.anchor.getZ(), 2) > Math.pow(from.radius, 2)
-                        && Math.pow(column.anchor.getX()+from.pos.getX()-to.pos.getX(), 2) + Math.pow(column.anchor.getZ()+from.pos.getZ()-to.pos.getZ(), 2) > Math.pow(to.radius, 2)) {
-                    relativeBits.add(new GeoFeatureBit(column.states[i], column.anchor.up(i-column.baseLevelIndex)));
+                relPos = column.anchor.up(i-column.baseLevelIndex);
+                // Add the bit only when overwriting all junctions, or when no overlap with junctions exists, or when
+                // the bit is not part of the edge's sidewalk AND the bit is part of one of the junctions' sidewalk.
+                if (writeEntireColumn || column.ints[i] != 1 && (
+                        columnOverlapsFrom && from.positionIsSidewalk(from.pos.add(relPos))
+                        || columnOverlapsTo && to.positionIsSidewalk(from.pos.add(relPos))
+                )) {
+                    // Add bit.
+                    bit = new GeoFeatureBit(column.states[i], relPos);
+                    relativeBits.add(bit);
+                    // If the bit is part of the sidewalk (int = 1 for that index), add its position.
+                    if (column.ints[i] == 1) {
+                        sidewalkPositions.add(from.pos.add(relPos));
+                    }
                 }
             }
         }
@@ -248,6 +269,20 @@ public class RoadEdge extends GeoFeature {
 
     public double getYSlope() {
         return ySlope;
+    }
+
+    /**
+     * Tests if a {@link BlockPos} is part of this {@link RoadEdge}'s sidewalk.
+     * @param pos The {@link BlockPos} to test.
+     * @return True if {@code pos} is a sidewalk position.
+     */
+    public boolean positionIsSidewalk(BlockPos pos) {
+        for (BlockPos sidewalkPos : sidewalkPositions) {
+            if (pos.equals(sidewalkPos)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -279,6 +314,10 @@ public class RoadEdge extends GeoFeature {
             from = new RoadJunction(nbt.getCompound("from"));
             to = new RoadJunction(nbt.getCompound("to"));
         }
+        NbtCompound sidewalkNbt = nbt.getCompound("sidewalk");
+        for (String key : sidewalkNbt.getKeys()) {
+            sidewalkPositions.add(NbtUtils.blockPosFromNbt(sidewalkNbt.getCompound(key)));
+        }
         NbtCompound roadDotsNbt = nbt.getCompound("roadDots");
         for (String key : roadDotsNbt.getKeys()) {
             roadDots.add(new RoadDot(roadDotsNbt.getCompound(key), this));
@@ -299,6 +338,7 @@ public class RoadEdge extends GeoFeature {
      */
     public NbtCompound toNbt(boolean isMajorRoad) {
         NbtCompound nbt = super.toNbt();
+        int i;
         if (isMajorRoad) {
             nbt.putInt("fromId", from.elementID);
             nbt.putInt("toId", to.elementID);
@@ -307,8 +347,15 @@ public class RoadEdge extends GeoFeature {
             nbt.put("from", from.toNbt());
             nbt.put("to", to.toNbt());
         }
+        NbtCompound sidewalkNbt = new NbtCompound();
+        i=0;
+        for (BlockPos pos : sidewalkPositions) {
+            sidewalkNbt.put(Integer.toString(i), NbtUtils.blockPosToNbt(pos));
+            i++;
+        }
+        nbt.put("sidewalk", sidewalkNbt);
         NbtCompound roadDotsNbt = new NbtCompound();
-        int i=0;
+        i=0;
         for (RoadDot dot : roadDots) {
             roadDotsNbt.put(Integer.toString(i), dot.toNbt());
             i++;
@@ -326,7 +373,7 @@ public class RoadEdge extends GeoFeature {
 
     public class TerrainAdjustment {
 
-        public static final double TERRAIN_ADJUSTING_SPACE = 2.0; // Space between terrain adjusting points
+        public static final double TERRAIN_ADJUSTING_SPACE = 3.0; // Space between terrain adjusting points
         public static final double MAX_SLOPE_DEVIATION = 0.15; // Maximum difference between overall slope and the slopes from the adjusted points
         public static final double SMOOTHING_FACTOR = 0.2; // Factor by which a point gets adjusted towards its neighbors
         public static final int MAX_SMOOTHING_ITERATIONS = 40; // The maximum number of iterations that smooth the adjusting offsets.

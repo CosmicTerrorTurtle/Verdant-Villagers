@@ -46,7 +46,8 @@
             "air": "state:minecraft:air",
             "stf": "palette:0:verdant_villagers:stone___minecraft:stone_bricks"
           },
-          "block_states": ["stf", "stf", "air", "air", "air"]
+          "block_states": ["stf", "stf", "air", "air", "air"],
+          "ints": [0, 0, 0, 0, 0]
         }
       }
     }
