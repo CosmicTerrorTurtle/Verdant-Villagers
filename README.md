@@ -15,6 +15,5 @@ Coming in the future:
 - Villagers with different professions (builder, farmer, miner, guard etc.) that gather resources, craft tools and blocks, build structures and roads etc.
 - A villager trading system
 - New village types: Biome-specific like desert/tundra villages with different buildings than the standard village type; underground villages, underwater villages, sky villages
-- New block palette types: Colored blocks (wool, beds, glass, flowers, concrete, terracotta, banners, candles)
 
 ![oak_village_outdated](https://user-images.githubusercontent.com/111278470/184848109-cd051815-868c-4753-8716-f123af53578e.png)
