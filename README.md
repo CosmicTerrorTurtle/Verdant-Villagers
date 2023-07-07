@@ -8,8 +8,8 @@ Currently work in progress; the mod is still in early development. Here's a quic
 Already implemented:
 - The village heart entity is the brain of the village. It plans, where roads and structures will be built (and currently places them immediately - in the future, this will be done by villagers).
 - The village heart entity's spawn egg plus crafting recipe.
-- The village anchor block is used for moving the village center. When in the world, it will call the nearest village heart entity (within 100 blocks), which will move towards the anchor and then hover over it.
-- Block palettes for stone and wood. When spawned, the village scans its environment and decides which block palettes to use. For example, if there's a lot of oak wood around, the village's wood block palette will be oak. This means, that each structure that is built with wood blocks, will have oak logs, planks etc.
+- The village anchor block is used for moving the village center. When present in the world, it will regularly call the nearest village heart entity (within 100 blocks), which will move towards the anchor and then hover over it.
+- Block palettes for stone, wood and colors. When spawned, the village scans its environment and decides which block palettes to use. For example, if there's a lot of oak wood around, the village's wood block palette will be oak. This means, that each structure that is built with wood blocks, will have oak logs, planks etc.
 
 Coming in the future:
 - Villagers with different professions (builder, farmer, miner, guard etc.) that gather resources, craft tools and blocks, build structures and roads etc.
