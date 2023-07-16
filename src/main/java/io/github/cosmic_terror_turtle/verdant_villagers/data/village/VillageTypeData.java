@@ -9,24 +9,30 @@ import java.util.HashMap;
 
 public class VillageTypeData {
 
+    public ArrayList<String> dimensions;
+    public ArrayList<String> biomes;
     public String terrainCategory;
     public ArrayList<String> structureTypesToBuild;
 
     public VillageTypeData(JsonReader reader) throws IOException {
-        structureTypesToBuild = null;
+        dimensions = null;
+        biomes = null;
         terrainCategory = null;
+        structureTypesToBuild = null;
 
         reader.beginObject();
         while (reader.hasNext()) {
             switch (reader.nextName()) {
                 default -> throw new IOException();
+                case "dimensions" -> dimensions = JsonUtils.readStringArray(reader);
+                case "biomes" -> biomes = JsonUtils.readStringArray(reader);
                 case "terrain_category" -> terrainCategory = reader.nextString();
                 case "structure_types_to_build" -> structureTypesToBuild = JsonUtils.readStringArray(reader);
             }
         }
         reader.endObject();
 
-        if (structureTypesToBuild == null || terrainCategory == null) {
+        if (dimensions==null || biomes==null || terrainCategory==null || structureTypesToBuild==null) {
             throw new IOException();
         }
     }

@@ -1,5 +1,5 @@
 {
-  "village_types": ["standard", "coast", "under_ground", "sky"],
+  "village_types": ["default", "coast", "under_ground", "sky"],
   "available_for_villager_count": [0, 1000],
   "data_per_structure_type": {
     "plant_farm": {

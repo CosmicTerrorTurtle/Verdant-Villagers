@@ -3,6 +3,8 @@ package io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village;
 import io.github.cosmic_terror_turtle.verdant_villagers.data.village.BlockPalette;
 import io.github.cosmic_terror_turtle.verdant_villagers.data.village.DataRegistry;
 import io.github.cosmic_terror_turtle.verdant_villagers.data.village.RawStructureTemplate;
+import io.github.cosmic_terror_turtle.verdant_villagers.data.village.VillageTypeData;
+import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.VillageHeartEntity;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.road.RoadDot;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.road.RoadEdge;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.road.RoadJunction;
@@ -13,7 +15,6 @@ import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.st
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure.StructureProvider;
 import io.github.cosmic_terror_turtle.verdant_villagers.util.MathUtils;
 import io.github.cosmic_terror_turtle.verdant_villagers.util.ModTags;
-import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.VillageHeartEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
@@ -166,7 +167,7 @@ public class ServerVillage extends Village {
         fluidAbove = (float) fluidA / totalA;
         fluidBelow = (float) fluidB / totalB;
 
-        // Determine village type parameters
+        // Determine terrain category
         String terrainCategory;
         if (airBelow > 0.7) {
             terrainCategory = "sky";
@@ -186,13 +187,22 @@ public class ServerVillage extends Village {
         villageType = null;
         ArrayList<String> villageTypes = new ArrayList<>(DataRegistry.getVillageTypes());
         ArrayList<String> fittingVillageTypes = new ArrayList<>();
+        VillageTypeData data;
+        boolean dimOkay;
+        boolean biomeOkay;
+        boolean terrainOkay;
         for (String vType : villageTypes) {
-            if (DataRegistry.getVillageTypeData(vType).terrainCategory.equals(terrainCategory)) {
+            // Check if terrain category, dimension and biome of each village type are sufficient
+            data = DataRegistry.getVillageTypeData(vType);
+            dimOkay = data.dimensions.isEmpty() || data.dimensions.contains(world.getDimensionKey().getValue().toString());
+            biomeOkay = data.biomes.isEmpty() || data.biomes.contains(world.getBiome(pos).getKey().get().getValue().toString());
+            terrainOkay = data.terrainCategory.equals(terrainCategory);
+            if (dimOkay && biomeOkay && terrainOkay) {
                 fittingVillageTypes.add(vType);
             }
         }
         if (fittingVillageTypes.isEmpty()) {
-            villageType = "standard";
+            villageType = "default";
         } else {
             villageType = fittingVillageTypes.get(random.nextInt(fittingVillageTypes.size()));
         }
@@ -415,9 +425,9 @@ public class ServerVillage extends Village {
      * @return The number of block palettes.
      */
     private int getUpdatedBlockPaletteLevel() {
-        if (villagerCount < 20) {
+        if (villagerCount < 15) {
             return 0;
-        } else if (villagerCount < 40) {
+        } else if (villagerCount < 30) {
             return 1;
         }
         return 2;

@@ -1,0 +1,58 @@
+{
+  "village_types": ["nether_standard", "nether_coast", "nether_under_ground", "nether_sky"],
+  "available_for_villager_count": [0, 1000],
+  "data_per_structure_type": {
+    "nether_plant_farm": {
+      "villagers_accounted_for": "6"
+    }
+  },
+  "abbreviation_map": {
+    "nul": "null",
+    "air": "state:minecraft:air",
+    "gra": "palette:0:verdant_villagers:wood___minecraft:grass_block",
+    "pth": "state:minecraft:dirt_path",
+    "rac": "state:minecraft:netherrack",
+    "sou": "state:minecraft:soul_sand",
+    "lav": "state:minecraft:lava",
+    "tor": "state:minecraft:soul_torch",
+    "fcn": "palette:0:verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:true:south:false:west:false:east:false",
+    "fcs": "palette:0:verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:false:south:true:west:false:east:false",
+    "fns": "palette:0:verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:true:south:true:west:false:east:false",
+    "fwe": "palette:0:verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:false:south:false:west:true:east:true",
+    "fnw": "palette:0:verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:true:south:false:west:true:east:false",
+    "fne": "palette:0:verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:true:south:false:west:false:east:true",
+    "fsw": "palette:0:verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:false:south:true:west:true:east:false",
+    "fse": "palette:0:verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:false:south:true:west:false:east:true"
+  },
+  "block_state_cube": [
+    [["nul","nul","nul","nul","nul","nul","nul","nul","nul"],["nul","gra","gra","gra","gra","gra","gra","gra","nul"],["nul","fsw","fns","fns","fns","fns","fns","fnw","nul"],["nul","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","nul"]],
+    [["nul","nul","rac","rac","rac","rac","rac","nul","nul"],["gra","gra","sou","sou","gra","sou","sou","gra","gra"],["fsw","fne","air","air","tor","air","air","fse","fnw"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"]],
+    [["nul","rac","rac","rac","rac","rac","rac","rac","nul"],["gra","sou","sou","sou","sou","sou","sou","sou","gra"],["fwe","air","air","air","air","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"]],
+    [["nul","rac","rac","rac","rac","rac","rac","rac","nul"],["gra","sou","sou","sou","sou","sou","sou","sou","gra"],["fwe","air","air","air","air","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"]],
+    [["nul","rac","rac","rac","rac","rac","rac","rac","nul"],["gra","gra","sou","sou","lav","sou","sou","gra","gra"],["fwe","tor","air","air","air","air","air","tor","fwe"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"]],
+    [["nul","rac","rac","rac","rac","rac","rac","rac","nul"],["gra","sou","sou","sou","sou","sou","sou","sou","gra"],["fwe","air","air","air","air","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"]],
+    [["nul","rac","rac","rac","rac","rac","rac","rac","nul"],["gra","sou","sou","sou","sou","sou","sou","sou","gra"],["fwe","air","air","air","air","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"]],
+    [["nul","nul","rac","rac","rac","rac","rac","nul","nul"],["gra","gra","sou","sou","pth","sou","sou","gra","gra"],["fse","fnw","air","air","air","air","air","fsw","fne"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air"]],
+    [["nul","nul","nul","nul","rac","nul","nul","nul","nul"],["nul","gra","gra","gra","pth","gra","gra","gra","nul"],["nul","fse","fns","fcn","air","fcs","fns","fne","nul"],["nul","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","nul"]]
+  ],
+  "center": [4, 1, 4],
+  "points_of_interest": [
+    {
+      "subclass_name": "StructureAccessPoint",
+      "subclass_data": {
+        "pos": [-5, 0, 0],
+        "radius": 0.2,
+        "template_column": {
+          "base_level_index": 1,
+          "abbreviation_map": {
+            "air": "state:minecraft:air",
+            "pth": "state:minecraft:dirt_path",
+            "dir": "state:minecraft:dirt"
+          },
+          "block_states": ["dir", "pth", "air", "air", "air"],
+          "ints": [0, 0, 0, 0, 0]
+        }
+      }
+    }
+  ]
+}
