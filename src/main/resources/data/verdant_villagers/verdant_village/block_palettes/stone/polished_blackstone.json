@@ -1,0 +1,15 @@
+{
+  "palette_type_id": "verdant_villagers:stone",
+  "palette_id": "verdant_villagers:polished_blackstone",
+  "add_to_defaults": false,
+  "indicator_blocks": [
+    "minecraft:blackstone"
+  ],
+  "replacement_rules": [
+    {"replace_block": "minecraft:stone_bricks", "with_state": "minecraft:polished_blackstone"},
+    {"replace_block": "minecraft:chiseled_stone_bricks", "with_state": "minecraft:chiseled_polished_blackstone"},
+    {"replace_block": "minecraft:stone_brick_stairs", "with_block_and_copy_states":  "minecraft:polished_blackstone_stairs"},
+    {"replace_block": "minecraft:stone_brick_slab", "with_block_and_copy_states":  "minecraft:polished_blackstone_slab"},
+    {"replace_block": "minecraft:stone_brick_wall", "with_block_and_copy_states":  "minecraft:polished_blackstone_wall"}
+  ]
+}

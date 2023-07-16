@@ -1,7 +1,7 @@
 {
   "palette_type_id": "verdant_villagers:stone",
   "palette_id": "verdant_villagers:nether_bricks",
-  "add_to_defaults": true,
+  "add_to_defaults": false,
   "indicator_blocks": [
     "minecraft:netherrack",
     "minecraft:nether_bricks"

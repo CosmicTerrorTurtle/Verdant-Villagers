@@ -1,0 +1,16 @@
+{
+  "palette_type_id": "verdant_villagers:stone",
+  "palette_id": "verdant_villagers:mud_bricks",
+  "add_to_defaults": false,
+  "indicator_blocks": [
+    "minecraft:mud",
+    "minecraft:packed_mud"
+  ],
+  "replacement_rules": [
+    {"replace_block": "minecraft:stone_bricks", "with_state": "minecraft:mud_bricks"},
+    {"replace_block": "minecraft:chiseled_stone_bricks", "with_state": "minecraft:packed_mud"},
+    {"replace_block": "minecraft:stone_brick_stairs", "with_block_and_copy_states":  "minecraft:mud_brick_stairs"},
+    {"replace_block": "minecraft:stone_brick_slab", "with_block_and_copy_states":  "minecraft:mud_brick_slab"},
+    {"replace_block": "minecraft:stone_brick_wall", "with_block_and_copy_states":  "minecraft:mud_brick_wall"}
+  ]
+}

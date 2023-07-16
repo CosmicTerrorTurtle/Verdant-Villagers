@@ -3,7 +3,8 @@
   "palette_id": "verdant_villagers:deepslate_bricks",
   "add_to_defaults": true,
   "indicator_blocks": [
-    "minecraft:deepslate"
+    "minecraft:deepslate",
+    "minecraft:deepslate_bricks"
   ],
   "replacement_rules": [
     {"replace_block": "minecraft:stone_bricks", "with_state": "minecraft:deepslate_bricks"},

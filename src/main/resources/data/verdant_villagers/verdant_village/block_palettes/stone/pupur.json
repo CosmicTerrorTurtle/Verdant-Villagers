@@ -1,0 +1,17 @@
+{
+  "palette_type_id": "verdant_villagers:stone",
+  "palette_id": "verdant_villagers:purpur",
+  "add_to_defaults": false,
+  "indicator_blocks": [
+    "minecraft:purpur_block",
+    "minecraft:chorus_plant",
+    "minecraft:chorus_flower"
+  ],
+  "replacement_rules": [
+    {"replace_block": "minecraft:stone_bricks", "with_state": "minecraft:purpur_block"},
+    {"replace_block": "minecraft:chiseled_stone_bricks", "with_state": "minecraft:purpur_pillar"},
+    {"replace_block": "minecraft:stone_brick_stairs", "with_block_and_copy_states":  "minecraft:purpur_stairs"},
+    {"replace_block": "minecraft:stone_brick_slab", "with_block_and_copy_states":  "minecraft:purpur_slab"},
+    {"replace_block": "minecraft:stone_brick_wall", "with_state":  "minecraft:purpur_pillar"}
+  ]
+}
