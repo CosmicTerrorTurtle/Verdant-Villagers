@@ -24,6 +24,9 @@ import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -31,6 +34,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -188,16 +192,41 @@ public class ServerVillage extends Village {
         ArrayList<String> villageTypes = new ArrayList<>(DataRegistry.getVillageTypes());
         ArrayList<String> fittingVillageTypes = new ArrayList<>();
         VillageTypeData data;
-        boolean dimOkay;
+        RegistryEntry<Biome> biomeEntry = world.getBiome(pos);
+        String biomeID = biomeEntry.getKey().get().getValue().toString();
         boolean biomeOkay;
-        boolean terrainOkay;
         for (String vType : villageTypes) {
             // Check if terrain category, dimension and biome of each village type are sufficient
             data = DataRegistry.getVillageTypeData(vType);
-            dimOkay = data.dimensions.isEmpty() || data.dimensions.contains(world.getDimensionKey().getValue().toString());
-            biomeOkay = data.biomes.isEmpty() || data.biomes.contains(world.getBiome(pos).getKey().get().getValue().toString());
-            terrainOkay = data.terrainCategory.equals(terrainCategory);
-            if (dimOkay && biomeOkay && terrainOkay) {
+            if (!data.dimensions.isEmpty() && !data.dimensions.contains(world.getDimensionKey().getValue().toString())) {
+                continue;
+            }
+            if (!data.terrainCategory.equals(terrainCategory)) {
+                continue;
+            }
+
+            biomeOkay = false;
+            if (data.biomes.isEmpty()) {
+                biomeOkay = true;
+            } else {
+                for (String biome : data.biomes) {
+                    if (biome.startsWith("#")) {
+                        // Test biome tag
+                        if (biomeEntry.isIn(TagKey.of(RegistryKeys.BIOME, new Identifier(biome.substring(1))))) {
+                            biomeOkay = true;
+                            break;
+                        }
+                    } else {
+                        // Test biome
+                        if (biome.equals(biomeID)) {
+                            biomeOkay = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (biomeOkay) {
+                // The village type fits.
                 fittingVillageTypes.add(vType);
             }
         }
