@@ -5,9 +5,21 @@
     "terrain_category": "on_land",
     "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "plant_farm", "decoration"]
   },
+  "desert": {
+    "dimensions": [],
+    "biomes": ["minecraft:desert"],
+    "terrain_category": "on_land",
+    "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "plant_farm", "decoration"]
+  },
   "coast": {
     "dimensions": ["minecraft:overworld", "minecraft:the_end"],
     "biomes": [],
+    "terrain_category": "on_coast",
+    "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "plant_farm", "decoration"]
+  },
+  "desert_coast": {
+    "dimensions": [],
+    "biomes": ["minecraft:desert"],
     "terrain_category": "on_coast",
     "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "plant_farm", "decoration"]
   },

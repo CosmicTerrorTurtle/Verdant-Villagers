@@ -119,7 +119,7 @@ public class SaveVillageStructureCommand {
             writer.name("village_types");
             writer.beginArray();
             writer.setIndent(compactIndent);
-            writer.value("standard");
+            writer.value("default");
             writer.endArray();
             writer.setIndent(normalIndent);
 
