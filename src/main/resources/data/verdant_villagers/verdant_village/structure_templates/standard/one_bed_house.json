@@ -9,6 +9,8 @@
   "abbreviation_map": {
     "nul": "null",
     "air": "state:minecraft:air",
+    "pth": "state:minecraft:dirt_path",
+    "dir": "state:minecraft:dirt",
     "stf": "palette:0:verdant_villagers:stone___minecraft:stone_bricks",
     "wlo": "palette:0:verdant_villagers:wood___minecraft:oak_log:axis:y",
     "wpl": "palette:0:verdant_villagers:wood___minecraft:oak_planks",
@@ -42,11 +44,6 @@
         "radius": 0.2,
         "template_column": {
           "base_level_index": 1,
-          "abbreviation_map": {
-            "air": "state:minecraft:air",
-            "pth": "state:minecraft:dirt_path",
-            "dir": "state:minecraft:dirt"
-          },
           "block_states": ["dir", "pth", "air", "air", "air"],
           "ints": [0, 0, 0, 0, 0]
         }

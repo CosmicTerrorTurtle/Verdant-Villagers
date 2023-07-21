@@ -2,11 +2,20 @@ package io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village;
 
 import io.github.cosmic_terror_turtle.verdant_villagers.util.NbtUtils;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class VerticalBlockColumn {
+
+    private static final VerticalBlockColumn MERGE_DEFAULT_COLUMN = new VerticalBlockColumn(
+            new BlockState[]{Blocks.CRAFTING_TABLE.getDefaultState()},
+            new int[]{0},
+            0,
+            new BlockPos(0, 0, 0)
+    );
 
     public BlockPos anchor = new BlockPos(0, 0, 0);
     public BlockState[] states;
@@ -46,6 +55,40 @@ public class VerticalBlockColumn {
 
     public VerticalBlockColumn copyWith(BlockPos anchor) {
         return new VerticalBlockColumn(states, ints, baseLevelIndex, anchor);
+    }
+
+    /**
+     * Attempts to merge two block columns. Only works if both columns sit directly on top of each other.
+     * @param top The column on top, whose anchor will be used for the merged column.
+     * @param bottom The column below, whose base level index will be used for the merged column.
+     * @return A new column that has the states and ints of both input sitting in top of one another. If one of the
+     * inputs is null, then the other one gets returned. If both are null, a default column gets returned.
+     */
+    public static VerticalBlockColumn merge(@Nullable VerticalBlockColumn top, @Nullable VerticalBlockColumn bottom) {
+        if (top == null) {
+            if (bottom == null) {
+                return MERGE_DEFAULT_COLUMN;
+            } else {
+                return bottom;
+            }
+        } else if (bottom == null) {
+            return top;
+        }
+        if (top.baseLevelIndex != bottom.baseLevelIndex - bottom.states.length) {
+            throw new RuntimeException("Block columns could not be merged.");
+        }
+        BlockState[] states = new BlockState[top.states.length + bottom.states.length];
+        int[] ints = new int[states.length];
+        for (int i=0; i<states.length; i++) {
+            if (i<bottom.states.length) {
+                states[i] = bottom.states[i];
+                ints[i] = bottom.ints[i];
+            } else {
+                states[i] = top.states[i-bottom.states.length];
+                ints[i] = top.ints[i-bottom.states.length];
+            }
+        }
+        return new VerticalBlockColumn(states, ints, bottom.baseLevelIndex, top.anchor);
     }
 
     /**

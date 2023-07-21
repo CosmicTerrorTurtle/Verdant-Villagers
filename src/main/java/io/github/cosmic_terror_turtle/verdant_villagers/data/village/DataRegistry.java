@@ -8,6 +8,7 @@ import net.minecraft.nbt.NbtCompound;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class DataRegistry {
@@ -20,10 +21,11 @@ public class DataRegistry {
     private static final HashMap<String, VillageTypeData> villageTypes = new HashMap<>();
     private static final HashMap<String, StructureTypeData> structureTypes = new HashMap<>();
     private static final HashMap<String, ArrayList<RawStructureTemplate>> templatesPerVillageType = new HashMap<>();
+    private static final ArrayList<RawRoadType> roadTypes = new ArrayList<>();
     private static final ArrayList<String> villageNames = new ArrayList<>();
 
     private static final HashMap<String, Function<NbtCompound, ? extends PointOfInterest>> pointOfInterestNbtConstructors = new HashMap<>();
-    private static final HashMap<String, Function<JsonReader, ? extends RawPointOfInterest>> pointOfInterestJsonConstructors = new HashMap<>();
+    private static final HashMap<String, BiFunction<JsonReader, HashMap<String, String>, ? extends RawPointOfInterest>> pointOfInterestJsonConstructors = new HashMap<>();
 
     public static void clearData() {
         blockPaletteTypes.clear();
@@ -32,6 +34,7 @@ public class DataRegistry {
         villageTypes.clear();
         structureTypes.clear();
         templatesPerVillageType.clear();
+        roadTypes.clear();
         villageNames.clear();
     }
 
@@ -65,6 +68,11 @@ public class DataRegistry {
                     throw new RuntimeException("Structure type '"+structureType+"' does not exist.");
                 }
             }
+        }
+
+        // There must be at least one road type present.
+        if (roadTypes.isEmpty()) {
+            throw new RuntimeException("No road types found.");
         }
 
         // There must be at least one village name present.
@@ -196,6 +204,34 @@ public class DataRegistry {
         return null;
     }
 
+    public static void addRoadType(RawRoadType type) {
+        roadTypes.add(type);
+    }
+
+    /**
+     * Selects a random raw road type that matches the given constraints.
+     * @param villageType The type of the village.
+     * @param villagerCount The villager count of the village.
+     * @return A random road type that matches the village type and villager count, if possible.
+     */
+    public static RawRoadType getRandomRoadTypeFor(String villageType, int villagerCount) {
+        ArrayList<RawRoadType> candidates = new ArrayList<>();
+        ArrayList<RawRoadType> bestCandidates = new ArrayList<>();
+        for (RawRoadType type : roadTypes) {
+            candidates.add(type);
+            if (type.availableForVillagerCount.get(0)<=villagerCount && villagerCount<= type.availableForVillagerCount.get(1)) {
+                bestCandidates.add(type);
+            }
+        }
+        if (!bestCandidates.isEmpty()) {
+            return bestCandidates.get(random.nextInt(bestCandidates.size()));
+        }
+        if (!candidates.isEmpty()) {
+            return candidates.get(random.nextInt(candidates.size()));
+        }
+        return null;
+    }
+
     public static void addVillageNames(ArrayList<String> newNames) {
         villageNames.addAll(newNames);
     }
@@ -213,11 +249,11 @@ public class DataRegistry {
     }
 
     private static void registerPointOfInterestSubclasses() {
-        registerPointOfInterestConstructors("StructureAccessPoint", StructureAccessPoint::new, reader -> {
-            try { return new RawStructureAccessPoint(reader); }
+        registerPointOfInterestConstructors("StructureAccessPoint", StructureAccessPoint::new, (reader, abbreviationMap) -> {
+            try { return new RawStructureAccessPoint(reader, abbreviationMap); }
             catch (IOException e) { throw new RuntimeException(e); }
         });
-        registerPointOfInterestConstructors("SaplingLocationPoint", SaplingLocationPoint::new, reader -> {
+        registerPointOfInterestConstructors("SaplingLocationPoint", SaplingLocationPoint::new, (reader, abbreviationMap) -> {
             try { return new RawSaplingLocationPoint(reader); }
             catch (IOException e) { throw new RuntimeException(e); }
         });
@@ -229,7 +265,7 @@ public class DataRegistry {
      * @param nbtConstructor The constructor used when reading the village from an NBT tag.
      * @param jsonConstructor The constructor used when reading a structure template from a json file during data loading/reloading.
      */
-    public static void registerPointOfInterestConstructors(String key, Function<NbtCompound, ? extends PointOfInterest> nbtConstructor, Function<JsonReader, ? extends RawPointOfInterest> jsonConstructor) {
+    public static void registerPointOfInterestConstructors(String key, Function<NbtCompound, ? extends PointOfInterest> nbtConstructor, BiFunction<JsonReader, HashMap<String, String>, ? extends RawPointOfInterest> jsonConstructor) {
         pointOfInterestNbtConstructors.put(key, nbtConstructor);
         pointOfInterestJsonConstructors.put(key, jsonConstructor);
     }
@@ -238,7 +274,7 @@ public class DataRegistry {
         return pointOfInterestNbtConstructors.get(key);
     }
 
-    public static Function<JsonReader, ? extends RawPointOfInterest> getPointOfInterestJsonConstructor(String key) {
+    public static BiFunction<JsonReader, HashMap<String, String>, ? extends RawPointOfInterest> getPointOfInterestJsonConstructor(String key) {
         return pointOfInterestJsonConstructors.get(key);
     }
 }

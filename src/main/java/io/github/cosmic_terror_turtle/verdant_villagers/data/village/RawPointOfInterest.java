@@ -7,12 +7,13 @@ import net.minecraft.util.math.BlockPos;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class RawPointOfInterest {
 
     ArrayList<Integer> pos;
 
-    public static RawPointOfInterest createNew(JsonReader reader) throws IOException {
+    public static RawPointOfInterest createNew(JsonReader reader, HashMap<String, String> abbreviationMap) throws IOException {
         String subclassName;
         RawPointOfInterest poi;
 
@@ -24,7 +25,7 @@ public class RawPointOfInterest {
         if (!reader.hasNext() || !reader.nextName().equals("subclass_data")) {
             throw new IOException();
         }
-        poi = DataRegistry.getPointOfInterestJsonConstructor(subclassName).apply(reader);
+        poi = DataRegistry.getPointOfInterestJsonConstructor(subclassName).apply(reader, abbreviationMap);
         reader.endObject();
 
         return poi;

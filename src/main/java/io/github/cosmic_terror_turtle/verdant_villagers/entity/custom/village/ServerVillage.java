@@ -5,10 +5,7 @@ import io.github.cosmic_terror_turtle.verdant_villagers.data.village.DataRegistr
 import io.github.cosmic_terror_turtle.verdant_villagers.data.village.RawStructureTemplate;
 import io.github.cosmic_terror_turtle.verdant_villagers.data.village.VillageTypeData;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.VillageHeartEntity;
-import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.road.RoadDot;
-import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.road.RoadEdge;
-import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.road.RoadJunction;
-import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.road.RoadType;
+import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.road.*;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure.PointOfInterest;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure.Structure;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure.StructureAccessPoint;
@@ -60,7 +57,7 @@ public class ServerVillage extends Village {
     private static final int SEARCH_DISTANCE_STRUCTURE_AVG = 13;
     private static final double SEARCH_DISTANCE_STRUCTURE_FRACTION = 0.1;
     // If the distance between two positions is lower than this threshold, they are considered to be close to each other.
-    private static final int POSITIONS_ARE_CLOSE_DISTANCE = 100;
+    private static final int POSITIONS_ARE_CLOSE_DISTANCE = 90;
     // The minimum number of near road junctions needed for a structure position to be valid.
     private static final int MIN_NEAR_ROAD_JUNCTIONS = 6;
     // The minimum space between two road junctions (regardless of whether they are connected or not).
@@ -79,6 +76,7 @@ public class ServerVillage extends Village {
     private final World world;
     private BlockPos pos;
     public final Random random;
+    public final RoadTypeProvider roadTypeProvider;
     public final StructureProvider structureProvider;
     private UpdateCyclePhase cyclePhase = UpdateCyclePhase.PAUSE;
     private RoadType roadType = null;
@@ -116,6 +114,7 @@ public class ServerVillage extends Village {
         world = villageHeart.world;
         pos = villageHeart.getBlockPos();
         random = new Random();
+        roadTypeProvider = new RoadTypeProvider(this);
         structureProvider = new StructureProvider(this);
 
         // Initialize persistent fields
@@ -355,6 +354,7 @@ public class ServerVillage extends Village {
         world = villageHeart.world;
         pos = villageHeart.getBlockPos();
         random = new Random();
+        roadTypeProvider = new RoadTypeProvider(this);
         structureProvider = new StructureProvider(this);
 
         // Read the village heart from the nbt tag.
@@ -620,7 +620,7 @@ public class ServerVillage extends Village {
                 }
 
                 // Update road type
-                roadType = getRoadType();
+                roadType = roadTypeProvider.getRoadType(DataRegistry.getRandomRoadTypeFor(villageType, villagerCount));
                 cyclePhase = UpdateCyclePhase.STRUCTURES;
             }
             case STRUCTURES -> {
@@ -703,28 +703,7 @@ public class ServerVillage extends Village {
      * @return The inflated villager count.
      */
     private static double getInflatedVillagerCount(double actualCount) {
-        return 2+1.1*actualCount;
-    }
-
-    /**
-     * Fetches the road type (only for major roads) depending on the current villager count.
-     * @return The current road type.
-     */
-    private RoadType getRoadType() {
-
-        if (villagerCount < 5) {
-            return RoadType.getSmallPath();
-        }
-        if (villagerCount < 15) {
-            return RoadType.getMediumPath(this);
-        }
-        if (villagerCount < 25) {
-            return RoadType.getBigPath(this);
-        }
-        if (villagerCount < 35) {
-            return RoadType.getSmallStreet(this);
-        }
-        return RoadType.getMediumStreet(this);
+        return 5+1.1*actualCount;
     }
 
     /**
@@ -879,7 +858,7 @@ public class ServerVillage extends Village {
                             }
 
                             // Create new junction.
-                            newJunction = new RoadJunction(nextElementID++, testPos, roadType);
+                            newJunction = new RoadJunction(nextElementID++, world, testPos, roadType);
 
                             // Does the new junction collide with any existing structures, edges or access paths?
                             for (Structure structure : structures) {
@@ -923,7 +902,7 @@ public class ServerVillage extends Village {
                                         continue;
                                     }
                                     // Create new road edge.
-                                    testEdge = new RoadEdge(nextElementID++, this, newJunction, junction, false, true, roadType);
+                                    testEdge = new RoadEdge(nextElementID++, world, this, newJunction, junction, true, roadType);
                                     // Is the edge's Y-slope okay?
                                     if (Math.abs(testEdge.getYSlope()) > ROAD_EDGE_MAX_Y_SLOPE) {
                                         continue;
@@ -957,8 +936,8 @@ public class ServerVillage extends Village {
                                     if (edgeCollides) {
                                         continue;
                                     }
-                                    for (RoadEdge accessPath : accessPaths) {
-                                        if (GeoFeatureCollision.featuresOverlap(testEdge, accessPath, true)) {
+                                    for (RoadEdge edge : newEdges) {
+                                        if (GeoFeatureCollision.edgesOverlap(testEdge, edge)) {
                                             edgeCollides = true;
                                             break;
                                         }
@@ -966,8 +945,8 @@ public class ServerVillage extends Village {
                                     if (edgeCollides) {
                                         continue;
                                     }
-                                    for (RoadEdge edge : newEdges) {
-                                        if (GeoFeatureCollision.edgesOverlap(testEdge, edge)) {
+                                    for (RoadEdge accessPath : accessPaths) {
+                                        if (GeoFeatureCollision.featuresOverlap(testEdge, accessPath, true)) {
                                             edgeCollides = true;
                                             break;
                                         }
@@ -1067,7 +1046,7 @@ public class ServerVillage extends Village {
                             // Test if enough road junctions are nearby.
                             junctionCount = 0;
                             for (RoadJunction junction : roadJunctions) {
-                                if (junction.pos.isWithinDistance(testPos, POSITIONS_ARE_CLOSE_DISTANCE)) {
+                                if (junction.pos.isWithinDistance(testPos, roadType.edgeMinMaxLengthMultiplier*POSITIONS_ARE_CLOSE_DISTANCE)) {
                                     junctionCount++;
                                     if (junctionCount >= MIN_NEAR_ROAD_JUNCTIONS) {
                                         break;
@@ -1200,9 +1179,13 @@ public class ServerVillage extends Village {
 
                         // Create test edge.
                         RoadEdge testEdge = new RoadEdge(
-                                nextElementID++, this, new RoadJunction(nextElementID++, accessPoint.pos, 0, 0.6),
+                                nextElementID++,
+                                world,
+                                this,
+                                new RoadJunction(nextElementID++, accessPoint.pos, 0, 0.6),
                                 new RoadJunction(nextElementID++, roadDot.pos, 0, 2.0*roadDot.edge.radius),
-                                accessPoint.radius, true, true, accessPoint.templateRoadColumn
+                                true,
+                                new AccessPathRoadType(accessPoint.radius, accessPoint.templateRoadColumn)
                         );
                         // Check edge's Y-slope.
                         if (Math.abs(testEdge.getYSlope()) < ROAD_EDGE_MAX_Y_SLOPE) {

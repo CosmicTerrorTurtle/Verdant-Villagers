@@ -21,7 +21,7 @@ public class RawSaplingLocationPoint extends RawPointOfInterest {
         while (reader.hasNext()) {
             switch (reader.nextName()) {
                 default -> throw new IOException();
-                case "pos" -> pos = JsonUtils.readIntArray(reader);
+                case "pos" -> pos = JsonUtils.readList(reader, JsonReader::nextInt);
                 case "saplings" -> saplings = reader.nextInt();
             }
         }

@@ -3,6 +3,7 @@ package io.github.cosmic_terror_turtle.verdant_villagers.data;
 import com.google.gson.stream.JsonReader;
 import io.github.cosmic_terror_turtle.verdant_villagers.VerdantVillagers;
 import io.github.cosmic_terror_turtle.verdant_villagers.data.village.*;
+import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.road.RoadTypeProvider;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure.StructureProvider;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
@@ -29,6 +30,7 @@ public class ModResources {
 
                 // Clear caches
                 DataRegistry.clearData();
+                RoadTypeProvider.resetProviders();
                 StructureProvider.resetProviders();
 
 
@@ -99,13 +101,25 @@ public class ModResources {
                     }
                 }
 
+                // Road types
+                for (Map.Entry<Identifier, Resource> result :
+                        manager.findResources("verdant_village"+File.separator+"road_types", id -> id.getPath().endsWith(".json")).entrySet()) {
+                    try (JsonReader reader = new JsonReader(new InputStreamReader(result.getValue().getInputStream()))) {
+
+                        RawRoadType.createNew(reader);
+
+                    } catch (Exception e) {
+                        VerdantVillagers.LOGGER.error("Error occurred while loading resource json " + result.getKey(), e);
+                    }
+                }
+
                 // Village names
                 for (Map.Entry<Identifier, Resource> result :
                         manager.findResources("verdant_village"+File.separator+"village_names", id -> id.getPath().endsWith(".json")).entrySet()
                 ) {
                     try (JsonReader reader = new JsonReader(new InputStreamReader(result.getValue().getInputStream()))) {
 
-                        DataRegistry.addVillageNames(JsonUtils.readStringArray(reader));
+                        DataRegistry.addVillageNames(JsonUtils.readList(reader, JsonReader::nextString));
 
                     } catch (Exception e) {
                         VerdantVillagers.LOGGER.error("Error occurred while loading resource json " + result.getKey(), e);

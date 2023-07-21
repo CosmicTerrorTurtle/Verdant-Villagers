@@ -11,6 +11,7 @@
     "csp": "collision_space",
     "air": "state:minecraft:air",
     "pth": "state:minecraft:dirt_path",
+    "dir": "state:minecraft:dirt",
     "sst": "state:minecraft:sandstone",
     "css": "state:minecraft:cut_sandstone",
     "csl": "state:minecraft:cut_sandstone_slab:type:bottom:waterlogged:false",
@@ -77,11 +78,6 @@
         "radius": 0.4,
         "template_column": {
           "base_level_index": 1,
-          "abbreviation_map": {
-            "air": "state:minecraft:air",
-            "pth": "state:minecraft:dirt_path",
-            "dir": "state:minecraft:dirt"
-          },
           "block_states": ["dir", "pth", "air", "air", "air"],
           "ints": [0, 0, 0, 0, 0]
         }

@@ -37,13 +37,18 @@ public class RawStructureTemplate {
         while (reader.hasNext()) {
             switch (reader.nextName()) {
                 default -> throw new IOException();
-                case "village_types" -> villageTypes = JsonUtils.readStringArray(reader);
-                case "available_for_villager_count" -> availableForVillagerCount = JsonUtils.readIntArray(reader);
-                case "data_per_structure_type" -> dataPerStructureType = JsonUtils.readNestedMap(reader);
-                case "abbreviation_map" -> abbreviationMap = JsonUtils.readMap(reader);
+                case "village_types" -> villageTypes = JsonUtils.readList(reader, JsonReader::nextString);
+                case "available_for_villager_count" -> availableForVillagerCount = JsonUtils.readList(reader, JsonReader::nextInt);
+                case "data_per_structure_type" -> dataPerStructureType = JsonUtils.readMap(reader, reader1 -> JsonUtils.readMap(reader1, JsonReader::nextString));
+                case "abbreviation_map" -> abbreviationMap = JsonUtils.readMap(reader, JsonReader::nextString);
                 case "block_state_cube" -> blockStateArray = readBlockStateArray(reader);
-                case "center" -> center = JsonUtils.readIntArray(reader);
-                case "points_of_interest" -> pointsOfInterest = readPointsOfInterest(reader);
+                case "center" -> center = JsonUtils.readList(reader, JsonReader::nextInt);
+                case "points_of_interest" -> {
+                    if (abbreviationMap == null) {
+                        throw new IOException("Abbreviation map must be defined before point of interest.");
+                    }
+                    pointsOfInterest = readPointsOfInterest(reader, abbreviationMap);
+                }
             }
         }
         reader.endObject();
@@ -93,11 +98,11 @@ public class RawStructureTemplate {
         return blockStateArray;
     }
 
-    private static ArrayList<RawPointOfInterest> readPointsOfInterest(JsonReader reader) throws IOException {
+    private static ArrayList<RawPointOfInterest> readPointsOfInterest(JsonReader reader, HashMap<String, String> abbreviationMap) throws IOException {
         ArrayList<RawPointOfInterest> array = new ArrayList<>();
         reader.beginArray();
         while (reader.hasNext()) {
-            array.add(RawPointOfInterest.createNew(reader));
+            array.add(RawPointOfInterest.createNew(reader, abbreviationMap));
         }
         reader.endArray();
         return array;

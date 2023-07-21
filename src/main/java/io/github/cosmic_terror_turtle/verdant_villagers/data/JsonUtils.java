@@ -8,47 +8,25 @@ import java.util.HashMap;
 
 public class JsonUtils {
 
-    public static ArrayList<Integer> readIntArray(JsonReader reader) throws IOException {
-        ArrayList<Integer> array = new ArrayList<>();
+    public static <T> ArrayList<T> readList(JsonReader reader, JsonProcessor<T> inner) throws IOException {
+        ArrayList<T> list = new ArrayList<>();
         reader.beginArray();
         while (reader.hasNext()) {
-            array.add(reader.nextInt());
+            list.add(inner.process(reader));
         }
         reader.endArray();
-        return array;
+        return list;
     }
-
-    public static ArrayList<String> readStringArray(JsonReader reader) throws IOException {
-        ArrayList<String> array = new ArrayList<>();
-        reader.beginArray();
-        while (reader.hasNext()) {
-            array.add(reader.nextString());
-        }
-        reader.endArray();
-        return array;
-    }
-
-    public static HashMap<String, String> readMap(JsonReader reader) throws IOException {
-        HashMap<String, String> map = new HashMap<>();
-
+    public static <T> HashMap<String, T> readMap(JsonReader reader, JsonProcessor<T> inner) throws IOException {
+        HashMap<String, T> map = new HashMap<>();
         reader.beginObject();
         while (reader.hasNext()) {
-            map.put(reader.nextName(), reader.nextString());
+            map.put(reader.nextName(), inner.process(reader));
         }
         reader.endObject();
-
         return map;
     }
-
-    public static HashMap<String, HashMap<String, String>> readNestedMap(JsonReader reader) throws IOException {
-        HashMap<String, HashMap<String, String>> map = new HashMap<>();
-
-        reader.beginObject();
-        while (reader.hasNext()) {
-            map.put(reader.nextName(), readMap(reader));
-        }
-        reader.endObject();
-
-        return map;
+    public interface JsonProcessor<T> {
+        T process(JsonReader reader) throws IOException;
     }
 }

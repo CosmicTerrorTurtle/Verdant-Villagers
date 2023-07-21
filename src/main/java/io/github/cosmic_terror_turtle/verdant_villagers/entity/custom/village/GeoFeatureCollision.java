@@ -89,7 +89,7 @@ public class GeoFeatureCollision {
                 // If the bits collide and their position is not close to one of the shared junctions, return true.
                 if (newBit.blockPos.equals(oldBit.blockPos)) {
                     if (posIsInSameHeightRadii(newBit.blockPos, sharedJunctions)) {
-                        toBeRemoved.add(oldBit);
+                        toBeRemoved.add(newBit);
                     } else {
                         return true;
                     }

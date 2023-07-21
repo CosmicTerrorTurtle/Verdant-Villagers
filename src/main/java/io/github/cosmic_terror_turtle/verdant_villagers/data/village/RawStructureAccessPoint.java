@@ -8,13 +8,14 @@ import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.st
 import net.minecraft.util.math.BlockPos;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 public class RawStructureAccessPoint extends RawPointOfInterest {
 
     public double radius;
     public RawVerticalBlockColumn rawTemplateRoadColumn;
 
-    public RawStructureAccessPoint(JsonReader reader) throws IOException {
+    public RawStructureAccessPoint(JsonReader reader, HashMap<String, String> abbreviationMap) throws IOException {
         pos = null;
         radius = 0;
         rawTemplateRoadColumn = null;
@@ -23,9 +24,9 @@ public class RawStructureAccessPoint extends RawPointOfInterest {
         while (reader.hasNext()) {
             switch (reader.nextName()) {
                 default -> throw new IOException();
-                case "pos" -> pos = JsonUtils.readIntArray(reader);
+                case "pos" -> pos = JsonUtils.readList(reader, JsonReader::nextInt);
                 case "radius" -> radius = reader.nextDouble();
-                case "template_column" -> rawTemplateRoadColumn = new RawVerticalBlockColumn(reader);
+                case "template_column" -> rawTemplateRoadColumn = new RawVerticalBlockColumn(reader, abbreviationMap);
             }
         }
         reader.endObject();

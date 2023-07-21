@@ -53,7 +53,7 @@ public class BlockPalette {
                 case "palette_id" -> id = new Identifier(reader.nextString());
                 case "add_to_defaults" -> addToDefaults = reader.nextBoolean();
                 case "indicator_blocks" -> indicatorBlocks = new ArrayList<>(
-                        JsonUtils.readStringArray(reader).stream().map(block_id -> Registries.BLOCK.get(new Identifier(block_id))).toList()
+                        JsonUtils.readList(reader, JsonReader::nextString).stream().map(block_id -> Registries.BLOCK.get(new Identifier(block_id))).toList()
                 );
                 case "replacement_rules" -> {
                     replacementRules = new ArrayList<>();

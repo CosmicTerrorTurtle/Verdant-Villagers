@@ -24,10 +24,10 @@ public class VillageTypeData {
         while (reader.hasNext()) {
             switch (reader.nextName()) {
                 default -> throw new IOException();
-                case "dimensions" -> dimensions = JsonUtils.readStringArray(reader);
-                case "biomes" -> biomes = JsonUtils.readStringArray(reader);
+                case "dimensions" -> dimensions = JsonUtils.readList(reader, JsonReader::nextString);
+                case "biomes" -> biomes = JsonUtils.readList(reader, JsonReader::nextString);
                 case "terrain_category" -> terrainCategory = reader.nextString();
-                case "structure_types_to_build" -> structureTypesToBuild = JsonUtils.readStringArray(reader);
+                case "structure_types_to_build" -> structureTypesToBuild = JsonUtils.readList(reader, JsonReader::nextString);
             }
         }
         reader.endObject();

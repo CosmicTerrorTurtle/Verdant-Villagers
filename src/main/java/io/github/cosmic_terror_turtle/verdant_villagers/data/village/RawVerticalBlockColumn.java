@@ -16,9 +16,8 @@ public class RawVerticalBlockColumn {
     public int[] ints;
     public int baseLevelIndex;
 
-    public RawVerticalBlockColumn(JsonReader reader) throws IOException {
+    public RawVerticalBlockColumn(JsonReader reader, HashMap<String, String> abbreviationMap) throws IOException {
         baseLevelIndex = 0;
-        HashMap<String, String> abbreviationMap = null;
         ArrayList<String> blockStateList = null;
         ArrayList<Integer> intsArray = null;
 
@@ -27,14 +26,13 @@ public class RawVerticalBlockColumn {
             switch (reader.nextName()) {
                 default -> throw new IOException();
                 case "base_level_index" -> baseLevelIndex = reader.nextInt();
-                case "abbreviation_map" -> abbreviationMap = JsonUtils.readMap(reader);
-                case "block_states" -> blockStateList = JsonUtils.readStringArray(reader);
-                case "ints" -> intsArray = JsonUtils.readIntArray(reader);
+                case "block_states" -> blockStateList = JsonUtils.readList(reader, JsonReader::nextString);
+                case "ints" -> intsArray = JsonUtils.readList(reader, JsonReader::nextInt);
             }
         }
         reader.endObject();
 
-        if (abbreviationMap == null || blockStateList == null || intsArray == null || blockStateList.size() != intsArray.size()) {
+        if (blockStateList == null || intsArray == null || blockStateList.size() != intsArray.size()) {
             throw new IOException();
         }
 

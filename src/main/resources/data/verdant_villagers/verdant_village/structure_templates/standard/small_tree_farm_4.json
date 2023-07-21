@@ -11,6 +11,7 @@
     "air": "state:minecraft:air",
     "gra": "palette:0:verdant_villagers:wood___minecraft:grass_block",
     "pth": "state:minecraft:dirt_path",
+    "dir": "state:minecraft:dirt",
     "tor": "state:minecraft:torch",
     "sap": "palette:0:verdant_villagers:wood___minecraft:oak_sapling",
     "fcn": "palette:0:verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:true:south:false:west:false:east:false",
@@ -43,11 +44,6 @@
         "radius": 0.8,
         "template_column": {
           "base_level_index": 1,
-          "abbreviation_map": {
-            "air": "state:minecraft:air",
-            "pth": "state:minecraft:dirt_path",
-            "dir": "state:minecraft:dirt"
-          },
           "block_states": ["dir", "pth", "air", "air", "air", "air"],
           "ints": [0, 0, 0, 0, 0, 0]
         }

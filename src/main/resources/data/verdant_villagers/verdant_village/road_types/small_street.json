@@ -1,0 +1,160 @@
+{
+  "abbreviation_map": {
+    "air": "state:minecraft:air",
+    "bf0": "palette:0:verdant_villagers:stone___minecraft:stone_bricks",
+    "bf1": "palette:1:verdant_villagers:stone___minecraft:stone_bricks",
+    "bwa": "palette:0:verdant_villagers:stone___minecraft:stone_brick_wall",
+    "tor": "state:minecraft:torch"
+  },
+  "available_for_villager_count": [25, 35],
+  "edge_min_max_length_multiplier": 1.3,
+  "edge_block_column_radii": {
+    "top": {
+      "air":  [
+        3.0
+      ],
+      "terrain": [],
+      "fluid": []
+    },
+    "bottom": {
+      "air": [],
+      "air_above_terrain": [],
+      "terrain": [],
+      "fluid": []
+    }
+  },
+  "edge_template_block_columns": {
+    "top": {
+      "air": [
+        {"base_level_index": 1, "block_states": ["bf0","bf0","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0]}
+      ],
+      "terrain": [],
+      "fluid": []
+    },
+    "bottom": {
+      "air": [],
+      "air_above_terrain": [],
+      "terrain": [],
+      "fluid": []
+    }
+  },
+  "edge_special_column_space": 8.0,
+  "edge_special_block_column_radii": {
+    "top": {
+      "air": [
+        0.05
+      ],
+      "terrain": [],
+      "fluid": []
+    },
+    "bottom": {
+      "air": [],
+      "air_above_terrain": [],
+      "terrain": [],
+      "fluid": []
+    }
+  },
+  "edge_special_template_block_columns": {
+    "top": {
+      "air": [
+        {"base_level_index": 1, "block_states": ["bf0","bf1","bf1","bf1","bwa","tor","air","air"], "ints": [0,0,0,0,0,0,0,0]}
+      ],
+      "terrain": [],
+      "fluid": []
+    },
+    "bottom": {
+      "air": [],
+      "air_above_terrain": [],
+      "terrain": [],
+      "fluid": []
+    }
+  },
+  "junction_block_column_radii": {
+    "top": {
+      "air": [
+        8.5
+      ],
+      "terrain": [],
+      "fluid": []
+    },
+    "bottom": {
+      "air": [],
+      "air_above_terrain": [],
+      "terrain": [],
+      "fluid": []
+    }
+  },
+  "junction_template_block_columns": {
+    "top": {
+      "air": [
+        {"base_level_index": 1, "block_states": ["bf0","bf0","air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0,0,0]}
+      ],
+      "terrain": [],
+      "fluid": []
+    },
+    "bottom": {
+      "air": [],
+      "air_above_terrain": [],
+      "terrain": [],
+      "fluid": []
+    }
+  },
+  "junction_special_block_column_radii": {
+    "top": {
+      "air": {
+        "lamp_post": [
+          0.0
+        ]
+      },
+      "terrain": {
+
+      },
+      "fluid": {
+
+      }
+    },
+    "bottom": {
+      "air": {
+
+      },
+      "air_above_terrain": {
+
+      },
+      "terrain": {
+
+      },
+      "fluid": {
+
+      }
+    }
+  },
+  "junction_special_template_block_columns": {
+    "top": {
+      "air": {
+        "lamp_post": [
+          {"base_level_index": 1, "block_states": ["bf0","bf1","bf1","bf1","bwa","tor","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0,0,0]}
+        ]
+      },
+      "terrain": {
+
+      },
+      "fluid": {
+
+      }
+    },
+    "bottom": {
+      "air": {
+
+      },
+      "air_above_terrain": {
+
+      },
+      "terrain": {
+
+      },
+      "fluid": {
+
+      }
+    }
+  }
+}
