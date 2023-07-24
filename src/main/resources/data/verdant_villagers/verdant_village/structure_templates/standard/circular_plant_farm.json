@@ -1,5 +1,6 @@
 {
   "village_types": ["default", "desert", "coast", "desert_coast", "under_ground", "sky"],
+  "available_for_block_palettes": {},
   "available_for_villager_count": [0, 1000],
   "data_per_structure_type": {
     "plant_farm": {

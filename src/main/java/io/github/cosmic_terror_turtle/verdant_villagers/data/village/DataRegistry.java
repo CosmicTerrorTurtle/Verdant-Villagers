@@ -184,14 +184,32 @@ public class DataRegistry {
      * @return A random template that matches the village and structure types, or null if no template matching the constraints
      * was found. If possible, a template will be selected that is available for the given villager count.
      */
-    public static RawStructureTemplate getRandomTemplateFor(String villageType, String structureType, int villagerCount) {
+    public static RawStructureTemplate getRandomTemplateFor(
+            String villageType, String structureType,
+            int villagerCount, HashMap<String, ArrayList<BlockPalette>> blockPalettes) {
         ArrayList<RawStructureTemplate> candidates = new ArrayList<>();
         ArrayList<RawStructureTemplate> bestCandidates = new ArrayList<>();
+        boolean fits;
         for (RawStructureTemplate template : templatesPerVillageType.get(villageType)) {
             if (template.dataPerStructureType.containsKey(structureType)) {
                 candidates.add(template);
                 if (template.availableForVillagerCount.get(0)<=villagerCount && villagerCount<= template.availableForVillagerCount.get(1)) {
-                    bestCandidates.add(template);
+                    fits = true;
+                    for (Map.Entry<String, ArrayList<String>> entry : template.availableForBlockPalettes.entrySet()) {
+                        fits = false;
+                        for (BlockPalette palette : blockPalettes.get(entry.getKey())) {
+                            if (entry.getValue().contains(palette.id.toString())) {
+                                fits = true;
+                                break;
+                            }
+                        }
+                        if (!fits) {
+                            break;
+                        }
+                    }
+                    if (fits) {
+                        bestCandidates.add(template);
+                    }
                 }
             }
         }

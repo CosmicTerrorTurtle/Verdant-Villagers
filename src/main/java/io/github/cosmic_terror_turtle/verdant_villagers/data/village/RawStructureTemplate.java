@@ -12,6 +12,7 @@ public class RawStructureTemplate {
     public static final String NULL_KEY = "null";
 
 
+    public HashMap<String, ArrayList<String>> availableForBlockPalettes;
     public ArrayList<Integer> availableForVillagerCount;
     public HashMap<String, HashMap<String, String>> dataPerStructureType;
     public String[][][] blockStateCube;
@@ -26,6 +27,7 @@ public class RawStructureTemplate {
     public static void createNew(JsonReader reader) throws IOException {
         ArrayList<String> villageTypes = null;
 
+        HashMap<String, ArrayList<String>> availableForBlockPalettes = null;
         ArrayList<Integer> availableForVillagerCount = null;
         HashMap<String, HashMap<String, String>> dataPerStructureType = null;
         HashMap<String, String> abbreviationMap = null;
@@ -38,10 +40,11 @@ public class RawStructureTemplate {
             switch (reader.nextName()) {
                 default -> throw new IOException();
                 case "village_types" -> villageTypes = JsonUtils.readList(reader, JsonReader::nextString);
+                case "available_for_block_palettes" -> availableForBlockPalettes = JsonUtils.readMap(reader, reader1 -> JsonUtils.readList(reader1, JsonReader::nextString));
                 case "available_for_villager_count" -> availableForVillagerCount = JsonUtils.readList(reader, JsonReader::nextInt);
                 case "data_per_structure_type" -> dataPerStructureType = JsonUtils.readMap(reader, reader1 -> JsonUtils.readMap(reader1, JsonReader::nextString));
                 case "abbreviation_map" -> abbreviationMap = JsonUtils.readMap(reader, JsonReader::nextString);
-                case "block_state_cube" -> blockStateArray = readBlockStateArray(reader);
+                case "block_state_cube" -> blockStateArray = JsonUtils.readList(reader, reader1 -> JsonUtils.readList(reader1, reader2 -> JsonUtils.readList(reader2, JsonReader::nextString)));
                 case "center" -> center = JsonUtils.readList(reader, JsonReader::nextInt);
                 case "points_of_interest" -> {
                     if (abbreviationMap == null) {
@@ -53,49 +56,29 @@ public class RawStructureTemplate {
         }
         reader.endObject();
 
-        if (villageTypes == null || availableForVillagerCount==null || availableForVillagerCount.size()!=2 || dataPerStructureType == null
-                || abbreviationMap == null || blockStateArray == null || center == null || center.size()!=3 || pointsOfInterest==null) {
+        if (villageTypes==null || availableForBlockPalettes==null || availableForVillagerCount==null || availableForVillagerCount.size()!=2 || dataPerStructureType==null
+                || abbreviationMap==null || blockStateArray==null || center==null || center.size()!=3 || pointsOfInterest==null) {
             throw new IOException();
         }
 
         DataRegistry.addTemplate(
-                new RawStructureTemplate(availableForVillagerCount, dataPerStructureType, getCube(blockStateArray, abbreviationMap), center, pointsOfInterest),
+                new RawStructureTemplate(availableForBlockPalettes, availableForVillagerCount, dataPerStructureType, getCube(blockStateArray, abbreviationMap), center, pointsOfInterest),
                 villageTypes
         );
     }
 
-    public RawStructureTemplate(ArrayList<Integer> availableForVillagerCount, HashMap<String, HashMap<String, String>> dataPerStructureType, String[][][] blockStateCube,
-                                ArrayList<Integer> center, ArrayList<RawPointOfInterest> pointsOfInterest) {
+    public RawStructureTemplate(HashMap<String, ArrayList<String>> availableForBlockPalettes,
+                                ArrayList<Integer> availableForVillagerCount,
+                                HashMap<String, HashMap<String, String>> dataPerStructureType,
+                                String[][][] blockStateCube,
+                                ArrayList<Integer> center,
+                                ArrayList<RawPointOfInterest> pointsOfInterest) {
+        this.availableForBlockPalettes = availableForBlockPalettes;
         this.availableForVillagerCount = availableForVillagerCount;
         this.dataPerStructureType = dataPerStructureType;
         this.blockStateCube = blockStateCube;
         this.center = center;
         this.pointsOfInterest = pointsOfInterest;
-    }
-
-    private static ArrayList<ArrayList<ArrayList<String>>> readBlockStateArray(JsonReader reader) throws IOException {
-        int i, j;
-        ArrayList<ArrayList<ArrayList<String>>> blockStateArray = new ArrayList<>();
-        reader.beginArray();
-        i = 0;
-        while (reader.hasNext()) {
-            blockStateArray.add(new ArrayList<>());
-            reader.beginArray();
-            j = 0;
-            while (reader.hasNext()) {
-                blockStateArray.get(i).add(new ArrayList<>());
-                reader.beginArray();
-                while (reader.hasNext()) {
-                    blockStateArray.get(i).get(j).add(reader.nextString());
-                }
-                reader.endArray();
-                j++;
-            }
-            reader.endArray();
-            i++;
-        }
-        reader.endArray();
-        return blockStateArray;
     }
 
     private static ArrayList<RawPointOfInterest> readPointsOfInterest(JsonReader reader, HashMap<String, String> abbreviationMap) throws IOException {

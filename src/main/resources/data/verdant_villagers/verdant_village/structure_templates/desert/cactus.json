@@ -1,5 +1,6 @@
 {
   "village_types": ["desert", "desert_coast"],
+  "available_for_block_palettes": {},
   "available_for_villager_count": [0, 1000],
   "data_per_structure_type": {
     "decoration": {
@@ -9,9 +10,9 @@
   "abbreviation_map": {
     "nul": "null",
     "csp": "collision_space",
-    "sst": "minecraft:sandstone",
-    "san": "minecraft:sand",
-    "cac": "minecraft:cactus"
+    "sst": "state:minecraft:sandstone",
+    "san": "state:minecraft:sand",
+    "cac": "state:minecraft:cactus"
   },
   "block_state_cube": [
     [["nul","nul","nul"],["nul","nul","nul"],["air","air","air"],["air","air","air"],["air","air","air"],["air","air","air"]],

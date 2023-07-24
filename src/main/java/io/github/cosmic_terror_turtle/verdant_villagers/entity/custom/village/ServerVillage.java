@@ -42,33 +42,60 @@ public class ServerVillage extends Village {
     public enum SurfaceFluidMode {NONE, AS_GROUND, AS_AIR}
 
 
-    // If true, the village will immediately place a feature once it is planned.
+    /**
+     * If true, the village will immediately place a feature once it is planned.
+     */
     public static boolean PLACE_BLOCKS_DIRECTLY = true;
-    // If true, the village will speed up its planning process.
+    /**
+     * If true, the village will speed up its planning process.
+     */
     public static boolean PLAN_FAST = true;
 
-    // The side length of an L*L*L volume of blocks called mega block.
+    /**
+     * The side length of an L*L*L volume of blocks called mega block.
+     */
     public static final int MEGA_BLOCK_LENGTH = 2;
 
-    // Range of random initial values for searchDistanceRoad (value = avg*(1+offset); offset is in (-fraction, fraction)).
+    /**
+     * Range of random initial values for {@link ServerVillage#searchDistanceRoad} (see
+     * {@link ServerVillage#SEARCH_DISTANCE_ROAD_FRACTION} and {@link MathUtils#getRand(double, double)}).
+     */
     private static final int SEARCH_DISTANCE_ROAD_AVG = 30;
     private static final double SEARCH_DISTANCE_ROAD_FRACTION = 0.1;
-    // Range of random initial values for searchDistanceStructure.
+    /**
+     * Range of random initial values for {@link ServerVillage#searchDistanceStructure} (see
+     *      * {@link ServerVillage#SEARCH_DISTANCE_STRUCTURE_FRACTION} and {@link MathUtils#getRand(double, double)}).
+     */
     private static final int SEARCH_DISTANCE_STRUCTURE_AVG = 13;
     private static final double SEARCH_DISTANCE_STRUCTURE_FRACTION = 0.1;
-    // If the distance between two positions is lower than this threshold, they are considered to be close to each other.
-    private static final int POSITIONS_ARE_CLOSE_DISTANCE = 90;
-    // The minimum number of near road junctions needed for a structure position to be valid.
+    /**
+     * If the distance between two positions is lower than this threshold, they are considered to be close to each other.
+     */
+    private static final int POSITIONS_ARE_CLOSE_DISTANCE = 85;
+    /**
+     * The minimum number of near road junctions needed for a structure position to be valid.
+     */
     private static final int MIN_NEAR_ROAD_JUNCTIONS = 6;
-    // The minimum space between two road junctions (regardless of whether they are connected or not).
+    /**
+     * The basic minimum space between two road junctions (regardless of whether they are connected or not).
+     */
     private static final int ROAD_JUNCTION_BASE_SPACE = 44;
-    // The minimum and maximum length that a road edge is allowed to have.
+    /**
+     * The basic minimum length that a road edge is allowed to have.
+     */
     private static final int ROAD_EDGE_BASE_MIN_LENGTH = ROAD_JUNCTION_BASE_SPACE;
+    /**
+     * The basic maximum length that a road edge is allowed to have.
+     */
     private static final int ROAD_EDGE_BASE_MAX_LENGTH = 66;
-    // The maximum slope angle that a road edge can have.
+    /**
+     * The maximum slope angle that a road edge can have.
+     */
     private static final double ROAD_EDGE_MAX_Y_SLOPE = 0.45;
-    // The maximum length that an access point path can have.
-    private static final int ACCESS_POINT_PATH_MAX_LENGTH = 24;
+    /**
+     * The basic maximum length that an access path can have.
+     */
+    private static final int ACCESS_PATH_BASE_MAX_LENGTH = 24;
 
 
     // Fields deleted when the block gets unloaded.
@@ -123,8 +150,8 @@ public class ServerVillage extends Village {
         nextElementID = 0;
         name = DataRegistry.getRandomVillageName();
         villagerCount = 0;
-        searchDistanceRoad = (int) getRand(SEARCH_DISTANCE_ROAD_AVG, SEARCH_DISTANCE_ROAD_FRACTION);
-        searchDistanceStructure = (int) getRand(SEARCH_DISTANCE_STRUCTURE_AVG, SEARCH_DISTANCE_STRUCTURE_FRACTION);
+        searchDistanceRoad = (int) MathUtils.getRand(SEARCH_DISTANCE_ROAD_AVG, SEARCH_DISTANCE_ROAD_FRACTION);
+        searchDistanceStructure = (int) MathUtils.getRand(SEARCH_DISTANCE_STRUCTURE_AVG, SEARCH_DISTANCE_STRUCTURE_FRACTION);
 
         // Analyze terrain
         int xzTerrainRadius = 64;
@@ -435,16 +462,6 @@ public class ServerVillage extends Village {
         villageHeart.markForUpdate();
     }
 
-    /**
-     * Determines a random value that is uniformly distributed (inclusive) between {@code avg}*(1-{@code fraction}; 1+{@code fraction}).
-     * @param avg The average value.
-     * @param fraction The fraction that determines the range.
-     * @return The value.
-     */
-    private double getRand(double avg, double fraction) {
-        return avg * (1 + random.nextDouble(-fraction, fraction));
-    }
-
     public String getVillageType() {
         return villageType;
     }
@@ -635,10 +652,10 @@ public class ServerVillage extends Village {
                     default -> {}
                     case "count_villagers" -> {
 
-                        int villagersAccountedFor = 0;
+                        float villagersAccountedFor = 0;
                         for (Structure structure : structures) {
                             if (structure.dataPerStructureType.containsKey(selectedStructureType)) {
-                                villagersAccountedFor += Integer.parseInt(structure.dataPerStructureType.get(selectedStructureType).get("villagers_accounted_for"));
+                                villagersAccountedFor += Float.parseFloat(structure.dataPerStructureType.get(selectedStructureType).get("villagers_accounted_for"));
                             }
                         }
                         if (villagersAccountedFor < getInflatedVillagerCount(villagerCount)) {
@@ -1011,7 +1028,7 @@ public class ServerVillage extends Village {
     private boolean planSingleStructure(String structureType) {
 
         // Randomly select the structure template for this attempt.
-        RawStructureTemplate rawTemplate = DataRegistry.getRandomTemplateFor(villageType, structureType, villagerCount);
+        RawStructureTemplate rawTemplate = DataRegistry.getRandomTemplateFor(villageType, structureType, villagerCount, blockPalettes);
         if (rawTemplate == null) {
             return false;
         }
@@ -1159,7 +1176,7 @@ public class ServerVillage extends Village {
                 nearDots = new ArrayList<>();
                 for (RoadEdge edge : roadEdges) {
                     for (RoadDot dot : edge.roadDots) {
-                        if (dot.pos.isWithinDistance(accessPoint.pos, ACCESS_POINT_PATH_MAX_LENGTH*roadType.edgeMinMaxLengthMultiplier)
+                        if (dot.pos.isWithinDistance(accessPoint.pos, ACCESS_PATH_BASE_MAX_LENGTH *roadType.edgeMinMaxLengthMultiplier)
                                 && 1 < MathHelper.square(dot.pos.getX()-accessPoint.pos.getX()) + MathHelper.square(dot.pos.getZ()-accessPoint.pos.getZ())) {
                             nearDots.add(dot);
                         }
