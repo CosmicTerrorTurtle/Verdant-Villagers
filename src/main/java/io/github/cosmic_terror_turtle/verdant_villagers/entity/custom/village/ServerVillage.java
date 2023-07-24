@@ -462,18 +462,14 @@ public class ServerVillage extends Village {
         villageHeart.markForUpdate();
     }
 
-    public String getVillageType() {
-        return villageType;
-    }
-
     /**
      * Determines the number of block palettes this village should have depending on the current villager count.
      * @return The number of block palettes.
      */
     private int getUpdatedBlockPaletteLevel() {
-        if (villagerCount < 15) {
+        if (villagerCount < 10) {
             return 0;
-        } else if (villagerCount < 30) {
+        } else if (villagerCount < 20) {
             return 1;
         }
         return 2;
@@ -627,7 +623,7 @@ public class ServerVillage extends Village {
 
                 // Spawn villagers if necessary
                 if (villagerCount < 5 && random.nextDouble() < 0.1) {
-                    // try to spawn villager
+                    //<try to spawn villager>
                 }
 
                 // Add new block palettes if necessary.

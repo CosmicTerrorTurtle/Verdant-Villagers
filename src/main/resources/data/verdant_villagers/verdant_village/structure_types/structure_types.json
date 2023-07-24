@@ -15,11 +15,11 @@
     "search_distance_multiplier": 1,
     "structure_check_method": "count_villagers"
   },
-  "plant_farm": {
+  "crop_field": {
     "search_distance_multiplier": 1,
     "structure_check_method": "count_villagers"
   },
-  "nether_plant_farm": {
+  "nether_crop_field": {
     "search_distance_multiplier": 1,
     "structure_check_method": "count_villagers"
   },

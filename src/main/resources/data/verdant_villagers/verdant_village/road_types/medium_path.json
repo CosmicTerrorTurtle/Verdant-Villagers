@@ -7,7 +7,7 @@
     "fnc": "palette:0:verdant_villagers:wood___minecraft:oak_fence",
     "tor": "state:minecraft:torch"
   },
-  "available_for_villager_count": [5, 15],
+  "available_for_villager_count": [6, 15],
   "edge_min_max_length_multiplier": 1.1,
   "edge_block_column_radii": {
     "top": {
@@ -27,7 +27,7 @@
   "edge_template_block_columns": {
     "top": {
       "air": [
-        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0]}
+        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0]}
       ],
       "terrain": [],
       "fluid": []
@@ -58,7 +58,7 @@
   "edge_special_template_block_columns": {
     "top": {
       "air": [
-        {"base_level_index": 1, "block_states": ["dir","wlo","wlo","wlo","fnc","tor","air"], "ints": [0,0,0,0,0,0,0]}
+        {"base_level_index": 1, "block_states": ["dir","wlo","wlo","wlo","fnc","tor","air","air"], "ints": [0,0,0,0,0,0,0,0]}
       ],
       "terrain": [],
       "fluid": []
@@ -88,7 +88,7 @@
   "junction_template_block_columns": {
     "top": {
       "air": [
-        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0,0]}
+        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0,0,0]}
       ],
       "terrain": [],
       "fluid": []
@@ -133,7 +133,7 @@
     "top": {
       "air": {
         "lamp_post": [
-          {"base_level_index": 1, "block_states": ["dir","wlo","wlo","wlo","fnc","tor","air","air","air"], "ints": [0,0,0,0,0,0,0,0,0]}
+          {"base_level_index": 1, "block_states": ["dir","wlo","wlo","wlo","fnc","tor","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0,0,0]}
         ]
       },
       "terrain": {

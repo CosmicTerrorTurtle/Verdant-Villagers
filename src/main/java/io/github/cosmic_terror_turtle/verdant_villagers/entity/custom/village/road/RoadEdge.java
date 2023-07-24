@@ -191,6 +191,7 @@ public class RoadEdge extends GeoFeature {
         BlockPos anchorPos;
         VerticalBlockColumn columnTop;
         VerticalBlockColumn columnBottom;
+        boolean replaceOldColumns;
         double spaceAfterLastSpecialColumn = 0.0;
         double spaceAfterLastDot = 0.0;
         double spaceAfterLastTerrainCheck = 0.0;
@@ -269,10 +270,15 @@ public class RoadEdge extends GeoFeature {
                 );
                 if (roadType != null) {
                     // Normal columns
+                    replaceOldColumns = false;
                     columnTop = null;
                     for (int i=0; i<columnRadiiTop.size(); i++) {
                         if (Math.abs(offset) <= columnRadiiTop.get(i)) {
                             columnTop = columnsTop.get(i);
+                            // If either the top or bottom column are the innermost/outermost column, replace old columns.
+                            if (i==0 || i==columnRadiiTop.size()-1) {
+                                replaceOldColumns = true;
+                            }
                             break;
                         }
                     }
@@ -280,16 +286,23 @@ public class RoadEdge extends GeoFeature {
                     for (int i=0; i<columnRadiiBottom.size(); i++) {
                         if (Math.abs(offset) <= columnRadiiBottom.get(i)) {
                             columnBottom = columnsBottom.get(i);
+                            if (i==0 || i==columnRadiiBottom.size()-1) {
+                                replaceOldColumns = true;
+                            }
                             break;
                         }
                     }
-                    addToColumns(normalColumns, VerticalBlockColumn.merge(columnTop, columnBottom).copyWith(anchorPos), false);
-                    // Special columns
-                    if (spaceAfterLastSpecialColumn == 0) {
+                    addToColumns(normalColumns, VerticalBlockColumn.merge(columnTop, columnBottom).copyWith(anchorPos), replaceOldColumns);
+                    // Special columns (only place when outside the junction's same height radii)
+                    if (spaceAfterLastSpecialColumn==0 && from.sameHeightRadius<a && a<d-to.sameHeightRadius) {
+                        replaceOldColumns = false;
                         columnTop = null;
                         for (int i=0; i<specialColumnRadiiTop.size(); i++) {
                             if (Math.abs(offset) <= specialColumnRadiiTop.get(i)) {
                                 columnTop = specialColumnsTop.get(i);
+                                if (i==0 || i==specialColumnRadiiTop.size()-1) {
+                                    replaceOldColumns = true;
+                                }
                                 break;
                             }
                         }
@@ -297,13 +310,16 @@ public class RoadEdge extends GeoFeature {
                         for (int i=0; i<specialColumnRadiiBottom.size(); i++) {
                             if (Math.abs(offset) <= specialColumnRadiiBottom.get(i)) {
                                 columnBottom = specialColumnsBottom.get(i);
+                                if (i==0 || i==specialColumnRadiiBottom.size()-1) {
+                                    replaceOldColumns = true;
+                                }
                                 break;
                             }
                         }
                         // Adding special columns is optional.
                         // This if statement avoids the default merge column being placed.
                         if (columnTop != null || columnBottom != null) {
-                            addToColumns(specialColumns, VerticalBlockColumn.merge(columnTop, columnBottom).copyWith(anchorPos), false);
+                            addToColumns(specialColumns, VerticalBlockColumn.merge(columnTop, columnBottom).copyWith(anchorPos), replaceOldColumns);
                         }
                     }
                 } else if (accessPathRoadType != null) {

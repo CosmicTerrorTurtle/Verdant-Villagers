@@ -7,6 +7,7 @@ import io.github.cosmic_terror_turtle.verdant_villagers.data.village.RawVertical
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.ServerVillage;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.VerticalBlockColumn;
 import io.github.cosmic_terror_turtle.verdant_villagers.util.MathUtils;
+import io.github.cosmic_terror_turtle.verdant_villagers.util.ModTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.state.property.Properties;
@@ -134,18 +135,57 @@ public class RoadType {
      * Determines the terrain type used for road junctions and edges at the given position.
      * @param top If true, the terrain above {@code pos} will be analyzed, otherwise the terrain below.
      * @param world The world of {@code pos}.
-     * @param pos The position from which the terrain scan should start. This is usually the height of the road's upmost
+     * @param startPos The position from which the terrain scan should start. This is usually the height of the road's upmost
      *            surface blocks.
      * @return A String representing the terrain type that can be used to access the template columns and radii of
      * {@link RoadType}.
      */
-    public static String getTerrainType(boolean top, World world, BlockPos pos) {
+    public static String getTerrainType(boolean top, World world, BlockPos startPos) {
+        int terrain = 0;
+        int fluid = 0;
+        int total = 8;
+        BlockPos pos;
         if (top) {
             // Top
-            return "air";// "terrain" "fluid"
+            for (int i=1; i<=total; i++) {
+                pos = startPos.up(i);
+                if (world.getBlockState(pos).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)) {
+                    terrain++;
+                } else if (!world.getFluidState(pos).isEmpty()) {
+                    fluid++;
+                }
+            }
+            if (fluid > 0.2*total) {
+                return "fluid";
+            } else if (terrain > 0.4*total) {
+                return "terrain";
+            }
+            return "air";
         } else {
             // Bottom
-            return "terrain";// "air_above_terrain" "air" "fluid"
+            for (int i=0; i<total; i++) {
+                pos = startPos.down(i);
+                if (world.getBlockState(pos).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)) {
+                    terrain++;
+                }
+            }
+            // Return fluid if the first two blocks are fluid.
+            if (!world.getFluidState(startPos).isEmpty() && !world.getFluidState(startPos.down()).isEmpty()) {
+                return "fluid";
+            }
+            // Return air when no terrain was found.
+            if (terrain == 0) {
+                return "air";
+            }
+            // Terrain was found.
+            // If the first three blocks are not terrain, it is air above terrain.
+            if (!world.getBlockState(startPos).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)
+                    && !world.getBlockState(startPos.down()).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)
+                    && !world.getBlockState(startPos.down(2)).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)) {
+                return "air_above_terrain";
+            }
+            // It's probably terrain.
+            return "terrain";
         }
     }
 }

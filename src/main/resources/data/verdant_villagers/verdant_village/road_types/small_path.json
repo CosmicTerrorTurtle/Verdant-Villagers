@@ -4,7 +4,9 @@
     "pth": "state:minecraft:dirt_path",
     "dir": "state:minecraft:dirt",
     "wlo": "palette:0:verdant_villagers:wood___minecraft:oak_log",
+    "wpl": "palette:0:verdant_villagers:wood___minecraft:oak_planks",
     "fnc": "palette:0:verdant_villagers:wood___minecraft:oak_fence",
+    "gla": "state:minecraft:glass",
     "tor": "state:minecraft:torch"
   },
   "available_for_villager_count": [0, 5],
@@ -14,8 +16,14 @@
       "air":  [
         2.0
       ],
-      "terrain": [],
-      "fluid": []
+      "terrain": [
+        2.0
+      ],
+      "fluid": [
+        0.0,
+        1.9,
+        2.0
+      ]
     },
     "bottom": {
       "air": [],
@@ -27,10 +35,16 @@
   "edge_template_block_columns": {
     "top": {
       "air": [
-        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0]}
+        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0]}
       ],
-      "terrain": [],
-      "fluid": []
+      "terrain": [
+        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0]}
+      ],
+      "fluid": [
+        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air","gla"], "ints": [0,0,0,0,0,0,0,0]},
+        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air","gla"], "ints": [0,0,0,0,0,0,0,0]},
+        {"base_level_index": 1, "block_states": ["dir","gla","gla","gla","gla","gla","gla"], "ints": [0,1,1,1,1,1,1]}
+      ]
     },
     "bottom": {
       "air": [],
@@ -39,12 +53,19 @@
       "fluid": []
     }
   },
-  "edge_special_column_space": 1000000.0,
+  "edge_special_column_space": 6.0,
   "edge_special_block_column_radii": {
     "top": {
       "air": [],
-      "terrain": [],
-      "fluid": []
+      "terrain": [
+        1.4,
+        2.0
+      ],
+      "fluid": [
+        0.0,
+        1.9,
+        2.0
+      ]
     },
     "bottom": {
       "air": [],
@@ -56,8 +77,15 @@
   "edge_special_template_block_columns": {
     "top": {
       "air": [],
-      "terrain": [],
-      "fluid": []
+      "terrain": [
+        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air","wpl"], "ints": [0,0,0,0,0,0,0,0]},
+        {"base_level_index": 1, "block_states": ["wlo","wlo","wlo","wlo","wlo","wlo","wlo","wlo"], "ints": [0,0,0,0,0,0,0,0]}
+      ],
+      "fluid": [
+        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air","wpl"], "ints": [0,0,0,0,0,0,0,0]},
+        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air","wpl"], "ints": [0,0,0,0,0,0,0,0]},
+        {"base_level_index": 1, "block_states": ["wlo","wlo","wlo","wlo","wlo","wlo","wlo"], "ints": [0,0,0,0,0,0,0]}
+      ]
     },
     "bottom": {
       "air": [],
@@ -71,8 +99,13 @@
       "air": [
         6.0
       ],
-      "terrain": [],
-      "fluid": []
+      "terrain": [
+        6.0
+      ],
+      "fluid": [
+        5.0,
+        6.0
+      ]
     },
     "bottom": {
       "air": [],
@@ -84,10 +117,15 @@
   "junction_template_block_columns": {
     "top": {
       "air": [
-        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0,0]}
+        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0,0,0]}
       ],
-      "terrain": [],
-      "fluid": []
+      "terrain": [
+        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0,0,0]}
+      ],
+      "fluid": [
+        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air","air","air","gla"], "ints": [0,0,0,0,0,0,0,0,0,0]},
+        {"base_level_index": 1, "block_states": ["dir","gla","gla","gla","gla","gla","gla","gla","gla"], "ints": [0,1,1,1,1,1,1,1,1]}
+      ]
     },
     "bottom": {
       "air": [],
