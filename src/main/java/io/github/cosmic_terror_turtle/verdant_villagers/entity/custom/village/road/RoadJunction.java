@@ -2,9 +2,7 @@ package io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.r
 
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.GeoFeature;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.GeoFeatureBit;
-import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.ServerVillage;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.VerticalBlockColumn;
-import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.road.RoadType;
 import io.github.cosmic_terror_turtle.verdant_villagers.util.MathUtils;
 import io.github.cosmic_terror_turtle.verdant_villagers.util.NbtUtils;
 import net.minecraft.nbt.NbtCompound;
@@ -14,8 +12,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 public class RoadJunction extends GeoFeature {
 
@@ -23,51 +19,47 @@ public class RoadJunction extends GeoFeature {
     public ArrayList<BlockPos> sidewalkPositions = new ArrayList<>();
     public double radius;
     public double sameHeightRadius;
+    public String terrainTypeTop;
+    public String terrainTypeBottom;
 
     public RoadJunction(int elementID, BlockPos pos, double radius, double sameHeightRadius) {
         super(elementID);
         this.pos = pos;
         this.radius = radius;
         this.sameHeightRadius = sameHeightRadius;
+        terrainTypeTop = "";
+        terrainTypeBottom = "";
     }
     public RoadJunction(int elementID, World world, BlockPos pos, RoadType type) {
         super(elementID);
         this.pos = pos;
         radius = type.junctionRadius;
         sameHeightRadius = type.junctionSameHeightRadius;
+        terrainTypeTop = RoadType.getTerrainType(true, world, pos);
+        terrainTypeBottom = RoadType.getTerrainType(false, world, pos);
 
-        setBitsAndMegaBlocks(world, type);
+        setBitsAndMegaBlocks(type);
     }
 
-    private void setBitsAndMegaBlocks(World world, RoadType type) {
-        String top = RoadType.getTerrainType(true, world, pos);
-        String bottom = RoadType.getTerrainType(false, world, pos);
+    private void setBitsAndMegaBlocks(RoadType type) {
         // Normal columns
-        ArrayList<Double> blockColumnRadiiTop = type.junctionBlockColumnRadii.get("top").get(top);
-        ArrayList<Double> blockColumnRadiiBottom = type.junctionBlockColumnRadii.get("bottom").get(bottom);
-        ArrayList<VerticalBlockColumn> templateBlockColumnsTop = type.junctionTemplateBlockColumns.get("top").get(top);
-        ArrayList<VerticalBlockColumn> templateBlockColumnsBottom = type.junctionTemplateBlockColumns.get("bottom").get(bottom);
+        ArrayList<VerticalBlockColumn> templateBlockColumnsTop = type.junctionTemplateBlockColumns.get("top").get(terrainTypeTop);
+        ArrayList<VerticalBlockColumn> templateBlockColumnsBottom = type.junctionTemplateBlockColumns.get("bottom").get(terrainTypeBottom);
         // Special columns (choose random keys for top/bottom)
         String specialKey;
         ArrayList<String> keys;
-        HashMap<String, ArrayList<Double>> specialRadiiMapTop = type.junctionSpecialBlockColumnRadii.get("top").get(top);
-        HashMap<String, ArrayList<VerticalBlockColumn>> specialColumnsMapTop = type.junctionSpecialTemplateBlockColumns.get("top").get(top);
-        ArrayList<Double> specialRadiiTop = null;
+        HashMap<String, ArrayList<VerticalBlockColumn>> specialColumnsMapTop = type.junctionSpecialTemplateBlockColumns.get("top").get(terrainTypeTop);
         ArrayList<VerticalBlockColumn> specialColumnsTop = null;
-        if (!specialRadiiMapTop.isEmpty()) {
-            keys = new ArrayList<>(specialRadiiMapTop.keySet());
+        if (!specialColumnsMapTop.isEmpty()) {
+            keys = new ArrayList<>(specialColumnsMapTop.keySet());
             specialKey = keys.get(MathUtils.nextInt(0, keys.size()-1));
-            specialRadiiTop = specialRadiiMapTop.get(specialKey);
             specialColumnsTop = specialColumnsMapTop.get(specialKey);
         }
-        HashMap<String, ArrayList<Double>> specialRadiiMapBottom = type.junctionSpecialBlockColumnRadii.get("bottom").get(bottom);
-        HashMap<String, ArrayList<VerticalBlockColumn>> specialColumnsMapBottom = type.junctionSpecialTemplateBlockColumns.get("bottom").get(bottom);
-        ArrayList<Double> specialRadiiBottom = null;
+        HashMap<String, ArrayList<VerticalBlockColumn>> specialColumnsMapBottom = type.junctionSpecialTemplateBlockColumns.get("bottom").get(terrainTypeBottom);
         ArrayList<VerticalBlockColumn> specialColumnsBottom = null;
-        if (!specialRadiiMapBottom.isEmpty()) {
-            keys = new ArrayList<>(specialRadiiMapBottom.keySet());
+        if (!specialColumnsMapBottom.isEmpty()) {
+            keys = new ArrayList<>(specialColumnsMapBottom.keySet());
             specialKey = keys.get(MathUtils.nextInt(0, keys.size()-1));
-            specialRadiiBottom = specialRadiiMapBottom.get(specialKey);
             specialColumnsBottom = specialColumnsMapBottom.get(specialKey);
         }
 
@@ -78,53 +70,53 @@ public class RoadJunction extends GeoFeature {
         VerticalBlockColumn templateColumnBottom;
         for (int x = (int) -radius; x<=radius; x++) {
             for (int z = (int) -radius; z<=radius; z++) {
-                if (x*x+z*z <= radius*radius) {
-                    // Get normal column (top).
-                    templateColumnTop = null;
-                    for (int i = 0; i< blockColumnRadiiTop.size(); i++) {
-                        if (x*x+z*z <= blockColumnRadiiTop.get(i)*blockColumnRadiiTop.get(i)) {
+                if (x*x+z*z > radius*radius) {
+                    continue;
+                }
+                // Get normal columns.
+                templateColumnTop = null;
+                templateColumnBottom = null;
+                for (int i = 0; i<type.junctionBlockColumnRadii.size(); i++) {
+                    if (x*x+z*z <= type.junctionBlockColumnRadii.get(i)*type.junctionBlockColumnRadii.get(i)) {
+                        // Both top and bottom need to have the same length as the radii list or less.
+                        if (i < templateBlockColumnsTop.size()) {
                             templateColumnTop = templateBlockColumnsTop.get(i);
-                            break;
                         }
-                    }
-                    // If possible, use special instead of normal column (top).
-                    if (specialRadiiTop != null) {
-                        for (int i = 0; i< specialRadiiTop.size(); i++) {
-                            if (x*x+z*z <= specialRadiiTop.get(i)*specialRadiiTop.get(i)) {
-                                templateColumnTop = specialColumnsTop.get(i);
-                                break;
-                            }
-                        }
-                    }
-                    // Get normal column (bottom).
-                    templateColumnBottom = null;
-                    for (int i = 0; i< blockColumnRadiiBottom.size(); i++) {
-                        if (x*x+z*z <= blockColumnRadiiBottom.get(i)*blockColumnRadiiBottom.get(i)) {
+                        if (i < templateBlockColumnsBottom.size()) {
                             templateColumnBottom = templateBlockColumnsBottom.get(i);
-                            break;
                         }
+                        break;
                     }
-                    // If possible, use special instead of normal column (bottom).
-                    if (specialRadiiBottom != null) {
-                        for (int i = 0; i< specialRadiiBottom.size(); i++) {
-                            if (x*x+z*z <= specialRadiiBottom.get(i)*specialRadiiBottom.get(i)) {
-                                templateColumnBottom = specialColumnsBottom.get(i);
-                                break;
-                            }
+                }
+                // If possible, use special instead of normal columns.
+                for (int i = 0; i<type.junctionSpecialBlockColumnRadii.size(); i++) {
+                    if (x*x+z*z <= type.junctionSpecialBlockColumnRadii.get(i)*type.junctionSpecialBlockColumnRadii.get(i)) {
+                        // Check if the special columns top/bottom have an entry here (the radii list should be as long
+                        // as the longest columns list).
+                        if (specialColumnsTop != null && i < specialColumnsTop.size()) {
+                            templateColumnTop = specialColumnsTop.get(i);
                         }
+                        if (specialColumnsBottom != null && i < specialColumnsBottom.size()) {
+                            templateColumnBottom = specialColumnsBottom.get(i);
+                        }
+                        break;
                     }
-                    // Merge both columns.
-                    templateColumn = VerticalBlockColumn.merge(templateColumnTop, templateColumnBottom);
-                    // Create bits.
-                    position = new BlockPos(x, 0, z);
-                    for (int i=0; i<templateColumn.states.length; i++) {
-                        // Add bit.
-                        GeoFeatureBit bit = new GeoFeatureBit(templateColumn.states[i], position.up(i-templateColumn.baseLevelIndex));
-                        relativeBits.add(bit);
-                        // If the bit is part of the sidewalk (int = 1 for that index), add its position.
-                        if (templateColumn.ints[i] == 1) {
-                            sidewalkPositions.add(pos.add(bit.blockPos));
-                        }
+                }
+                // Avoid placing the default column.
+                if (templateColumnTop == null && templateColumnBottom == null) {
+                    continue;
+                }
+                // Merge both columns.
+                templateColumn = VerticalBlockColumn.merge(templateColumnTop, templateColumnBottom);
+                // Create bits.
+                position = new BlockPos(x, 0, z);
+                for (int i=0; i<templateColumn.states.length; i++) {
+                    // Add bit.
+                    GeoFeatureBit bit = new GeoFeatureBit(templateColumn.states[i], position.up(i-templateColumn.baseLevelIndex));
+                    relativeBits.add(bit);
+                    // If the bit is part of the sidewalk (int = 1 for that index), add its position.
+                    if (templateColumn.ints[i] == 1) {
+                        sidewalkPositions.add(pos.add(bit.blockPos));
                     }
                 }
             }
@@ -159,6 +151,8 @@ public class RoadJunction extends GeoFeature {
         }
         radius = nbt.getDouble("radius");
         sameHeightRadius = nbt.getDouble("sameHeightRadius");
+        terrainTypeTop = nbt.getString("terrainTypeTop");
+        terrainTypeBottom = nbt.getString("terrainTypeBottom");
     }
     /**
      * Saves this RoadJunction to an NbtCompound.
@@ -177,6 +171,8 @@ public class RoadJunction extends GeoFeature {
         nbt.put("sidewalk", sidewalkNbt);
         nbt.putDouble("radius", radius);
         nbt.putDouble("sameHeightRadius", sameHeightRadius);
+        nbt.putString("terrainTypeTop", terrainTypeTop);
+        nbt.putString("terrainTypeBottom", terrainTypeBottom);
         return nbt;
     }
 }

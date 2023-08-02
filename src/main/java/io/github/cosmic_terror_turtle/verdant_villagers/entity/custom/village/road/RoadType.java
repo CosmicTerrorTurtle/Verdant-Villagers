@@ -22,32 +22,30 @@ public class RoadType {
 
     public double edgeMinMaxLengthMultiplier;
 
+    public double edgeRoadDotRadius;
     public double edgeRadius;
-    HashMap<String, HashMap<String, ArrayList<Double>>> edgeBlockColumnRadii;
+    ArrayList<Double> edgeBlockColumnRadii;
     HashMap<String, HashMap<String, ArrayList<VerticalBlockColumn>>> edgeTemplateBlockColumns;
     double edgeSpecialColumnSpace;
-    HashMap<String, HashMap<String, ArrayList<Double>>> edgeSpecialBlockColumnRadii;
+    ArrayList<Double> edgeSpecialBlockColumnRadii;
     HashMap<String, HashMap<String, ArrayList<VerticalBlockColumn>>> edgeSpecialTemplateBlockColumns;
 
     public double junctionRadius;
     public double junctionSameHeightRadius;
-    HashMap<String, HashMap<String, ArrayList<Double>>> junctionBlockColumnRadii;
+    ArrayList<Double> junctionBlockColumnRadii;
     HashMap<String, HashMap<String, ArrayList<VerticalBlockColumn>>> junctionTemplateBlockColumns;
-    HashMap<String, HashMap<String, HashMap<String, ArrayList<Double>>>> junctionSpecialBlockColumnRadii;
+    ArrayList<Double> junctionSpecialBlockColumnRadii;
     HashMap<String, HashMap<String, HashMap<String, ArrayList<VerticalBlockColumn>>>> junctionSpecialTemplateBlockColumns;
 
     public RoadType(ServerVillage village, RawRoadType rawRoadType) {
         // Edge
         edgeMinMaxLengthMultiplier = rawRoadType.edgeMinMaxLengthMultiplier;
+        edgeRoadDotRadius = rawRoadType.edgeRoadDotRadius;
         edgeRadius = 0.0;
         edgeBlockColumnRadii = rawRoadType.edgeBlockColumnRadii;
-        for (Map.Entry<String, HashMap<String, ArrayList<Double>>> entry1 : edgeBlockColumnRadii.entrySet()) {
-            for (Map.Entry<String, ArrayList<Double>> entry2 : entry1.getValue().entrySet()) {
-                for (Double d : entry2.getValue()) {
-                    if (d > edgeRadius) {
-                        edgeRadius = d;
-                    }
-                }
+        for (Double d : edgeBlockColumnRadii) {
+            if (d > edgeRadius) {
+                edgeRadius = d;
             }
         }
         edgeTemplateBlockColumns = new HashMap<>();
@@ -62,13 +60,9 @@ public class RoadType {
         }
         edgeSpecialColumnSpace = rawRoadType.edgeSpecialColumnSpace;
         edgeSpecialBlockColumnRadii = rawRoadType.edgeSpecialBlockColumnRadii;
-        for (Map.Entry<String, HashMap<String, ArrayList<Double>>> entry1 : edgeSpecialBlockColumnRadii.entrySet()) {
-            for (Map.Entry<String, ArrayList<Double>> entry2 : entry1.getValue().entrySet()) {
-                for (Double d : entry2.getValue()) {
-                    if (d > edgeRadius) {
-                        edgeRadius = d;
-                    }
-                }
+        for (Double d : edgeSpecialBlockColumnRadii) {
+            if (d > edgeRadius) {
+                edgeRadius = d;
             }
         }
         edgeSpecialTemplateBlockColumns = new HashMap<>();
@@ -84,13 +78,9 @@ public class RoadType {
         // Junction
         junctionRadius = 0.0;
         junctionBlockColumnRadii = rawRoadType.junctionBlockColumnRadii;
-        for (Map.Entry<String, HashMap<String, ArrayList<Double>>> entry1 : junctionBlockColumnRadii.entrySet()) {
-            for (Map.Entry<String, ArrayList<Double>> entry2 : entry1.getValue().entrySet()) {
-                for (Double d : entry2.getValue()) {
-                    if (d > junctionRadius) {
-                        junctionRadius = d;
-                    }
-                }
+        for (Double d : junctionBlockColumnRadii) {
+            if (d > junctionRadius) {
+                junctionRadius = d;
             }
         }
         junctionTemplateBlockColumns = new HashMap<>();
@@ -104,15 +94,9 @@ public class RoadType {
             }
         }
         junctionSpecialBlockColumnRadii = rawRoadType.junctionSpecialBlockColumnRadii;
-        for (Map.Entry<String, HashMap<String, HashMap<String, ArrayList<Double>>>> entry1 : junctionSpecialBlockColumnRadii.entrySet()) {
-            for (Map.Entry<String, HashMap<String, ArrayList<Double>>> entry2 : entry1.getValue().entrySet()) {
-                for (Map.Entry<String, ArrayList<Double>> entry3 : entry2.getValue().entrySet()) {
-                    for (Double d : entry3.getValue()) {
-                        if (d > junctionRadius) {
-                            junctionRadius = d;
-                        }
-                    }
-                }
+        for (Double d : junctionSpecialBlockColumnRadii) {
+            if (d > junctionRadius) {
+                junctionRadius = d;
             }
         }
         junctionSpecialTemplateBlockColumns = new HashMap<>();
@@ -143,7 +127,7 @@ public class RoadType {
     public static String getTerrainType(boolean top, World world, BlockPos startPos) {
         int terrain = 0;
         int fluid = 0;
-        int total = 8;
+        int total = 10;
         BlockPos pos;
         if (top) {
             // Top
@@ -151,13 +135,14 @@ public class RoadType {
                 pos = startPos.up(i);
                 if (world.getBlockState(pos).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)) {
                     terrain++;
-                } else if (!world.getFluidState(pos).isEmpty()) {
+                } else if (!world.getBlockState(pos).getFluidState().isEmpty()) {
                     fluid++;
                 }
             }
-            if (fluid > 0.2*total) {
+            // Return fluid if the first block above is a fluid or if a decent amount of the blocks above are fluids.
+            if (fluid >= 0.2*total || !world.getFluidState(startPos.up()).isEmpty()) {
                 return "fluid";
-            } else if (terrain > 0.4*total) {
+            } else if (terrain >= 0.4*total) {
                 return "terrain";
             }
             return "air";
@@ -169,8 +154,10 @@ public class RoadType {
                     terrain++;
                 }
             }
-            // Return fluid if the first two blocks are fluid.
-            if (!world.getFluidState(startPos).isEmpty() && !world.getFluidState(startPos.down()).isEmpty()) {
+            // Return fluid if the first three blocks below are fluid (starting with startPos).
+            if (!world.getFluidState(startPos).isEmpty()
+                    && !world.getFluidState(startPos.down()).isEmpty()
+                    && !world.getFluidState(startPos.down(2)).isEmpty()) {
                 return "fluid";
             }
             // Return air when no terrain was found.

@@ -18,7 +18,7 @@ public class RoadEdge extends GeoFeature {
     public static final double ROUNDING_OFFSET = 0.5; // Makes the block position coordinates be centered in a block.
     public static final double ROAD_STEP = 0.1; // Lower step -> higher precision in placing the road blocks
     public static final double ROAD_DOT_SPACE = 2.5; // Space between road dots
-    public static final double ROAD_TYPE_TERRAIN_SPACE = 5.0;
+    public static final double ROAD_TYPE_TERRAIN_SPACE = 1.5;
 
     public static final int FIRST = 1;
     public static final int SECOND = 2;
@@ -159,6 +159,9 @@ public class RoadEdge extends GeoFeature {
 
         ArrayList<VerticalBlockColumn> normalColumns = new ArrayList<>();
         ArrayList<VerticalBlockColumn> specialColumns = new ArrayList<>();
+        ArrayList<VerticalBlockColumn> outerNormalColumns = new ArrayList<>();
+        ArrayList<VerticalBlockColumn> outerSpecialColumns = new ArrayList<>();
+        ArrayList<VerticalBlockColumn> columnsToAddTo;
         double angleAtFrom;
         if (to.pos.getZ()>from.pos.getZ()) {
             angleAtFrom = Math.acos((to.pos.getX()-from.pos.getX())/d);
@@ -188,32 +191,24 @@ public class RoadEdge extends GeoFeature {
         double yCoord;
         double yAdjustingOffset;
         BlockPos terrainProbingPos;
-        BlockPos anchorPos;
+        ArrayList<BlockPos> anchorPositions = new ArrayList<>();
         VerticalBlockColumn columnTop;
         VerticalBlockColumn columnBottom;
-        boolean replaceOldColumns;
+        VerticalBlockColumn merged;
         double spaceAfterLastSpecialColumn = 0.0;
         double spaceAfterLastDot = 0.0;
         double spaceAfterLastTerrainCheck = 0.0;
         String topTerrain;
         String bottomTerrain;
-        ArrayList<Double> columnRadiiTop = null;
-        ArrayList<Double> columnRadiiBottom = null;
         ArrayList<VerticalBlockColumn> columnsTop = null;
         ArrayList<VerticalBlockColumn> columnsBottom = null;
-        ArrayList<Double> specialColumnRadiiTop = null;
-        ArrayList<Double> specialColumnRadiiBottom = null;
         ArrayList<VerticalBlockColumn> specialColumnsTop = null;
         ArrayList<VerticalBlockColumn> specialColumnsBottom = null;
         if (roadType != null) {
-            topTerrain = RoadType.getTerrainType(true, world, from.pos);
-            bottomTerrain = RoadType.getTerrainType(false, world, from.pos);
-            columnRadiiTop = roadType.edgeBlockColumnRadii.get("top").get(topTerrain);
-            columnRadiiBottom = roadType.edgeBlockColumnRadii.get("bottom").get(bottomTerrain);
+            topTerrain = from.terrainTypeTop;
+            bottomTerrain = from.terrainTypeBottom;
             columnsTop = roadType.edgeTemplateBlockColumns.get("top").get(topTerrain);
             columnsBottom = roadType.edgeTemplateBlockColumns.get("bottom").get(bottomTerrain);
-            specialColumnRadiiTop = roadType.edgeSpecialBlockColumnRadii.get("top").get(topTerrain);
-            specialColumnRadiiBottom = roadType.edgeSpecialBlockColumnRadii.get("bottom").get(bottomTerrain);
             specialColumnsTop = roadType.edgeSpecialTemplateBlockColumns.get("top").get(topTerrain);
             specialColumnsBottom = roadType.edgeSpecialTemplateBlockColumns.get("bottom").get(bottomTerrain);
         }
@@ -232,9 +227,9 @@ public class RoadEdge extends GeoFeature {
             } else {
                 yAdjustingOffset = 0;
             }
-            // Check terrain above and underneath the road.
+            // Check terrain above and underneath the road, if outside the junction radii.
             spaceAfterLastTerrainCheck += ROAD_STEP;
-            if (spaceAfterLastTerrainCheck > ROAD_TYPE_TERRAIN_SPACE && roadType != null) {
+            if (spaceAfterLastTerrainCheck > ROAD_TYPE_TERRAIN_SPACE && roadType != null && from.radius < a && a < d-to.radius) {
                 spaceAfterLastTerrainCheck = 0;
                 terrainProbingPos = from.pos.add(BlockPos.ofFloored(
                         a*cos - f_of_a*sin + ROUNDING_OFFSET,
@@ -243,94 +238,94 @@ public class RoadEdge extends GeoFeature {
                 ));
                 topTerrain = RoadType.getTerrainType(true, world, terrainProbingPos);
                 bottomTerrain = RoadType.getTerrainType(false, world, terrainProbingPos);
-                columnRadiiTop = roadType.edgeBlockColumnRadii.get("top").get(topTerrain);
-                columnRadiiBottom = roadType.edgeBlockColumnRadii.get("bottom").get(bottomTerrain);
                 columnsTop = roadType.edgeTemplateBlockColumns.get("top").get(topTerrain);
                 columnsBottom = roadType.edgeTemplateBlockColumns.get("bottom").get(bottomTerrain);
-                specialColumnRadiiTop = roadType.edgeSpecialBlockColumnRadii.get("top").get(topTerrain);
-                specialColumnRadiiBottom = roadType.edgeSpecialBlockColumnRadii.get("bottom").get(bottomTerrain);
                 specialColumnsTop = roadType.edgeSpecialTemplateBlockColumns.get("top").get(topTerrain);
                 specialColumnsBottom = roadType.edgeSpecialTemplateBlockColumns.get("bottom").get(bottomTerrain);
             }
             // Determine if special columns need to be calculated.
             spaceAfterLastSpecialColumn += ROAD_STEP;
             if (roadType != null && spaceAfterLastSpecialColumn > roadType.edgeSpecialColumnSpace) {
-                spaceAfterLastSpecialColumn = 0;
+                spaceAfterLastSpecialColumn = 0.0;
             }
             // Bits
-            for (double offset=-radius; offset<=radius; offset+=ROAD_STEP) {
+            for (double rad=0; rad<=radius; rad+=ROAD_STEP) {
                 // Position math
-                tmp = offset/Math.sqrt(1+f_slope*f_slope);
-                aCoord = a+f_slope*tmp;
-                faCoord = f_of_a-tmp;
-                anchorPos = BlockPos.ofFloored(
-                        aCoord*cos - faCoord*sin + ROUNDING_OFFSET,
-                        yCoord + yAdjustingOffset + ROUNDING_OFFSET,
-                        aCoord*sin + faCoord*cos + ROUNDING_OFFSET
-                );
+                anchorPositions.clear();
+                for (double offset : new Double[]{rad, -rad}) {
+                    tmp = offset/Math.sqrt(1+f_slope*f_slope);
+                    aCoord = a+f_slope*tmp;
+                    faCoord = f_of_a-tmp;
+                    anchorPositions.add(BlockPos.ofFloored(
+                            aCoord*cos - faCoord*sin + ROUNDING_OFFSET,
+                            yCoord + yAdjustingOffset + ROUNDING_OFFSET,
+                            aCoord*sin + faCoord*cos + ROUNDING_OFFSET
+                    ));
+                }
                 if (roadType != null) {
                     // Normal columns
-                    replaceOldColumns = false;
+                    columnsToAddTo = normalColumns;
                     columnTop = null;
-                    for (int i=0; i<columnRadiiTop.size(); i++) {
-                        if (Math.abs(offset) <= columnRadiiTop.get(i)) {
-                            columnTop = columnsTop.get(i);
-                            // If either the top or bottom column are the innermost/outermost column, replace old columns.
-                            if (i==0 || i==columnRadiiTop.size()-1) {
-                                replaceOldColumns = true;
-                            }
-                            break;
-                        }
-                    }
                     columnBottom = null;
-                    for (int i=0; i<columnRadiiBottom.size(); i++) {
-                        if (Math.abs(offset) <= columnRadiiBottom.get(i)) {
-                            columnBottom = columnsBottom.get(i);
-                            if (i==0 || i==columnRadiiBottom.size()-1) {
-                                replaceOldColumns = true;
+                    for (int i=0; i<roadType.edgeBlockColumnRadii.size(); i++) {
+                        if (rad <= roadType.edgeBlockColumnRadii.get(i)) {
+                            if (i < columnsTop.size()) {
+                                columnTop = columnsTop.get(i);
+                            }
+                            if (i < columnsBottom.size()) {
+                                columnBottom = columnsBottom.get(i);
+                            }
+                            // If the column is the outermost column, replace old columns.
+                            if (i==roadType.edgeBlockColumnRadii.size()-1) {
+                                columnsToAddTo = outerNormalColumns;
                             }
                             break;
                         }
                     }
-                    addToColumns(normalColumns, VerticalBlockColumn.merge(columnTop, columnBottom).copyWith(anchorPos), replaceOldColumns);
+                    // Avoid placing the default merge column.
+                    if (columnTop != null || columnBottom != null) {
+                        merged = VerticalBlockColumn.merge(columnTop, columnBottom);
+                        for (BlockPos anchor : anchorPositions) {
+                            addToColumns(columnsToAddTo, merged.copyWith(anchor), false);
+                        }
+                    }
                     // Special columns (only place when outside the junction's same height radii)
                     if (spaceAfterLastSpecialColumn==0 && from.sameHeightRadius<a && a<d-to.sameHeightRadius) {
-                        replaceOldColumns = false;
+                        columnsToAddTo = specialColumns;
                         columnTop = null;
-                        for (int i=0; i<specialColumnRadiiTop.size(); i++) {
-                            if (Math.abs(offset) <= specialColumnRadiiTop.get(i)) {
-                                columnTop = specialColumnsTop.get(i);
-                                if (i==0 || i==specialColumnRadiiTop.size()-1) {
-                                    replaceOldColumns = true;
-                                }
-                                break;
-                            }
-                        }
                         columnBottom = null;
-                        for (int i=0; i<specialColumnRadiiBottom.size(); i++) {
-                            if (Math.abs(offset) <= specialColumnRadiiBottom.get(i)) {
-                                columnBottom = specialColumnsBottom.get(i);
-                                if (i==0 || i==specialColumnRadiiBottom.size()-1) {
-                                    replaceOldColumns = true;
+                        for (int i=0; i<roadType.edgeSpecialBlockColumnRadii.size(); i++) {
+                            if (rad <= roadType.edgeSpecialBlockColumnRadii.get(i)) {
+                                if (i < specialColumnsTop.size()) {
+                                    columnTop = specialColumnsTop.get(i);
+                                }
+                                if (i < specialColumnsBottom.size()) {
+                                    columnBottom = specialColumnsBottom.get(i);
+                                }
+                                if (i==roadType.edgeSpecialBlockColumnRadii.size()-1) {
+                                    columnsToAddTo = outerSpecialColumns;
                                 }
                                 break;
                             }
                         }
-                        // Adding special columns is optional.
-                        // This if statement avoids the default merge column being placed.
+                        // Avoid placing the default merge column.
                         if (columnTop != null || columnBottom != null) {
-                            addToColumns(specialColumns, VerticalBlockColumn.merge(columnTop, columnBottom).copyWith(anchorPos), replaceOldColumns);
+                            merged = VerticalBlockColumn.merge(columnTop, columnBottom);
+                            for (BlockPos anchor : anchorPositions) {
+                                addToColumns(columnsToAddTo, merged.copyWith(anchor), false);
+                            }
                         }
                     }
                 } else if (accessPathRoadType != null) {
-                    addToColumns(normalColumns, accessPathRoadType.column.copyWith(anchorPos), false);
+                    addToColumns(normalColumns, accessPathRoadType.column.copyWith(anchorPositions.get(0)), false);
+                    addToColumns(normalColumns, accessPathRoadType.column.copyWith(anchorPositions.get(1)), false);
                 }
             }
             // Road dots
             spaceAfterLastDot += ROAD_STEP;
-            if (spaceAfterLastDot > ROAD_DOT_SPACE) {
+            if (roadType != null && spaceAfterLastDot > ROAD_DOT_SPACE) {
                 spaceAfterLastDot = 0;
-                for (double offset : new double[]{1.0-radius, radius-1.0}) {
+                for (double offset : new double[]{roadType.edgeRoadDotRadius, -roadType.edgeRoadDotRadius}) {
                     tmp = offset/Math.sqrt(1+f_slope*f_slope);
                     aCoord = a+f_slope*tmp;
                     faCoord = f_of_a-tmp;
@@ -342,9 +337,15 @@ public class RoadEdge extends GeoFeature {
                 }
             }
         }
-        // Replace some normal columns with special columns.
-        for (VerticalBlockColumn specialColumn : specialColumns) {
-            addToColumns(normalColumns, specialColumn, true);
+        // Merge the lists of columns: First the outer special/normal columns, then the inner special/normal columns.
+        for (VerticalBlockColumn column : outerNormalColumns) {
+            addToColumns(outerSpecialColumns, column, false);
+        }
+        for (VerticalBlockColumn column : specialColumns) {
+            addToColumns(outerSpecialColumns, column, false);
+        }
+        for (VerticalBlockColumn column : normalColumns) {
+            addToColumns(outerSpecialColumns, column, false);
         }
         // Extract bits from columns.
         boolean columnOverlapsFrom;
@@ -353,7 +354,7 @@ public class RoadEdge extends GeoFeature {
         BlockPos relPos;
         GeoFeatureBit bit;
         ArrayList<GeoFeatureBit> relativeBits = new ArrayList<>();
-        for (VerticalBlockColumn column : normalColumns) {
+        for (VerticalBlockColumn column : outerSpecialColumns) {
             columnOverlapsFrom = Math.pow(column.anchor.getX(), 2) + Math.pow(column.anchor.getZ(), 2) <= Math.pow(from.radius, 2);
             columnOverlapsTo = Math.pow(column.anchor.getX()+from.pos.getX()-to.pos.getX(), 2) + Math.pow(column.anchor.getZ()+from.pos.getZ()-to.pos.getZ(), 2) <= Math.pow(to.radius, 2);
             writeEntireColumn = overwriteJunctions || !columnOverlapsFrom && !columnOverlapsTo;
@@ -503,7 +504,7 @@ public class RoadEdge extends GeoFeature {
 
     public class TerrainAdjustment {
 
-        public static final double TERRAIN_ADJUSTING_SPACE = 3.0; // Space between terrain adjusting points
+        public static final double TERRAIN_ADJUSTING_SPACE = 4.0; // Space between terrain adjusting points
         public static final double MAX_SLOPE_DEVIATION = 0.15; // Maximum difference between overall slope and the slopes from the adjusted points
         public static final double SMOOTHING_FACTOR = 0.2; // Factor by which a point gets adjusted towards its neighbors
         public static final int MAX_SMOOTHING_ITERATIONS = 40; // The maximum number of iterations that smooth the adjusting offsets.
@@ -578,8 +579,9 @@ public class RoadEdge extends GeoFeature {
 
                 // Is the slope deviation of this offset value too large or is smoothAll enabled?
                 if (smoothAll
-                        || Math.abs(getYOffsetFromIndex(i)-getYOffsetFromIndex(i-1))/TERRAIN_ADJUSTING_SPACE > MAX_SLOPE_DEVIATION
-                        || Math.abs(getYOffsetFromIndex(i+1)-getYOffsetFromIndex(i))/TERRAIN_ADJUSTING_SPACE > MAX_SLOPE_DEVIATION) {
+                        || Math.abs((getYOffsetFromIndex(i)-getYOffsetFromIndex(i-1))/TERRAIN_ADJUSTING_SPACE+ySlope) > ServerVillage.ROAD_EDGE_MAX_Y_SLOPE
+                        || Math.abs((getYOffsetFromIndex(i+1)-getYOffsetFromIndex(i))/TERRAIN_ADJUSTING_SPACE+ySlope) > ServerVillage.ROAD_EDGE_MAX_Y_SLOPE
+                ) {
                     smoothingNeeded = true;
                     newOffsets.add( yOffsetValues.get(i) + SMOOTHING_FACTOR * (getYOffsetFromIndex(i+1)+getYOffsetFromIndex(i-1)-2*yOffsetValues.get(i)) );
                 } else {

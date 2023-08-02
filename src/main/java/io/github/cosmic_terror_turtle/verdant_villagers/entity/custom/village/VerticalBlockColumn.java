@@ -58,11 +58,12 @@ public class VerticalBlockColumn {
     }
 
     /**
-     * Attempts to merge two block columns. Only works if both columns sit directly on top of each other.
+     * Attempts to merge two block columns. Only works if the top column sits directly on top of the bottom one or if
+     *  its lowest part overlaps one of the bottom positions.
      * @param top The column on top, whose anchor will be used for the merged column.
      * @param bottom The column below, whose base level index will be used for the merged column.
-     * @return A new column that has the states and ints of both input sitting in top of one another. If one of the
-     * inputs is null, then the other one gets returned. If both are null, a default column gets returned.
+     * @return A new column that has the merged states and ints of both inputs with the top column taking priority. If
+     * one of the inputs is null, then the other one gets returned. If both are null, a default column gets returned.
      */
     public static VerticalBlockColumn merge(@Nullable VerticalBlockColumn top, @Nullable VerticalBlockColumn bottom) {
         if (top == null) {
@@ -74,18 +75,19 @@ public class VerticalBlockColumn {
         } else if (bottom == null) {
             return top;
         }
-        if (top.baseLevelIndex != bottom.baseLevelIndex - bottom.states.length) {
-            throw new RuntimeException("Block columns could not be merged.");
+        int indexDiff = bottom.baseLevelIndex - top.baseLevelIndex;
+        if (indexDiff < 0 || bottom.states.length < indexDiff) {
+            throw new RuntimeException("Block columns could not be merged because base level indexes violate bounds.");
         }
-        BlockState[] states = new BlockState[top.states.length + bottom.states.length];
+        BlockState[] states = new BlockState[top.states.length + indexDiff];
         int[] ints = new int[states.length];
         for (int i=0; i<states.length; i++) {
-            if (i<bottom.states.length) {
+            if (i < indexDiff) {
                 states[i] = bottom.states[i];
                 ints[i] = bottom.ints[i];
             } else {
-                states[i] = top.states[i-bottom.states.length];
-                ints[i] = top.ints[i-bottom.states.length];
+                states[i] = top.states[i-indexDiff];
+                ints[i] = top.ints[i-indexDiff];
             }
         }
         return new VerticalBlockColumn(states, ints, bottom.baseLevelIndex, top.anchor);

@@ -12,14 +12,15 @@ public class RawRoadType {
     public ArrayList<Integer> availableForVillagerCount;
 
     public double edgeMinMaxLengthMultiplier;
+    public double edgeRoadDotRadius;
     /**
-     * Contains the radii to which each of the block columns of a road edge will extend. Each list of radii is mapped to
-     * by two Strings: The first denotes whether the columns are for the top or the bottom part of the road; the second
-     * denotes the terrain type surrounding the road (For example: 'top' -> 'fluid' -> [0.0, 3.0]).
+     * Contains the radii to which each of the block columns of a road edge will extend.
      */
-    public HashMap<String, HashMap<String, ArrayList<Double>>> edgeBlockColumnRadii;
+    public ArrayList<Double> edgeBlockColumnRadii;
     /**
-     * Contains the block columns belonging to {@link RawRoadType#edgeBlockColumnRadii}.
+     * Contains the block columns belonging to {@link RawRoadType#edgeBlockColumnRadii}. Each list of columns is mapped to
+     * by two Strings: The first denotes whether the columns are for the top or the bottom part of the road; the second
+     * denotes the terrain type surrounding the road (For example: 'top' -> 'fluid' -> [column1, column2]).
      */
     public HashMap<String, HashMap<String, ArrayList<RawVerticalBlockColumn>>> edgeTemplateBlockColumns;
     public double edgeSpecialColumnSpace;
@@ -27,20 +28,20 @@ public class RawRoadType {
      * Same as {@link RawRoadType#edgeBlockColumnRadii}, but only get placed every few blocks
      * ({@link RawRoadType#edgeSpecialColumnSpace}).
      */
-    public HashMap<String, HashMap<String, ArrayList<Double>>> edgeSpecialBlockColumnRadii;
+    public ArrayList<Double> edgeSpecialBlockColumnRadii;
     public HashMap<String, HashMap<String, ArrayList<RawVerticalBlockColumn>>> edgeSpecialTemplateBlockColumns;
 
     /**
      * Same as {@link RawRoadType#edgeBlockColumnRadii}, but for junctions.
      */
-    public HashMap<String, HashMap<String, ArrayList<Double>>> junctionBlockColumnRadii;
+    public ArrayList<Double> junctionBlockColumnRadii;
     public HashMap<String, HashMap<String, ArrayList<RawVerticalBlockColumn>>> junctionTemplateBlockColumns;
     /**
      * Same as {@link RawRoadType#junctionBlockColumnRadii}, but for adding extra features which override the normal
-     * block columns up to a certain radius, for example a small tree in the middle of the junction. Multiple variants can be chosen from the
-     * third map layer ('top' -> 'air' -> 'small_tree' -> [0.0, 1.0]).
+     * block columns up to a certain radius, for example a small tree in the middle of the junction. Multiple variants
+     * can be chosen from the third column map layer ('top' -> 'air' -> 'small_tree' -> [column1, column2]).
      */
-    public HashMap<String, HashMap<String, HashMap<String, ArrayList<Double>>>> junctionSpecialBlockColumnRadii;
+    public ArrayList<Double> junctionSpecialBlockColumnRadii;
     public HashMap<String, HashMap<String, HashMap<String, ArrayList<RawVerticalBlockColumn>>>> junctionSpecialTemplateBlockColumns;
 
     /**
@@ -52,14 +53,15 @@ public class RawRoadType {
         final HashMap<String, String> abbreviationMap;
         ArrayList<Integer> availableForVillagerCount = null;
         double edgeMinMaxLengthMultiplier = 1.0;
-        HashMap<String, HashMap<String, ArrayList<Double>>> edgeBlockColumnRadii = null;
+        double edgeRoadDotRadius = 1.0;
+        ArrayList<Double> edgeBlockColumnRadii = null;
         HashMap<String, HashMap<String, ArrayList<RawVerticalBlockColumn>>> edgeTemplateBlockColumns = null;
         double edgeSpecialColumnSpace = 1000000.0;
-        HashMap<String, HashMap<String, ArrayList<Double>>> edgeSpecialBlockColumnRadii = null;
+        ArrayList<Double> edgeSpecialBlockColumnRadii = null;
         HashMap<String, HashMap<String, ArrayList<RawVerticalBlockColumn>>> edgeSpecialTemplateBlockColumns = null;
-        HashMap<String, HashMap<String, ArrayList<Double>>> junctionBlockColumnRadii = null;
+        ArrayList<Double> junctionBlockColumnRadii = null;
         HashMap<String, HashMap<String, ArrayList<RawVerticalBlockColumn>>> junctionTemplateBlockColumns = null;
-        HashMap<String, HashMap<String, HashMap<String, ArrayList<Double>>>> junctionSpecialBlockColumnRadii = null;
+        ArrayList<Double> junctionSpecialBlockColumnRadii = null;
         HashMap<String, HashMap<String, HashMap<String, ArrayList<RawVerticalBlockColumn>>>> junctionSpecialTemplateBlockColumns = null;
 
         reader.beginObject();
@@ -73,14 +75,15 @@ public class RawRoadType {
                 default -> throw new IOException();
                 case "available_for_villager_count" -> availableForVillagerCount = JsonUtils.readList(reader, JsonReader::nextInt);
                 case "edge_min_max_length_multiplier" -> edgeMinMaxLengthMultiplier = reader.nextDouble();
-                case "edge_block_column_radii" -> edgeBlockColumnRadii = JsonUtils.readMap(reader, reader1 -> JsonUtils.readMap(reader1, reader2 -> JsonUtils.readList(reader2, JsonReader::nextDouble)));
+                case "edge_road_dot_radius" -> edgeRoadDotRadius = reader.nextDouble();
+                case "edge_block_column_radii" -> edgeBlockColumnRadii = JsonUtils.readList(reader, JsonReader::nextDouble);
                 case "edge_template_block_columns" -> edgeTemplateBlockColumns = JsonUtils.readMap(reader, reader1 -> JsonUtils.readMap(reader1, reader2 -> JsonUtils.readList(reader2, reader3 -> new RawVerticalBlockColumn(reader3, abbreviationMap))));
                 case "edge_special_column_space" -> edgeSpecialColumnSpace = reader.nextDouble();
-                case "edge_special_block_column_radii" -> edgeSpecialBlockColumnRadii = JsonUtils.readMap(reader, reader1 -> JsonUtils.readMap(reader1, reader2 -> JsonUtils.readList(reader2, JsonReader::nextDouble)));
+                case "edge_special_block_column_radii" -> edgeSpecialBlockColumnRadii = JsonUtils.readList(reader, JsonReader::nextDouble);
                 case "edge_special_template_block_columns" -> edgeSpecialTemplateBlockColumns = JsonUtils.readMap(reader, reader1 -> JsonUtils.readMap(reader1, reader2 -> JsonUtils.readList(reader2, reader3 -> new RawVerticalBlockColumn(reader3, abbreviationMap))));
-                case "junction_block_column_radii" -> junctionBlockColumnRadii = JsonUtils.readMap(reader, reader1 -> JsonUtils.readMap(reader1, reader2 -> JsonUtils.readList(reader2, JsonReader::nextDouble)));
+                case "junction_block_column_radii" -> junctionBlockColumnRadii = JsonUtils.readList(reader, JsonReader::nextDouble);
                 case "junction_template_block_columns" -> junctionTemplateBlockColumns = JsonUtils.readMap(reader, reader1 -> JsonUtils.readMap(reader1, reader2 -> JsonUtils.readList(reader2, reader3 -> new RawVerticalBlockColumn(reader3, abbreviationMap))));
-                case "junction_special_block_column_radii" -> junctionSpecialBlockColumnRadii = JsonUtils.readMap(reader, reader1 -> JsonUtils.readMap(reader1, reader2 -> JsonUtils.readMap(reader2, reader3 -> JsonUtils.readList(reader3, JsonReader::nextDouble))));
+                case "junction_special_block_column_radii" -> junctionSpecialBlockColumnRadii = JsonUtils.readList(reader, JsonReader::nextDouble);
                 case "junction_special_template_block_columns" -> junctionSpecialTemplateBlockColumns = JsonUtils.readMap(reader, reader1 -> JsonUtils.readMap(reader1, reader2 -> JsonUtils.readMap(reader2, reader3 -> JsonUtils.readList(reader3, reader4 -> new RawVerticalBlockColumn(reader4, abbreviationMap)))));
             }
         }
@@ -101,6 +104,7 @@ public class RawRoadType {
         DataRegistry.addRoadType(new RawRoadType(
                 availableForVillagerCount,
                 edgeMinMaxLengthMultiplier,
+                edgeRoadDotRadius,
                 edgeBlockColumnRadii,
                 edgeTemplateBlockColumns,
                 edgeSpecialColumnSpace,
@@ -115,17 +119,19 @@ public class RawRoadType {
     public RawRoadType(
             ArrayList<Integer> availableForVillagerCount,
             double edgeMinMaxLengthMultiplier,
-            HashMap<String, HashMap<String, ArrayList<Double>>> edgeBlockColumnRadii,
+            double edgeRoadDotRadius,
+            ArrayList<Double> edgeBlockColumnRadii,
             HashMap<String, HashMap<String, ArrayList<RawVerticalBlockColumn>>> edgeTemplateBlockColumns,
             double edgeSpecialColumnSpace,
-            HashMap<String, HashMap<String, ArrayList<Double>>> edgeSpecialBlockColumnRadii,
+            ArrayList<Double> edgeSpecialBlockColumnRadii,
             HashMap<String, HashMap<String, ArrayList<RawVerticalBlockColumn>>> edgeSpecialTemplateBlockColumns,
-            HashMap<String, HashMap<String, ArrayList<Double>>> junctionBlockColumnRadii,
+            ArrayList<Double> junctionBlockColumnRadii,
             HashMap<String, HashMap<String, ArrayList<RawVerticalBlockColumn>>> junctionTemplateBlockColumns,
-            HashMap<String, HashMap<String, HashMap<String, ArrayList<Double>>>> junctionSpecialBlockColumnRadii,
+            ArrayList<Double> junctionSpecialBlockColumnRadii,
             HashMap<String, HashMap<String, HashMap<String, ArrayList<RawVerticalBlockColumn>>>> junctionSpecialTemplateBlockColumns) {
         this.availableForVillagerCount = availableForVillagerCount;
         this.edgeMinMaxLengthMultiplier = edgeMinMaxLengthMultiplier;
+        this.edgeRoadDotRadius = edgeRoadDotRadius;
         this.edgeBlockColumnRadii = edgeBlockColumnRadii;
         this.edgeTemplateBlockColumns = edgeTemplateBlockColumns;
         this.edgeSpecialColumnSpace = edgeSpecialColumnSpace;

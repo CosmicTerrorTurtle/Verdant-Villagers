@@ -11,181 +11,150 @@
   },
   "available_for_villager_count": [0, 5],
   "edge_min_max_length_multiplier": 1.0,
-  "edge_block_column_radii": {
-    "top": {
-      "air":  [
-        2.0
-      ],
-      "terrain": [
-        2.0
-      ],
-      "fluid": [
-        0.0,
-        1.9,
-        2.0
-      ]
-    },
-    "bottom": {
-      "air": [],
-      "air_above_terrain": [],
-      "terrain": [],
-      "fluid": []
-    }
-  },
+  "edge_road_dot_radius": 1.4,
+  "edge_block_column_radii": [
+    0.3,
+    2.2,
+    2.4
+  ],
   "edge_template_block_columns": {
     "top": {
       "air": [
-        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0]}
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air"], "ints": [0,0,0,0,0,0]},
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air"], "ints": [0,0,0,0,0,0]},
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air"], "ints": [0,0,0,0,0,0]}
       ],
       "terrain": [
-        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0]}
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air"], "ints": [0,0,0,0,0,0]},
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air"], "ints": [0,0,0,0,0,0]},
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air"], "ints": [0,0,0,0,0,0]}
       ],
       "fluid": [
-        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air","gla"], "ints": [0,0,0,0,0,0,0,0]},
-        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air","gla"], "ints": [0,0,0,0,0,0,0,0]},
-        {"base_level_index": 1, "block_states": ["dir","gla","gla","gla","gla","gla","gla"], "ints": [0,1,1,1,1,1,1]}
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","gla","gla"], "ints": [0,0,0,0,0,0,0]},
+        {"base_level_index": -1, "block_states": ["air","air","air","air","gla","gla","gla"], "ints": [0,0,0,0,0,0,0]},
+        {"base_level_index": 0, "block_states": ["wpl","gla","gla","gla","gla","gla","gla"], "ints": [1,1,1,1,1,1,1]}
       ]
     },
     "bottom": {
-      "air": [],
-      "air_above_terrain": [],
-      "terrain": [],
-      "fluid": []
+      "air": [
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]}
+      ],
+      "air_above_terrain": [
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]}
+      ],
+      "terrain": [
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]}
+      ],
+      "fluid": [
+        {"base_level_index": 1, "block_states": ["wpl","wpl"], "ints": [0,0]},
+        {"base_level_index": 1, "block_states": ["wpl","wpl"], "ints": [0,0]},
+        {"base_level_index": 1, "block_states": ["wpl","wpl"], "ints": [0,0]}
+      ]
     }
   },
   "edge_special_column_space": 6.0,
-  "edge_special_block_column_radii": {
-    "top": {
-      "air": [],
-      "terrain": [
-        1.4,
-        2.0
-      ],
-      "fluid": [
-        0.0,
-        1.9,
-        2.0
-      ]
-    },
-    "bottom": {
-      "air": [],
-      "air_above_terrain": [],
-      "terrain": [],
-      "fluid": []
-    }
-  },
+  "edge_special_block_column_radii": [
+    0.3,
+    2.2,
+    2.4
+  ],
   "edge_special_template_block_columns": {
     "top": {
-      "air": [],
-      "terrain": [
-        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air","wpl"], "ints": [0,0,0,0,0,0,0,0]},
-        {"base_level_index": 1, "block_states": ["wlo","wlo","wlo","wlo","wlo","wlo","wlo","wlo"], "ints": [0,0,0,0,0,0,0,0]}
-      ],
-      "fluid": [
-        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air","wpl"], "ints": [0,0,0,0,0,0,0,0]},
-        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air","wpl"], "ints": [0,0,0,0,0,0,0,0]},
-        {"base_level_index": 1, "block_states": ["wlo","wlo","wlo","wlo","wlo","wlo","wlo"], "ints": [0,0,0,0,0,0,0]}
-      ]
-    },
-    "bottom": {
-      "air": [],
-      "air_above_terrain": [],
-      "terrain": [],
-      "fluid": []
-    }
-  },
-  "junction_block_column_radii": {
-    "top": {
       "air": [
-        6.0
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air"], "ints": [0,0,0,0,0,0]},
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air"], "ints": [0,0,0,0,0,0]},
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air"], "ints": [0,0,0,0,0,0]}
       ],
       "terrain": [
-        6.0
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","wpl"], "ints": [0,0,0,0,0,0]},
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","wpl"], "ints": [0,0,0,0,0,0]},
+        {"base_level_index": 0, "block_states": ["wlo","wlo","wlo","wlo","wlo","wlo","wlo"], "ints": [1,1,1,1,1,1,1]}
       ],
       "fluid": [
-        5.0,
-        6.0
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","wpl","wpl"], "ints": [0,0,0,0,0,0,0]},
+        {"base_level_index": -1, "block_states": ["air","air","air","air","wpl","wpl","wpl"], "ints": [0,0,0,0,0,0,0]},
+        {"base_level_index": 0, "block_states": ["wlo","wlo","wlo","wlo","wlo","wlo","wlo"], "ints": [1,1,1,1,1,1,1]}
       ]
     },
     "bottom": {
-      "air": [],
-      "air_above_terrain": [],
-      "terrain": [],
-      "fluid": []
+      "air": [
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]}
+      ],
+      "air_above_terrain": [
+        {"base_level_index": 1, "block_states": ["wpl","pth"], "ints": [0,0]},
+        {"base_level_index": 1, "block_states": ["wpl","pth"], "ints": [0,0]},
+        {"base_level_index": 4, "block_states": ["wlo","wlo","wlo","wlo","pth"], "ints": [2,0,0,0,0]}
+      ],
+      "terrain": [
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]}
+      ],
+      "fluid": [
+        {"base_level_index": 1, "block_states": ["wpl","wpl"], "ints": [0,0]},
+        {"base_level_index": 1, "block_states": ["wpl","wpl"], "ints": [0,0]},
+        {"base_level_index": 1, "block_states": ["wpl","wpl"], "ints": [0,0]}
+      ]
     }
   },
+  "junction_block_column_radii": [
+    5.0,
+    6.0
+  ],
   "junction_template_block_columns": {
     "top": {
       "air": [
-        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0,0,0]}
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0]},
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0]}
       ],
       "terrain": [
-        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0,0,0]}
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0]},
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0]}
       ],
       "fluid": [
-        {"base_level_index": 1, "block_states": ["dir","pth","air","air","air","air","air","air","air","gla"], "ints": [0,0,0,0,0,0,0,0,0,0]},
-        {"base_level_index": 1, "block_states": ["dir","gla","gla","gla","gla","gla","gla","gla","gla"], "ints": [0,1,1,1,1,1,1,1,1]}
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air","air","gla"], "ints": [0,0,0,0,0,0,0,0]},
+        {"base_level_index": 0, "block_states": ["wpl","gla","gla","gla","gla","gla","gla","gla"], "ints": [1,1,1,1,1,1,1,1]}
       ]
     },
     "bottom": {
-      "air": [],
-      "air_above_terrain": [],
-      "terrain": [],
-      "fluid": []
+      "air": [
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]}
+      ],
+      "air_above_terrain": [
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]}
+      ],
+      "terrain": [
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]}
+      ],
+      "fluid": [
+        {"base_level_index": 1, "block_states": ["wpl","wpl"], "ints": [0,0]},
+        {"base_level_index": 1, "block_states": ["wpl","wpl"], "ints": [0,0]}
+      ]
     }
   },
-  "junction_special_block_column_radii": {
-    "top": {
-      "air": {
-
-      },
-      "terrain": {
-
-      },
-      "fluid": {
-
-      }
-    },
-    "bottom": {
-      "air": {
-
-      },
-      "air_above_terrain": {
-
-      },
-      "terrain": {
-
-      },
-      "fluid": {
-
-      }
-    }
-  },
+  "junction_special_block_column_radii": [],
   "junction_special_template_block_columns": {
     "top": {
-      "air": {
-
-      },
-      "terrain": {
-
-      },
-      "fluid": {
-
-      }
+      "air": {},
+      "terrain": {},
+      "fluid": {}
     },
     "bottom": {
-      "air": {
-
-      },
-      "air_above_terrain": {
-
-      },
-      "terrain": {
-
-      },
-      "fluid": {
-
-      }
+      "air": {},
+      "air_above_terrain": {},
+      "terrain": {},
+      "fluid": {}
     }
   }
 }

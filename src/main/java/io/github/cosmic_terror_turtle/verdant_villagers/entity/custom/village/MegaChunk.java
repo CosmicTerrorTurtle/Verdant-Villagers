@@ -1,8 +1,10 @@
 package io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village;
 
 import io.github.cosmic_terror_turtle.verdant_villagers.util.NbtUtils;
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -35,17 +37,24 @@ public class MegaChunk {
     }
 
     /**
-     * Counts the blocks in this mega chunk.
-     * @param blockCounts The map that the counts will be added to.
+     * Scans the blocks in this mega chunk. This includes counting block types and removing trees.
+     * @param blockCounts The map that the block type counts will be added to.
      * @param world The world this mega chunk exists in.
      */
-    public void countBlocks(HashMap<Identifier, Integer> blockCounts, World world) {
+    public void scanBlocks(World world, HashMap<Identifier, Integer> blockCounts, boolean removeTrees) {
+        BlockPos pos;
+        BlockState state;
         Identifier blockId;
         for (int i=0; i<LENGTH; i++) {
             for (int j=0; j<LENGTH; j++) {
                 for (int k=0; k<LENGTH; k++) {
-                    blockId = Registries.BLOCK.getId(world.getBlockState(lowerTip.add(i, j, k)).getBlock());
+                    pos = lowerTip.add(i, j, k);
+                    state = world.getBlockState(pos);
+                    blockId = Registries.BLOCK.getId(state.getBlock());
                     blockCounts.put(blockId, blockCounts.getOrDefault(blockId, 0)+1);
+                    if (removeTrees && state.isIn(BlockTags.LOGS)) {
+                        world.removeBlock(pos, false);
+                    }
                 }
             }
         }

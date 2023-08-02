@@ -74,6 +74,47 @@ public class DataRegistry {
         if (roadTypes.isEmpty()) {
             throw new RuntimeException("No road types found.");
         }
+        int radiiNum;
+        for (RawRoadType type : roadTypes) {
+            // Edge columns
+            radiiNum = type.edgeBlockColumnRadii.size();
+            for (HashMap<String, ArrayList<RawVerticalBlockColumn>> map : type.edgeTemplateBlockColumns.values()) {
+                for (ArrayList<RawVerticalBlockColumn> list : map.values()) {
+                    if (list.size() > radiiNum) {
+                        throw new RuntimeException("Invalid road type: Edge column list must have size <="+radiiNum+".");
+                    }
+                }
+            }
+            // Special edge columns
+            radiiNum = type.edgeSpecialBlockColumnRadii.size();
+            for (HashMap<String, ArrayList<RawVerticalBlockColumn>> map : type.edgeSpecialTemplateBlockColumns.values()) {
+                for (ArrayList<RawVerticalBlockColumn> list : map.values()) {
+                    if (list.size() > radiiNum) {
+                        throw new RuntimeException("Invalid road type: Special edge column list must have size <="+radiiNum+".");
+                    }
+                }
+            }
+            // Junction columns
+            radiiNum = type.junctionBlockColumnRadii.size();
+            for (HashMap<String, ArrayList<RawVerticalBlockColumn>> map : type.junctionTemplateBlockColumns.values()) {
+                for (ArrayList<RawVerticalBlockColumn> list : map.values()) {
+                    if (list.size() != radiiNum) {
+                        throw new RuntimeException("Invalid road type: Junction column list must be of size "+radiiNum+".");
+                    }
+                }
+            }
+            // Junction special columns
+            radiiNum = type.junctionSpecialBlockColumnRadii.size();
+            for (HashMap<String, HashMap<String, ArrayList<RawVerticalBlockColumn>>> map1 : type.junctionSpecialTemplateBlockColumns.values()) {
+                for (HashMap<String, ArrayList<RawVerticalBlockColumn>> map2 : map1.values()) {
+                    for (ArrayList<RawVerticalBlockColumn> list : map2.values()) {
+                        if (list.size() > radiiNum) {
+                            throw new RuntimeException("Invalid road type: Special junction column list must have size <="+radiiNum+".");
+                        }
+                    }
+                }
+            }
+        }
 
         // There must be at least one village name present.
         if (villageNames.isEmpty()) {

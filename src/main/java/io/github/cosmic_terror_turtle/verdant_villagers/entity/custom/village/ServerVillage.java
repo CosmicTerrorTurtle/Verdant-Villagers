@@ -71,7 +71,7 @@ public class ServerVillage extends Village {
     /**
      * If the distance between two positions is lower than this threshold, they are considered to be close to each other.
      */
-    private static final int POSITIONS_ARE_CLOSE_DISTANCE = 85;
+    private static final int POSITIONS_ARE_CLOSE_DISTANCE = 80;
     /**
      * The minimum number of near road junctions needed for a structure position to be valid.
      */
@@ -91,7 +91,7 @@ public class ServerVillage extends Village {
     /**
      * The maximum slope angle that a road edge can have.
      */
-    private static final double ROAD_EDGE_MAX_Y_SLOPE = 0.45;
+    public static final double ROAD_EDGE_MAX_Y_SLOPE = 0.45;
     /**
      * The basic maximum length that an access path can have.
      */
@@ -201,16 +201,14 @@ public class ServerVillage extends Village {
         String terrainCategory;
         if (airBelow > 0.7) {
             terrainCategory = "sky";
-        } else if (landAbove > 0.5) {
+        } else if (landAbove > 0.55) {
             terrainCategory = "under_ground";
-        } else if (fluidAbove > 0.5) {
+        } else if (fluidAbove > 0.35) {
             terrainCategory = "under_fluid";
+        } else if (fluidBelow > 0.15) {
+            terrainCategory = "on_coast";
         } else {
-            if (fluidBelow > 0.15) {
-                terrainCategory = "on_coast";
-            } else {
-                terrainCategory = "on_land";
-            }
+            terrainCategory = "on_land";
         }
 
         // Determine village type
@@ -702,8 +700,9 @@ public class ServerVillage extends Village {
                         }
                     }
                     if (chunkIsNew) {
-                        chunkCandidate.countBlocks(blockCounts, world);
+                        // Add new chunk, count blocks and determine features to be removed.
                         megaChunks.add(chunkCandidate);
+                        chunkCandidate.scanBlocks(world, blockCounts, true);
                     }
                 }
             }
