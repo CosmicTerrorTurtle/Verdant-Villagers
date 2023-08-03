@@ -22,6 +22,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.*;
@@ -74,7 +75,6 @@ public class VillageHeartEntity extends PathAwareEntity implements GeoEntity {
         };
         birdNavigation.setCanPathThroughDoors(true);
         birdNavigation.setCanEnterOpenDoors(true);
-        birdNavigation.setCanSwim(true);
         return birdNavigation;
     }
 
@@ -147,7 +147,7 @@ public class VillageHeartEntity extends PathAwareEntity implements GeoEntity {
 
     // Animation methods
 
-    private PlayState predicate(AnimationState state) {
+    private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> state) {
         state.getController().setAnimation(RawAnimation.begin().then("animation.village_heart.hover", Animation.LoopType.LOOP));
         return PlayState.CONTINUE;
     }

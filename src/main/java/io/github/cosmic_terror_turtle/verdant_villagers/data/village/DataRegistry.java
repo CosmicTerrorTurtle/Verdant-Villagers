@@ -278,7 +278,7 @@ public class DataRegistry {
         ArrayList<RawRoadType> bestCandidates = new ArrayList<>();
         for (RawRoadType type : roadTypes) {
             candidates.add(type);
-            if (type.availableForVillagerCount.get(0)<=villagerCount && villagerCount<= type.availableForVillagerCount.get(1)) {
+            if (type.availableForVillagerCount.get(0)<=villagerCount && villagerCount<=type.availableForVillagerCount.get(1)) {
                 bestCandidates.add(type);
             }
         }

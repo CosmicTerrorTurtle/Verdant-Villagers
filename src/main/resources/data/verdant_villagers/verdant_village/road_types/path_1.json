@@ -9,13 +9,13 @@
     "gla": "state:minecraft:glass",
     "tor": "state:minecraft:torch"
   },
-  "available_for_villager_count": [6, 15],
-  "edge_min_max_length_multiplier": 1.1,
-  "edge_road_dot_radius": 1.9,
+  "available_for_villager_count": [0, 5],
+  "edge_min_max_length_multiplier": 1.0,
+  "edge_road_dot_radius": 1.4,
   "edge_block_column_radii": [
-    0.7,
-    2.7,
-    2.9
+    0.3,
+    2.2,
+    2.4
   ],
   "edge_template_block_columns": {
     "top": {
@@ -30,14 +30,14 @@
         {"base_level_index": -1, "block_states": ["air","air","air","air","air","air"], "ints": [0,0,0,0,0,0]}
       ],
       "fluid": [
-        {"base_level_index": -1, "block_states": ["air","air","air","air","air","gla","gla"], "ints": [0,0,0,0,0,0,0]},
-        {"base_level_index": -1, "block_states": ["air","air","air","air","gla","gla","gla"], "ints": [0,0,0,0,0,0,0]},
-        {"base_level_index": 0, "block_states": ["wpl","gla","gla","gla","gla","gla","gla"], "ints": [1,1,1,1,1,1,1]}
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","gla","gla"], "ints": [0,0,0,0,0,2,2]},
+        {"base_level_index": -1, "block_states": ["air","air","air","air","gla","gla","gla"], "ints": [0,0,0,0,2,2,2]},
+        {"base_level_index": 0, "block_states": ["wpl","gla","gla","gla","gla","gla","gla"], "ints": [2,2,2,2,2,2,2]}
       ]
     },
     "bottom": {
       "air": [
-        {"base_level_index": 2, "block_states": ["dir","dir","pth"], "ints": [0,0,0]},
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
         {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
         {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]}
       ],
@@ -60,53 +60,45 @@
   },
   "edge_special_column_space": 6.0,
   "edge_special_block_column_radii": [
-    0.0,
-    0.7,
-    2.7,
-    2.9
+    0.3,
+    2.2,
+    2.4
   ],
   "edge_special_template_block_columns": {
     "top": {
       "air": [
-        {"base_level_index": 0, "block_states": ["wlo","wlo","wlo","fnc","tor","air","air"], "ints": [0,0,0,0,0,0,0]},
         {"base_level_index": -1, "block_states": ["air","air","air","air","air","air"], "ints": [0,0,0,0,0,0]},
         {"base_level_index": -1, "block_states": ["air","air","air","air","air","air"], "ints": [0,0,0,0,0,0]},
         {"base_level_index": -1, "block_states": ["air","air","air","air","air","air"], "ints": [0,0,0,0,0,0]}
       ],
       "terrain": [
-        {"base_level_index": 0, "block_states": ["wlo","wlo","wlo","fnc","tor","air","wpl"], "ints": [0,0,0,0,0,0,0]},
-        {"base_level_index": -1, "block_states": ["air","air","air","air","air","wpl"], "ints": [0,0,0,0,0,0]},
-        {"base_level_index": -1, "block_states": ["air","air","air","air","air","wpl"], "ints": [0,0,0,0,0,0]},
-        {"base_level_index": 0, "block_states": ["wlo","wlo","wlo","wlo","wlo","wlo","wlo"], "ints": [1,1,1,1,1,1,1]}
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","wpl"], "ints": [0,0,0,0,0,2]},
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","wpl"], "ints": [0,0,0,0,0,2]},
+        {"base_level_index": 0, "block_states": ["wlo","wlo","wlo","wlo","wlo","wlo","wlo"], "ints": [2,2,2,2,2,2,2]}
       ],
       "fluid": [
-        {"base_level_index": 0, "block_states": ["wlo","wlo","wlo","fnc","tor","air","wpl","wpl"], "ints": [0,0,0,0,0,0,0,0]},
-        {"base_level_index": -1, "block_states": ["air","air","air","air","air","wpl","wpl"], "ints": [0,0,0,0,0,0,0]},
-        {"base_level_index": -1, "block_states": ["air","air","air","air","wpl","wpl","wpl"], "ints": [0,0,0,0,0,0,0]},
-        {"base_level_index": 0, "block_states": ["wlo","wlo","wlo","wlo","wlo","wlo","wlo"], "ints": [1,1,1,1,1,1,1]}
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","wpl","wpl"], "ints": [0,0,0,0,0,2,2]},
+        {"base_level_index": -1, "block_states": ["air","air","air","air","wpl","wpl","wpl"], "ints": [0,0,0,0,2,2,2]},
+        {"base_level_index": 0, "block_states": ["wlo","wlo","wlo","wlo","wlo","wlo","wlo"], "ints": [2,2,2,2,2,2,2]}
       ]
     },
     "bottom": {
       "air": [
-        {"base_level_index": 2, "block_states": ["dir","dir","pth"], "ints": [0,0,0]},
-        {"base_level_index": 2, "block_states": ["dir","dir","pth"], "ints": [0,0,0]},
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
         {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
         {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]}
       ],
       "air_above_terrain": [
         {"base_level_index": 1, "block_states": ["wpl","pth"], "ints": [0,0]},
         {"base_level_index": 1, "block_states": ["wpl","pth"], "ints": [0,0]},
-        {"base_level_index": 1, "block_states": ["wpl","pth"], "ints": [0,0]},
-        {"base_level_index": 4, "block_states": ["wlo","wlo","wlo","wlo","pth"], "ints": [2,0,0,0,0]}
+        {"base_level_index": 4, "block_states": ["wlo","wlo","wlo","wlo","pth"], "ints": [3,0,0,0,0]}
       ],
       "terrain": [
-        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
         {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
         {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
         {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]}
       ],
       "fluid": [
-        {"base_level_index": 1, "block_states": ["wpl","wpl"], "ints": [0,0]},
         {"base_level_index": 1, "block_states": ["wpl","wpl"], "ints": [0,0]},
         {"base_level_index": 1, "block_states": ["wpl","wpl"], "ints": [0,0]},
         {"base_level_index": 1, "block_states": ["wpl","wpl"], "ints": [0,0]}
@@ -114,22 +106,22 @@
     }
   },
   "junction_block_column_radii": [
-    6.25,
-    7.25
+    5.0,
+    6.0
   ],
   "junction_template_block_columns": {
     "top": {
       "air": [
-        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0]},
-        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0]}
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0,0]},
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0,0]}
       ],
       "terrain": [
-        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0]},
-        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0]}
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0,0]},
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0,0]}
       ],
       "fluid": [
-        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air","air","gla"], "ints": [0,0,0,0,0,0,0,0]},
-        {"base_level_index": 0, "block_states": ["wpl","gla","gla","gla","gla","gla","gla","gla"], "ints": [1,1,1,1,1,1,1,1]}
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air","air","air","gla"], "ints": [0,0,0,0,0,0,0,0,2]},
+        {"base_level_index": 0, "block_states": ["wpl","gla","gla","gla","gla","gla","gla","gla","gla"], "ints": [2,2,2,2,2,2,2,2,2]}
       ]
     },
     "bottom": {
@@ -151,26 +143,12 @@
       ]
     }
   },
-  "junction_special_block_column_radii": [
-    0.0
-  ],
+  "junction_special_block_column_radii": [],
   "junction_special_template_block_columns": {
     "top": {
-      "air": {
-        "lamp_post": [
-          {"base_level_index": 0, "block_states": ["wlo","wlo","wlo","fnc","tor","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0,0]}
-        ]
-      },
-      "terrain": {
-        "lamp_post": [
-          {"base_level_index": 0, "block_states": ["wlo","wlo","wlo","fnc","tor","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0,0]}
-        ]
-      },
-      "fluid": {
-        "lamp_post": [
-          {"base_level_index": 0, "block_states": ["wlo","wlo","wlo","fnc","tor","air","air","air","gla"], "ints": [0,0,0,0,0,0,0,0,0]}
-        ]
-      }
+      "air": {},
+      "terrain": {},
+      "fluid": {}
     },
     "bottom": {
       "air": {},

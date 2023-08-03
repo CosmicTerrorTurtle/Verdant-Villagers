@@ -1,0 +1,48 @@
+{
+  "village_types": ["under_water"],
+  "available_for_block_palettes": {},
+  "available_for_villager_count": [0, 1000],
+  "data_per_structure_type": {
+    "crop_field": {
+      "villagers_accounted_for": "6"
+    }
+  },
+  "abbreviation_map": {
+    "nul": "null",
+    "air": "state:minecraft:air",
+    "gra": "palette:0:verdant_villagers:wood___minecraft:grass_block",
+    "pth": "state:minecraft:dirt_path",
+    "dir": "state:minecraft:dirt",
+    "far": "state:minecraft:farmland",
+    "wat": "state:minecraft:water",
+    "gla": "state:minecraft:glass",
+    "tor": "state:minecraft:torch",
+    "wpl": "palette:0:verdant_villagers:wood___minecraft:oak_planks"
+  },
+  "block_state_cube": [
+    [["nul","nul","nul","nul","nul","nul","nul","nul","nul"],["nul","nul","wpl","wpl","wpl","wpl","wpl","nul","nul"],["nul","nul","gla","gla","gla","gla","gla","nul","nul"],["nul","nul","gla","gla","gla","gla","gla","nul","nul"],["nul","nul","gla","gla","gla","gla","gla","nul","nul"],["nul","nul","gla","gla","gla","gla","gla","nul","nul"],["nul","nul","nul","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","nul","nul","nul"]],
+    [["nul","nul","dir","dir","dir","dir","dir","nul","nul"],["nul","wpl","far","far","gra","far","far","wpl","nul"],["nul","gla","air","air","tor","air","air","gla","nul"],["nul","gla","air","air","air","air","air","gla","nul"],["nul","gla","air","air","air","air","air","gla","nul"],["nul","gla","air","air","air","air","air","gla","nul"],["nul","nul","gla","gla","gla","gla","gla","nul","nul"],["nul","nul","nul","nul","nul","nul","nul","nul","nul"]],
+    [["nul","dir","dir","dir","dir","dir","dir","dir","nul"],["wpl","far","far","far","far","far","far","far","wpl"],["gla","air","air","air","air","air","air","air","gla"],["gla","air","air","air","air","air","air","air","gla"],["gla","air","air","air","air","air","air","air","gla"],["gla","air","air","air","air","air","air","air","gla"],["nul","gla","gla","air","air","air","gla","gla","nul"],["nul","nul","nul","gla","gla","gla","nul","nul","nul"]],
+    [["nul","dir","dir","dir","dir","dir","dir","dir","nul"],["wpl","far","far","far","far","far","far","far","wpl"],["gla","air","air","air","air","air","air","air","gla"],["gla","air","air","air","air","air","air","air","gla"],["gla","air","air","air","air","air","air","air","gla"],["gla","air","air","air","air","air","air","air","gla"],["nul","gla","air","air","air","air","air","gla","nul"],["nul","nul","gla","gla","gla","gla","gla","nul","nul"]],
+    [["nul","dir","dir","dir","dir","dir","dir","dir","nul"],["wpl","gra","far","far","wat","far","far","gra","wpl"],["gla","tor","air","air","air","air","air","tor","gla"],["gla","air","air","air","air","air","air","air","gla"],["gla","air","air","air","air","air","air","air","gla"],["gla","air","air","air","air","air","air","air","gla"],["nul","gla","air","air","air","air","air","gla","nul"],["nul","nul","gla","gla","gla","gla","gla","nul","nul"]],
+    [["nul","dir","dir","dir","dir","dir","dir","dir","nul"],["wpl","far","far","far","far","far","far","far","wpl"],["gla","air","air","air","air","air","air","air","gla"],["gla","air","air","air","air","air","air","air","gla"],["gla","air","air","air","air","air","air","air","gla"],["gla","air","air","air","air","air","air","air","gla"],["nul","gla","air","air","air","air","air","gla","nul"],["nul","nul","gla","gla","gla","gla","gla","nul","nul"]],
+    [["nul","dir","dir","dir","dir","dir","dir","dir","nul"],["wpl","far","far","far","far","far","far","far","wpl"],["gla","air","air","air","air","air","air","air","gla"],["gla","air","air","air","air","air","air","air","gla"],["gla","air","air","air","air","air","air","air","gla"],["gla","air","air","air","air","air","air","air","gla"],["nul","gla","gla","air","air","air","gla","gla","nul"],["nul","nul","nul","gla","gla","gla","nul","nul","nul"]],
+    [["nul","nul","dir","dir","dir","dir","dir","nul","nul"],["nul","wpl","far","far","pth","far","far","wpl","nul"],["nul","gla","air","air","air","air","air","gla","nul"],["nul","gla","air","air","air","air","air","gla","nul"],["nul","gla","air","air","air","air","air","gla","nul"],["nul","gla","air","air","air","air","air","gla","nul"],["nul","nul","gla","gla","gla","gla","gla","nul","nul"],["nul","nul","nul","nul","nul","nul","nul","nul","nul"]],
+    [["nul","nul","nul","nul","dir","nul","nul","nul","nul"],["nul","nul","wpl","wpl","pth","wpl","wpl","nul","nul"],["nul","nul","gla","gla","air","gla","gla","nul","nul"],["nul","nul","gla","gla","air","gla","gla","nul","nul"],["nul","nul","gla","gla","air","gla","gla","nul","nul"],["nul","nul","gla","gla","gla","gla","gla","nul","nul"],["nul","nul","nul","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","nul","nul","nul"]]
+  ],
+  "center": [4, 1, 4],
+  "points_of_interest": [
+    {
+      "subclass_name": "StructureAccessPoint",
+      "subclass_data": {
+        "pos": [-5, 0, 0],
+        "radius": 0.2,
+        "template_column": {
+          "base_level_index": 1,
+          "block_states": ["dir", "pth", "air", "air", "air"],
+          "ints": [0, 0, 0, 0, 0]
+        }
+      }
+    }
+  ]
+}

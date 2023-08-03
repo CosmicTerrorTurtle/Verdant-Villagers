@@ -823,6 +823,7 @@ public class ServerVillage extends Village {
      */
     private boolean planSingleJunctionWithEdges() {
 
+        int surfaceBlockMaxYOffset = (int)(50*roadType.edgeMinMaxLengthMultiplier);
         double searchRadius = random.nextDouble(searchDistanceRoad);
         boolean withinBounds;
         boolean foundPositionNearJunctions;
@@ -843,7 +844,7 @@ public class ServerVillage extends Village {
             addAngle = 0;
             do {
                 testPos = pos.add((int) (searchRadius*Math.cos(startAngle+addAngle)), -1, (int) (searchRadius*Math.sin(startAngle+addAngle)));
-                testPos = getSurfaceBlock(testPos, testPos.getY()-50, testPos.getY()+50, true);
+                testPos = getSurfaceBlock(testPos, testPos.getY()-surfaceBlockMaxYOffset, testPos.getY()+surfaceBlockMaxYOffset, true);
                 if (testPos!= null) {
                     testPosIsValid = true;
                     for (MegaChunk megaChunk : megaChunks) {
@@ -1022,6 +1023,8 @@ public class ServerVillage extends Village {
      */
     private boolean planSingleStructure(String structureType) {
 
+        int surfaceBlockMaxYOffset = (int)(50*roadType.edgeMinMaxLengthMultiplier);
+
         // Randomly select the structure template for this attempt.
         RawStructureTemplate rawTemplate = DataRegistry.getRandomTemplateFor(villageType, structureType, villagerCount, blockPalettes);
         if (rawTemplate == null) {
@@ -1048,7 +1051,7 @@ public class ServerVillage extends Village {
             addAngle = 0;
             do {
                 testPos = pos.add((int) (searchRadius*Math.cos(startAngle+addAngle)), -1, (int) (searchRadius*Math.sin(startAngle+addAngle)));
-                testPos = getSurfaceBlock(testPos, testPos.getY()-50, testPos.getY()+50, true);
+                testPos = getSurfaceBlock(testPos, testPos.getY()-surfaceBlockMaxYOffset, testPos.getY()+surfaceBlockMaxYOffset, true);
                 if (testPos != null) {
                     for (MegaChunk megaChunk : megaChunks) {
                         // Find the mega chunk that this position is a part of.

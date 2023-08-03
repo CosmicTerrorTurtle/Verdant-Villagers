@@ -96,9 +96,10 @@ public class GeoFeatureCollision {
                 }
             }
         }
-        // No collision; remove the overlapping bits.
+        // No collision; remove the overlapping bits and their sidewalk positions.
         for (GeoFeatureBit bit : toBeRemoved) {
             newEdge.getBits().remove(bit);
+            newEdge.sidewalkPositions.remove(bit.blockPos);
         }
         return false;
     }
@@ -132,8 +133,8 @@ public class GeoFeatureCollision {
         for (GeoFeatureBit accessPathBit : accessPath.getBits()) {
             for (GeoFeatureBit edgeBit : edge.getBits()) {
                 if (accessPathBit.blockPos.equals(edgeBit.blockPos) && accessPathBit.blockState!=null && edgeBit.blockState!=null) {
-                    // If the position is part of edge's sidewalk, continue (this way, it will be overwritten by the access path).
-                    if (edge.positionIsSidewalk(edgeBit.blockPos)) {
+                    // If the position is part of edge's sidewalk or arch, continue (this way, it will be overwritten by the access path).
+                    if (edge.sidewalkPositions.contains(edgeBit.blockPos) || edge.archPositions.contains(edgeBit.blockPos)) {
                         continue;
                     }
                     // Are both bits air or both bits non-air?

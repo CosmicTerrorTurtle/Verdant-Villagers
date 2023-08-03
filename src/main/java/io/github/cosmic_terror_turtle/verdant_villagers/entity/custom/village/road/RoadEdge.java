@@ -28,6 +28,7 @@ public class RoadEdge extends GeoFeature {
     public RoadJunction from;
     public RoadJunction to;
     public ArrayList<BlockPos> sidewalkPositions = new ArrayList<>();
+    public ArrayList<BlockPos> archPositions = new ArrayList<>();
     public ArrayList<RoadDot> roadDots = new ArrayList<>();
     public final double radius;
     private int polynomialDegree;
@@ -352,26 +353,45 @@ public class RoadEdge extends GeoFeature {
         boolean columnOverlapsTo;
         boolean writeEntireColumn;
         BlockPos relPos;
+        BlockPos absPos;
         GeoFeatureBit bit;
         ArrayList<GeoFeatureBit> relativeBits = new ArrayList<>();
         for (VerticalBlockColumn column : outerSpecialColumns) {
-            columnOverlapsFrom = Math.pow(column.anchor.getX(), 2) + Math.pow(column.anchor.getZ(), 2) <= Math.pow(from.radius, 2);
-            columnOverlapsTo = Math.pow(column.anchor.getX()+from.pos.getX()-to.pos.getX(), 2) + Math.pow(column.anchor.getZ()+from.pos.getZ()-to.pos.getZ(), 2) <= Math.pow(to.radius, 2);
+            columnOverlapsFrom =
+                    Math.pow(column.anchor.getX(), 2)
+                    + Math.pow(column.anchor.getZ(), 2)
+                    <= Math.pow(from.radius, 2);
+            columnOverlapsTo =
+                    Math.pow(column.anchor.getX()+from.pos.getX()-to.pos.getX(), 2)
+                    + Math.pow(column.anchor.getZ()+from.pos.getZ()-to.pos.getZ(), 2)
+                    <= Math.pow(to.radius, 2);
             writeEntireColumn = overwriteJunctions || !columnOverlapsFrom && !columnOverlapsTo;
             for (int i=0; i<column.states.length; i++) {
                 relPos = column.anchor.up(i-column.baseLevelIndex);
-                // Add the bit only when overwriting all junctions, or when no overlap with junctions exists, or when
-                // the bit is not part of the edge's sidewalk AND the bit is part of one of the junctions' sidewalk.
-                if (writeEntireColumn || column.ints[i] != 1 && (
-                        columnOverlapsFrom && from.positionIsSidewalk(from.pos.add(relPos))
-                        || columnOverlapsTo && to.positionIsSidewalk(from.pos.add(relPos))
+                absPos = from.pos.add(relPos);
+                // Add the bit, when:
+                // -overwriting all junctions
+                // -or no overlap with junctions exists
+                // -or the bit is not marked as arch and the bit's column overlaps one of the junctions and:
+                //     -the bit is not sidewalk and the position is part of the junction's sidewalk
+                //     -or the position is part of the junction's arch
+                if (writeEntireColumn || column.ints[i] != 2 && (
+                        columnOverlapsFrom && (
+                                column.ints[i] != 1 && from.sidewalkPositions.contains(absPos)
+                                || from.archPositions.contains(absPos))
+                        || columnOverlapsTo && (
+                                column.ints[i] != 1 && to.sidewalkPositions.contains(absPos)
+                                || to.archPositions.contains(absPos))
                 )) {
                     // Add bit.
                     bit = new GeoFeatureBit(column.states[i], relPos);
                     relativeBits.add(bit);
-                    // If the bit is part of the sidewalk (int = 1 for that index), add its position.
-                    if (column.ints[i] == 1) {
-                        sidewalkPositions.add(from.pos.add(relPos));
+                    // Check ints of the column: 1 for sidewalk, 2 for arch, 3 for pillar.
+                    switch (column.ints[i]) {
+                        default -> {}
+                        case 1 -> sidewalkPositions.add(absPos);
+                        case 2 -> archPositions.add(absPos);
+                        //case 3 -> {}
                     }
                 }
             }
@@ -400,20 +420,6 @@ public class RoadEdge extends GeoFeature {
 
     public double getYSlope() {
         return ySlope;
-    }
-
-    /**
-     * Tests if a {@link BlockPos} is part of this {@link RoadEdge}'s sidewalk.
-     * @param pos The {@link BlockPos} to test.
-     * @return True if {@code pos} is a sidewalk position.
-     */
-    public boolean positionIsSidewalk(BlockPos pos) {
-        for (BlockPos sidewalkPos : sidewalkPositions) {
-            if (pos.equals(sidewalkPos)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -448,6 +454,10 @@ public class RoadEdge extends GeoFeature {
         NbtCompound sidewalkNbt = nbt.getCompound("sidewalk");
         for (String key : sidewalkNbt.getKeys()) {
             sidewalkPositions.add(NbtUtils.blockPosFromNbt(sidewalkNbt.getCompound(key)));
+        }
+        NbtCompound archNbt = nbt.getCompound("arch");
+        for (String key : archNbt.getKeys()) {
+            archPositions.add(NbtUtils.blockPosFromNbt(archNbt.getCompound(key)));
         }
         NbtCompound roadDotsNbt = nbt.getCompound("roadDots");
         for (String key : roadDotsNbt.getKeys()) {
@@ -485,6 +495,13 @@ public class RoadEdge extends GeoFeature {
             i++;
         }
         nbt.put("sidewalk", sidewalkNbt);
+        NbtCompound archNbt = new NbtCompound();
+        i=0;
+        for (BlockPos pos : archPositions) {
+            archNbt.put(Integer.toString(i), NbtUtils.blockPosToNbt(pos));
+            i++;
+        }
+        nbt.put("arch", archNbt);
         NbtCompound roadDotsNbt = new NbtCompound();
         i=0;
         for (RoadDot dot : roadDots) {
