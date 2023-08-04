@@ -19,6 +19,28 @@ public class GeoFeature {
     public static final int ROTATE_OPPOSITE = 2;
     public static final int ROTATE_CLOCKWISE = 3;
 
+    public static int getRandomRotation(Random random) {
+        double p = random.nextDouble();
+        if (p<0.25) {
+            return ROTATE_COUNTER_CLOCKWISE;
+        } else if (p<0.5) {
+            return ROTATE_CLOCKWISE;
+        } else if (p<0.75) {
+            return ROTATE_OPPOSITE;
+        } else {
+            return ROTATE_NOT;
+        }
+    }
+
+    private static int toMegaCoord(int coord) {
+        int length = ServerVillage.MEGA_BLOCK_LENGTH;
+        if (coord < 0) {
+            return (coord+1)/length*length-length;
+        } else {
+            return coord/length*length;
+        }
+    }
+
     public final int elementID;
     private int xMin = 0;
     private int xMax = 0;
@@ -59,14 +81,6 @@ public class GeoFeature {
             }
         }
         touchedMegaBlocks.add(pos);
-    }
-    private int toMegaCoord(int coord) {
-        int length = ServerVillage.MEGA_BLOCK_LENGTH;
-        if (coord < 0) {
-            return (coord+1)/length*length-length;
-        } else {
-            return coord/length*length;
-        }
     }
 
     /**
@@ -110,17 +124,16 @@ public class GeoFeature {
         updateBounds();
     }
 
-    public static int getRandomRotation(Random random) {
-        double p = random.nextDouble();
-        if (p<0.25) {
-            return ROTATE_COUNTER_CLOCKWISE;
-        } else if (p<0.5) {
-            return ROTATE_CLOCKWISE;
-        } else if (p<0.75) {
-            return ROTATE_OPPOSITE;
-        } else {
-            return ROTATE_NOT;
+    /**
+     * Adds new {@link GeoFeatureBit}s to this feature. Updates mega blocks and bounds afterwards.
+     * @param absoluteBits A list of bits to add that should only contain bits with new positions.
+     */
+    public void addBits(ArrayList<GeoFeatureBit> absoluteBits) {
+        for (GeoFeatureBit bit : absoluteBits) {
+            bits.add(bit);
+            addPosToTouchedMegaBlocks(bit.blockPos);
         }
+        updateBounds();
     }
 
     /**
@@ -159,7 +172,28 @@ public class GeoFeature {
      * @return If the bounds overlap.
      */
     public boolean boundsCollideWith(GeoFeature feature) {
-        return xMin <= feature.xMax && feature.xMin <= xMax && yMin <= feature.yMax && feature.yMin <= yMax && zMin <= feature.zMax && feature.zMin <= zMax;
+        return xMin <= feature.xMax && feature.xMin <= xMax
+                && yMin <= feature.yMax && feature.yMin <= yMax
+                && zMin <= feature.zMax && feature.zMin <= zMax;
+    }
+
+    /**
+     * Checks if a given position matches a position of this feature's bits.
+     * @param testPos The block position to test.
+     * @return True if a match was found, false otherwise.
+     */
+    public boolean bitsCollideWith(BlockPos testPos) {
+        if (testPos.getX() < xMin || xMax < testPos.getX()
+                || testPos.getY() < yMin || yMax < testPos.getY()
+                || testPos.getZ() < zMin || zMax < testPos.getZ()) {
+            return false;
+        }
+        for (GeoFeatureBit bit : bits) {
+            if (bit.blockPos.equals(testPos)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

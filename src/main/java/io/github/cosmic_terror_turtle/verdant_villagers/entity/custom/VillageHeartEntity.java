@@ -136,12 +136,24 @@ public class VillageHeartEntity extends PathAwareEntity implements GeoEntity {
 
     @Override
     protected ActionResult interactMob(PlayerEntity player, Hand hand) {
-        if (village instanceof ServerVillage && hand == Hand.MAIN_HAND) {
-            ((ServerVillage) village).increaseVillagerCount();
-            return ActionResult.success(world.isClient());
+        if (hand != Hand.MAIN_HAND) {
+            return ActionResult.PASS;
         }
-
-        return super.interactMob(player, hand);
+        if (village instanceof ServerVillage serverVillage) {
+            // Adjust villager count if allowed.
+            if (!ServerVillage.countVillagers) {
+                if (player.isSneaking()) {
+                    serverVillage.changeVillagerCount(-ServerVillage.VILLAGER_COUNT_DELTA);
+                } else {
+                    serverVillage.changeVillagerCount(ServerVillage.VILLAGER_COUNT_DELTA);
+                }
+            }
+        } else if (village instanceof ClientVillage clientVillage) {
+            // Open screen for player.
+        } else {
+            return ActionResult.PASS;
+        }
+        return ActionResult.success(world.isClient());
     }
 
 

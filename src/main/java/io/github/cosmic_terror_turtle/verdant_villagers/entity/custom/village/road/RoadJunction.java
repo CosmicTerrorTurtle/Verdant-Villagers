@@ -18,6 +18,7 @@ public class RoadJunction extends GeoFeature {
     public BlockPos pos;
     public ArrayList<BlockPos> sidewalkPositions = new ArrayList<>();
     public ArrayList<BlockPos> archPositions = new ArrayList<>();
+    public ArrayList<GeoFeatureBit> pillarStartBits = new ArrayList<>();
     public double radius;
     public double sameHeightRadius;
     public String terrainTypeTop;
@@ -120,7 +121,7 @@ public class RoadJunction extends GeoFeature {
                         default -> {}
                         case 1 -> sidewalkPositions.add(pos.add(bit.blockPos));
                         case 2 -> archPositions.add(pos.add(bit.blockPos));
-                        //case 3 -> {}
+                        case 3 -> pillarStartBits.add(new GeoFeatureBit(bit.blockState, pos.add(bit.blockPos)));
                     }
                 }
             }
@@ -142,6 +143,10 @@ public class RoadJunction extends GeoFeature {
         NbtCompound archNbt = nbt.getCompound("arch");
         for (String key : archNbt.getKeys()) {
             archPositions.add(NbtUtils.blockPosFromNbt(archNbt.getCompound(key)));
+        }
+        NbtCompound pillarNbt = nbt.getCompound("pillar");
+        for (String key : pillarNbt.getKeys()) {
+            pillarStartBits.add(new GeoFeatureBit(pillarNbt.getCompound(key)));
         }
         radius = nbt.getDouble("radius");
         sameHeightRadius = nbt.getDouble("sameHeightRadius");
@@ -170,6 +175,13 @@ public class RoadJunction extends GeoFeature {
             i++;
         }
         nbt.put("arch", archNbt);
+        NbtCompound pillarNbt = new NbtCompound();
+        i=0;
+        for (GeoFeatureBit bit : pillarStartBits) {
+            pillarNbt.put(Integer.toString(i), bit.toNbt());
+            i++;
+        }
+        nbt.put("pillar", pillarNbt);
         nbt.putDouble("radius", radius);
         nbt.putDouble("sameHeightRadius", sameHeightRadius);
         nbt.putString("terrainTypeTop", terrainTypeTop);

@@ -24,7 +24,7 @@
     "structure_check_method": "count_villagers"
   },
   "decoration": {
-    "search_distance_multiplier": 4,
+    "search_distance_multiplier": 5,
     "structure_check_method": "count_villagers"
   }
 }

@@ -13,7 +13,7 @@
     "gla": "state:minecraft:glass",
     "tor": "state:minecraft:torch"
   },
-  "available_for_villager_count": [36, 1000],
+  "available_for_villager_count": [65, 1000],
   "edge_min_max_length_multiplier": 1.5,
   "edge_road_dot_radius": 3.0,
   "edge_block_column_radii": [

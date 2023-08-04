@@ -45,16 +45,22 @@ public class ServerVillage extends Village {
     /**
      * If true, the village will immediately place a feature once it is planned.
      */
-    public static boolean PLACE_BLOCKS_DIRECTLY = true;
+    public static final boolean PLACE_BLOCKS_DIRECTLY = true;
     /**
      * If true, the village will speed up its planning process.
      */
-    public static boolean PLAN_FAST = true;
+    public static final boolean PLAN_FAST = true;
+    public static final int VILLAGER_COUNT_DELTA = 5;
 
     /**
      * The side length of an L*L*L volume of blocks called mega block.
      */
     public static final int MEGA_BLOCK_LENGTH = 2;
+
+    /**
+     * The maximum number of junctions that a village can have. If this number is reached, no more roads will be planned.
+     */
+    private static final int JUNCTION_LIMIT = 100;
 
     /**
      * Range of random initial values for {@link ServerVillage#searchDistanceRoad} (see
@@ -66,16 +72,16 @@ public class ServerVillage extends Village {
      * Range of random initial values for {@link ServerVillage#searchDistanceStructure} (see
      *      * {@link ServerVillage#SEARCH_DISTANCE_STRUCTURE_FRACTION} and {@link MathUtils#getRand(double, double)}).
      */
-    private static final int SEARCH_DISTANCE_STRUCTURE_AVG = 13;
+    private static final int SEARCH_DISTANCE_STRUCTURE_AVG = 14;
     private static final double SEARCH_DISTANCE_STRUCTURE_FRACTION = 0.1;
     /**
      * If the distance between two positions is lower than this threshold, they are considered to be close to each other.
      */
-    private static final int POSITIONS_ARE_CLOSE_DISTANCE = 80;
+    private static final int POSITIONS_ARE_CLOSE_DISTANCE = 50;
     /**
      * The minimum number of near road junctions needed for a structure position to be valid.
      */
-    private static final int MIN_NEAR_ROAD_JUNCTIONS = 6;
+    private static final int MIN_NEAR_ROAD_JUNCTIONS = 4;
     /**
      * The basic minimum space between two road junctions (regardless of whether they are connected or not).
      */
@@ -96,6 +102,12 @@ public class ServerVillage extends Village {
      * The basic maximum length that an access path can have.
      */
     private static final int ACCESS_PATH_BASE_MAX_LENGTH = 24;
+
+    /**
+     * If true, the villagers get counted normally. If false, the count is incremented every update() call and can be
+     * manually adjusted by the player.
+     */
+    public static boolean countVillagers = false;
 
 
     // Fields deleted when the block gets unloaded.
@@ -262,11 +274,6 @@ public class ServerVillage extends Village {
 
         // Maps, lists and block palettes
 
-        blockCounts = new HashMap<>();
-
-        megaChunks = new ArrayList<>();
-        addMegaChunksAround(pos);
-
         blockPaletteLevel = 0;
         blockPalettes = new HashMap<>();
         for (String typeKey : DataRegistry.getBlockPaletteTypeKeys()) {
@@ -286,10 +293,22 @@ public class ServerVillage extends Village {
         }
         addBlockPalettesForAllTypes(tmpBlockCounts);
 
+        blockCounts = new HashMap<>();
+        megaChunks = new ArrayList<>();
+        addMegaChunksAround(pos);
+
         roadJunctions = new ArrayList<>();
         roadEdges = new ArrayList<>();
         accessPaths = new ArrayList<>();
         structures = new ArrayList<>();
+
+        // output name, type and terrain stats for testing
+        for (PlayerEntity player : world.getPlayers()) {
+            player.sendMessage(Text.literal(name+" ("+villageType+")"));
+            player.sendMessage(Text.literal(
+                    "A/B land: " + landAbove + "/" + landBelow + ", fluid: " + fluidAbove + "/" + fluidBelow + ", air: " + airAbove + "/" + airBelow
+            ));
+        }
     }
 
     // Serialize all data that needs to be persistent.
@@ -455,8 +474,11 @@ public class ServerVillage extends Village {
         }
     }
 
-    public void increaseVillagerCount() {
-        villagerCount += 8;
+    public void changeVillagerCount(int amount) {
+        villagerCount += amount;
+        if (villagerCount < 0) {
+            villagerCount = 0;
+        }
         villageHeart.markForUpdate();
     }
 
@@ -606,11 +628,17 @@ public class ServerVillage extends Village {
                 // Count iron golems and villagers
                 Box box;
                 int ironGolemCount = 0;
-                //villagerCount = 0;
+                if (countVillagers) {
+                    villagerCount = 0;
+                } else if (villagerCount < 100 && random.nextDouble() < 0.2) {
+                    villagerCount++;
+                }
                 for (MegaChunk megaChunk : megaChunks) {
                     box = megaChunk.getBox();
                     ironGolemCount += world.getEntitiesByClass(IronGolemEntity.class, box, entity -> true).size();
-                    //villagerCount += world.getEntitiesByClass(XXXEntity.class, box, entity -> true).size();
+                    if (countVillagers) {
+                        //villagerCount += world.getEntitiesByClass(XXXEntity.class, box, entity -> true).size();
+                    }
                 }
 
                 // Spawn iron golems if necessary
@@ -670,11 +698,6 @@ public class ServerVillage extends Village {
                 // output name and villager count for testing
                 for (PlayerEntity player : world.getPlayers()) {
                     player.sendMessage(Text.literal(name+" ("+villagerCount+")"));
-                    if (random.nextDouble() < 0.2) {
-                        player.sendMessage(Text.literal(
-                                "type: "+villageType+", A/B land: "+landAbove+"/"+landBelow+", fluid: "+fluidAbove+"/"+fluidBelow+", air: "+airAbove+"/"+airBelow
-                        ));
-                    }
                 }
                 cyclePhase = UpdateCyclePhase.PAUSE;
             }
@@ -682,15 +705,18 @@ public class ServerVillage extends Village {
     }
 
     /**
-     * Adds all mega chunks in a 3x3x3 cube around the given position.
+     * Adds all mega chunks in an n*3*n cube around the given position, where n is 3 for small villages and 5 for big
+     * villages.
      * @param blockPos A position in the central mega chunk.
      */
     private void addMegaChunksAround(BlockPos blockPos) {
+        int ikMin = villagerCount < 100 ? -1 : -2;
+        int ikMax = villagerCount < 100 ? 2 : 3;
         MegaChunk chunkCandidate;
         boolean chunkIsNew;
-        for (int i=-1; i<2; i++) {
+        for (int i=ikMin; i<ikMax; i++) {
             for (int j=-1; j<2; j++) {
-                for (int k=-1; k<2; k++) {
+                for (int k=ikMin; k<ikMax; k++) {
                     chunkCandidate = new MegaChunk(nextElementID++, blockPos.add(i*MegaChunk.LENGTH, j*MegaChunk.LENGTH, k*MegaChunk.LENGTH));
                     chunkIsNew = true;
                     for (MegaChunk megaChunk : megaChunks) {
@@ -807,10 +833,10 @@ public class ServerVillage extends Village {
      * @param needForRoads A number indicating the need for roads.
      */
     private void planNewRoads(double needForRoads) {
-        // Add new roads (if possible).
+        // Attempt to plan new roads if the village has not reached the maximum number of road junctions.
         int maxNewRoads = 1;
         int numOfFailures = 0;
-        for (int i=0; i<needForRoads && i<maxNewRoads; i++) {
+        for (int i=0; i<needForRoads && i<maxNewRoads && roadJunctions.size() < JUNCTION_LIMIT; i++) {
             if (!planSingleJunctionWithEdges()) {
                 numOfFailures++;
             }
@@ -986,6 +1012,8 @@ public class ServerVillage extends Village {
                             // Add the new junction and edges to the network.
                             roadJunctions.add(newJunction);
                             roadEdges.addAll(newEdges);
+                            // Extend pillars to the ground.
+                            extendPillars(newJunction, newEdges);
                             // Add new chunks around the added junction.
                             addMegaChunksAround(megaChunk.getLowerTip());
 
@@ -1012,6 +1040,71 @@ public class ServerVillage extends Village {
             searchRadius += searchDistanceRoad;
         } while (withinBounds && foundPositionNearJunctions);
 
+        return false;
+    }
+
+    /**
+     * Attempts to extend pillars below newly planned road features.
+     * @param newJunction The newly planned junction.
+     * @param newEdges A list of newly planned edges.
+     */
+    private void extendPillars(RoadJunction newJunction, ArrayList<RoadEdge> newEdges) {
+        ArrayList<GeoFeature> features = new ArrayList<>();
+        features.add(newJunction);
+        features.addAll(newEdges);
+        ArrayList<GeoFeatureBit> pillarStarts;
+        ArrayList<GeoFeatureBit> pillarBits;
+        BlockPos testPos;
+        for (GeoFeature feature : features) {
+            if (feature instanceof RoadJunction junction) {
+                pillarStarts = junction.pillarStartBits;
+            } else if (feature instanceof  RoadEdge edge) {
+                pillarStarts = edge.pillarStartBits;
+            } else {
+                throw new RuntimeException();
+            }
+            pillarBits = new ArrayList<>();
+            // Attempt to extend pillar while the maximum extension is not reached, the ground is not reached and no
+            // position downwards is part of an existing feature.
+            for (GeoFeatureBit startBit : pillarStarts) {
+                for (int i=1; i<10; i++) {
+                    testPos = startBit.blockPos.down(i);
+                    if (posIsPartOfFeature(testPos) || world.getBlockState(testPos).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)) {
+                        break;
+                    }
+                    pillarBits.add(new GeoFeatureBit(startBit.blockState, testPos));
+                }
+            }
+            feature.addBits(pillarBits);
+        }
+    }
+
+    /**
+     * Scans the entire village for features which overlap a position.
+     * @param testPos The block position to check.
+     * @return True when there is an overlap, false otherwise.
+     */
+    private boolean posIsPartOfFeature(BlockPos testPos) {
+        for (RoadJunction junction : roadJunctions) {
+            if (junction.bitsCollideWith(testPos)) {
+                return true;
+            }
+        }
+        for (RoadEdge edge : roadEdges) {
+            if (edge.bitsCollideWith(testPos)) {
+                return true;
+            }
+        }
+        for (RoadEdge path : accessPaths) {
+            if (path.bitsCollideWith(testPos)) {
+                return true;
+            }
+        }
+        for (Structure structure : structures) {
+            if (structure.bitsCollideWith(testPos)) {
+                return true;
+            }
+        }
         return false;
     }
 

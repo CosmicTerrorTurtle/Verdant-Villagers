@@ -9,7 +9,7 @@
     "gla": "state:minecraft:glass",
     "tor": "state:minecraft:torch"
   },
-  "available_for_villager_count": [6, 15],
+  "available_for_villager_count": [5, 24],
   "edge_min_max_length_multiplier": 1.1,
   "edge_road_dot_radius": 1.9,
   "edge_block_column_radii": [
@@ -128,7 +128,7 @@
         {"base_level_index": -1, "block_states": ["air","air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0,0]}
       ],
       "fluid": [
-        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air","air","air","gla"], "ints": [0,0,0,0,0,0,0,2]},
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air","air","air","air","gla"], "ints": [0,0,0,0,0,0,0,0,2]},
         {"base_level_index": 0, "block_states": ["wpl","gla","gla","gla","gla","gla","gla","gla","gla"], "ints": [2,2,2,2,2,2,2,2,2]}
       ]
     },

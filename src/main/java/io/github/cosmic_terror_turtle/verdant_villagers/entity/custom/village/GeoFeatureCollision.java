@@ -100,6 +100,8 @@ public class GeoFeatureCollision {
         for (GeoFeatureBit bit : toBeRemoved) {
             newEdge.getBits().remove(bit);
             newEdge.sidewalkPositions.remove(bit.blockPos);
+            newEdge.archPositions.remove(bit.blockPos);
+            newEdge.pillarStartBits.removeIf(pillarBit -> pillarBit.blockPos.equals(bit.blockPos));
         }
         return false;
     }

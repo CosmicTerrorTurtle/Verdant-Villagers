@@ -29,6 +29,7 @@ public class RoadEdge extends GeoFeature {
     public RoadJunction to;
     public ArrayList<BlockPos> sidewalkPositions = new ArrayList<>();
     public ArrayList<BlockPos> archPositions = new ArrayList<>();
+    public ArrayList<GeoFeatureBit> pillarStartBits = new ArrayList<>();
     public ArrayList<RoadDot> roadDots = new ArrayList<>();
     public final double radius;
     private int polynomialDegree;
@@ -391,7 +392,7 @@ public class RoadEdge extends GeoFeature {
                         default -> {}
                         case 1 -> sidewalkPositions.add(absPos);
                         case 2 -> archPositions.add(absPos);
-                        //case 3 -> {}
+                        case 3 -> pillarStartBits.add(new GeoFeatureBit(column.states[i], absPos));
                     }
                 }
             }
@@ -459,6 +460,10 @@ public class RoadEdge extends GeoFeature {
         for (String key : archNbt.getKeys()) {
             archPositions.add(NbtUtils.blockPosFromNbt(archNbt.getCompound(key)));
         }
+        NbtCompound pillarNbt = nbt.getCompound("pillar");
+        for (String key : pillarNbt.getKeys()) {
+            pillarStartBits.add(new GeoFeatureBit(pillarNbt.getCompound(key)));
+        }
         NbtCompound roadDotsNbt = nbt.getCompound("roadDots");
         for (String key : roadDotsNbt.getKeys()) {
             roadDots.add(new RoadDot(roadDotsNbt.getCompound(key), this));
@@ -502,6 +507,13 @@ public class RoadEdge extends GeoFeature {
             i++;
         }
         nbt.put("arch", archNbt);
+        NbtCompound pillarNbt = new NbtCompound();
+        i=0;
+        for (GeoFeatureBit bit : pillarStartBits) {
+            pillarNbt.put(Integer.toString(i), bit.toNbt());
+            i++;
+        }
+        nbt.put("pillar", pillarNbt);
         NbtCompound roadDotsNbt = new NbtCompound();
         i=0;
         for (RoadDot dot : roadDots) {
