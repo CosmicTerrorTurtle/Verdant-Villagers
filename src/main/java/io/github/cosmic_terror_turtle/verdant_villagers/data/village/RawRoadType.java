@@ -11,7 +11,7 @@ public class RawRoadType {
 
     public ArrayList<Integer> availableForVillagerCount;
 
-    public double edgeMinMaxLengthMultiplier;
+    public double scale;
     public double edgeRoadDotRadius;
     /**
      * Contains the radii to which each of the block columns of a road edge will extend.
@@ -52,7 +52,7 @@ public class RawRoadType {
     public static void createNew(JsonReader reader) throws IOException {
         final HashMap<String, String> abbreviationMap;
         ArrayList<Integer> availableForVillagerCount = null;
-        double edgeMinMaxLengthMultiplier = 1.0;
+        double scale = 1.0;
         double edgeRoadDotRadius = 1.0;
         ArrayList<Double> edgeBlockColumnRadii = null;
         HashMap<String, HashMap<String, ArrayList<RawVerticalBlockColumn>>> edgeTemplateBlockColumns = null;
@@ -74,7 +74,7 @@ public class RawRoadType {
             switch (reader.nextName()) {
                 default -> throw new IOException();
                 case "available_for_villager_count" -> availableForVillagerCount = JsonUtils.readList(reader, JsonReader::nextInt);
-                case "edge_min_max_length_multiplier" -> edgeMinMaxLengthMultiplier = reader.nextDouble();
+                case "scale" -> scale = reader.nextDouble();
                 case "edge_road_dot_radius" -> edgeRoadDotRadius = reader.nextDouble();
                 case "edge_block_column_radii" -> edgeBlockColumnRadii = JsonUtils.readList(reader, JsonReader::nextDouble);
                 case "edge_template_block_columns" -> edgeTemplateBlockColumns = JsonUtils.readMap(reader, reader1 -> JsonUtils.readMap(reader1, reader2 -> JsonUtils.readList(reader2, reader3 -> new RawVerticalBlockColumn(reader3, abbreviationMap))));
@@ -103,7 +103,7 @@ public class RawRoadType {
 
         DataRegistry.addRoadType(new RawRoadType(
                 availableForVillagerCount,
-                edgeMinMaxLengthMultiplier,
+                scale,
                 edgeRoadDotRadius,
                 edgeBlockColumnRadii,
                 edgeTemplateBlockColumns,
@@ -118,7 +118,7 @@ public class RawRoadType {
 
     public RawRoadType(
             ArrayList<Integer> availableForVillagerCount,
-            double edgeMinMaxLengthMultiplier,
+            double scale,
             double edgeRoadDotRadius,
             ArrayList<Double> edgeBlockColumnRadii,
             HashMap<String, HashMap<String, ArrayList<RawVerticalBlockColumn>>> edgeTemplateBlockColumns,
@@ -130,7 +130,7 @@ public class RawRoadType {
             ArrayList<Double> junctionSpecialBlockColumnRadii,
             HashMap<String, HashMap<String, HashMap<String, ArrayList<RawVerticalBlockColumn>>>> junctionSpecialTemplateBlockColumns) {
         this.availableForVillagerCount = availableForVillagerCount;
-        this.edgeMinMaxLengthMultiplier = edgeMinMaxLengthMultiplier;
+        this.scale = scale;
         this.edgeRoadDotRadius = edgeRoadDotRadius;
         this.edgeBlockColumnRadii = edgeBlockColumnRadii;
         this.edgeTemplateBlockColumns = edgeTemplateBlockColumns;

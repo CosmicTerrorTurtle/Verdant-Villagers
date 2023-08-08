@@ -1,16 +1,10 @@
 package io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.road;
 
-import io.github.cosmic_terror_turtle.verdant_villagers.VerdantVillagers;
-import io.github.cosmic_terror_turtle.verdant_villagers.data.village.BlockStateParsing;
 import io.github.cosmic_terror_turtle.verdant_villagers.data.village.RawRoadType;
 import io.github.cosmic_terror_turtle.verdant_villagers.data.village.RawVerticalBlockColumn;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.ServerVillage;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.VerticalBlockColumn;
-import io.github.cosmic_terror_turtle.verdant_villagers.util.MathUtils;
 import io.github.cosmic_terror_turtle.verdant_villagers.util.ModTags;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -20,7 +14,7 @@ import java.util.Map;
 
 public class RoadType {
 
-    public double edgeMinMaxLengthMultiplier;
+    public double scale;
 
     public double edgeRoadDotRadius;
     public double edgeRadius;
@@ -39,7 +33,7 @@ public class RoadType {
 
     public RoadType(ServerVillage village, RawRoadType rawRoadType) {
         // Edge
-        edgeMinMaxLengthMultiplier = rawRoadType.edgeMinMaxLengthMultiplier;
+        scale = rawRoadType.scale;
         edgeRoadDotRadius = rawRoadType.edgeRoadDotRadius;
         edgeRadius = 0.0;
         edgeBlockColumnRadii = rawRoadType.edgeBlockColumnRadii;

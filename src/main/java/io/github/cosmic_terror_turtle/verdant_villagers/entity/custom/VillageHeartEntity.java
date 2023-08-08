@@ -100,7 +100,13 @@ public class VillageHeartEntity extends PathAwareEntity implements GeoEntity {
     }
 
     @Override
-    public void checkDespawn() {
+    public boolean canImmediatelyDespawn(double distanceSquared) {
+        return false;
+    }
+
+    @Override
+    public boolean cannotDespawn() {
+        return true;
     }
 
     @Override
@@ -207,7 +213,6 @@ public class VillageHeartEntity extends PathAwareEntity implements GeoEntity {
         NbtCompound nbt = new NbtCompound();
 
         if (village!=null) {
-            nbt.putString("name", village.getName());
             nbt.putInt("villagerCount", village.getVillagerCount());
         }
 
@@ -220,7 +225,6 @@ public class VillageHeartEntity extends PathAwareEntity implements GeoEntity {
      */
     private void setSyncNbt(NbtCompound nbt) {
         if (village!=null && nbt.contains("name")) {
-            village.setName(nbt.getString("name"));
             village.setVillagerCount(nbt.getInt("villagerCount"));
         }
     }

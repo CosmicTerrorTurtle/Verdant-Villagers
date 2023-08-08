@@ -18,6 +18,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LargeEntitySpawnHelper;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.passive.IronGolemEntity;
+import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
@@ -63,25 +64,21 @@ public class ServerVillage extends Village {
     private static final int JUNCTION_LIMIT = 100;
 
     /**
-     * Range of random initial values for {@link ServerVillage#searchDistanceRoad} (see
-     * {@link ServerVillage#SEARCH_DISTANCE_ROAD_FRACTION} and {@link MathUtils#getRand(double, double)}).
+     * The distance in positions between different placement attempts in road planning.
      */
-    private static final int SEARCH_DISTANCE_ROAD_AVG = 30;
-    private static final double SEARCH_DISTANCE_ROAD_FRACTION = 0.1;
+    private static final int SEARCH_DISTANCE_ROAD = 30;
     /**
-     * Range of random initial values for {@link ServerVillage#searchDistanceStructure} (see
-     *      * {@link ServerVillage#SEARCH_DISTANCE_STRUCTURE_FRACTION} and {@link MathUtils#getRand(double, double)}).
+     * The distance in positions between different placement attempts in structure planning.
      */
-    private static final int SEARCH_DISTANCE_STRUCTURE_AVG = 14;
-    private static final double SEARCH_DISTANCE_STRUCTURE_FRACTION = 0.1;
+    private static final int SEARCH_DISTANCE_STRUCTURE = 15;
     /**
      * If the distance between two positions is lower than this threshold, they are considered to be close to each other.
      */
-    private static final int POSITIONS_ARE_CLOSE_DISTANCE = 50;
+    private static final int POSITIONS_ARE_CLOSE_DISTANCE = 80;
     /**
      * The minimum number of near road junctions needed for a structure position to be valid.
      */
-    private static final int MIN_NEAR_ROAD_JUNCTIONS = 4;
+    private static final int MIN_NEAR_ROAD_JUNCTIONS = 6;
     /**
      * The basic minimum space between two road junctions (regardless of whether they are connected or not).
      */
@@ -101,7 +98,7 @@ public class ServerVillage extends Village {
     /**
      * The basic maximum length that an access path can have.
      */
-    private static final int ACCESS_PATH_BASE_MAX_LENGTH = 24;
+    private static final int ACCESS_PATH_BASE_MAX_LENGTH = 20;
 
     /**
      * If true, the villagers get counted normally. If false, the count is incremented every update() call and can be
@@ -123,8 +120,6 @@ public class ServerVillage extends Village {
 
     // Fields persistent when the block gets unloaded.
     private int nextElementID; // The unique id that is given next to a new feature. Always post-increment when assigning the next id.
-    private final int searchDistanceRoad; // The distance in positions between different placement attempts in road planning.
-    private final int searchDistanceStructure; // The distance in positions between different placement attempts in structure planning.
     // Village type parameters
     private final float landAbove;
     private final float landBelow;
@@ -160,10 +155,8 @@ public class ServerVillage extends Village {
 
         // Misc values
         nextElementID = 0;
-        name = DataRegistry.getRandomVillageName();
+        villageHeart.setCustomName(Text.literal(DataRegistry.getRandomVillageName()));
         villagerCount = 0;
-        searchDistanceRoad = (int) MathUtils.getRand(SEARCH_DISTANCE_ROAD_AVG, SEARCH_DISTANCE_ROAD_FRACTION);
-        searchDistanceStructure = (int) MathUtils.getRand(SEARCH_DISTANCE_STRUCTURE_AVG, SEARCH_DISTANCE_STRUCTURE_FRACTION);
 
         // Analyze terrain
         int xzTerrainRadius = 64;
@@ -304,7 +297,7 @@ public class ServerVillage extends Village {
 
         // output name, type and terrain stats for testing
         for (PlayerEntity player : world.getPlayers()) {
-            player.sendMessage(Text.literal(name+" ("+villageType+")"));
+            player.sendMessage(Text.literal(villageHeart.getName().getString()+" ("+villageType+")"));
             player.sendMessage(Text.literal(
                     "A/B land: " + landAbove + "/" + landBelow + ", fluid: " + fluidAbove + "/" + fluidBelow + ", air: " + airAbove + "/" + airBelow
             ));
@@ -316,10 +309,7 @@ public class ServerVillage extends Village {
         NbtCompound nbt = new NbtCompound();
 
         nbt.putInt("nextElementID", nextElementID);
-        nbt.putString("name", name);
         nbt.putInt("villagerCount", villagerCount);
-        nbt.putInt("searchDistanceRoad", searchDistanceRoad);
-        nbt.putInt("searchDistanceStructure", searchDistanceStructure);
         nbt.putFloat("landAbove", landAbove);
         nbt.putFloat("landBelow", landBelow);
         nbt.putFloat("airAbove", airAbove);
@@ -404,10 +394,7 @@ public class ServerVillage extends Village {
         // Read the village heart from the nbt tag.
 
         nextElementID = nbt.getInt("nextElementID");
-        name = nbt.getString("name");
         villagerCount = nbt.getInt("villagerCount");
-        searchDistanceRoad = nbt.getInt("searchDistanceRoad");
-        searchDistanceStructure = nbt.getInt("searchDistanceStructure");
         landAbove = nbt.getFloat("landAbove");
         landBelow = nbt.getFloat("landBelow");
         airAbove = nbt.getFloat("airAbove");
@@ -637,14 +624,14 @@ public class ServerVillage extends Village {
                     box = megaChunk.getBox();
                     ironGolemCount += world.getEntitiesByClass(IronGolemEntity.class, box, entity -> true).size();
                     if (countVillagers) {
-                        //villagerCount += world.getEntitiesByClass(XXXEntity.class, box, entity -> true).size();
+                        villagerCount += world.getEntitiesByClass(VillagerEntity.class, box, entity -> true).size();
                     }
                 }
 
                 // Spawn iron golems if necessary
                 if (ironGolemCount * 8 < villagerCount && random.nextDouble() < 0.1) {
                     LargeEntitySpawnHelper.trySpawnAt(EntityType.IRON_GOLEM, SpawnReason.MOB_SUMMONED, (ServerWorld) world, pos,
-                            10, 50, 30, LargeEntitySpawnHelper.Requirements.IRON_GOLEM);
+                            10, (int)(roadType.scale*50), 30, LargeEntitySpawnHelper.Requirements.IRON_GOLEM);
                 }
 
                 // Spawn villagers if necessary
@@ -697,7 +684,7 @@ public class ServerVillage extends Village {
 
                 // output name and villager count for testing
                 for (PlayerEntity player : world.getPlayers()) {
-                    player.sendMessage(Text.literal(name+" ("+villagerCount+")"));
+                    player.sendMessage(Text.literal(villageHeart.getName().getString()+" ("+villagerCount+")"));
                 }
                 cyclePhase = UpdateCyclePhase.PAUSE;
             }
@@ -849,8 +836,8 @@ public class ServerVillage extends Village {
      */
     private boolean planSingleJunctionWithEdges() {
 
-        int surfaceBlockMaxYOffset = (int)(50*roadType.edgeMinMaxLengthMultiplier);
-        double searchRadius = random.nextDouble(searchDistanceRoad);
+        int surfaceBlockMaxYOffset = (int)(50*roadType.scale);
+        double searchRadius = random.nextDouble(SEARCH_DISTANCE_ROAD);
         boolean withinBounds;
         boolean foundPositionNearJunctions;
         double startAngle;
@@ -880,14 +867,14 @@ public class ServerVillage extends Village {
 
                             // Is the test position close enough to existing junctions?
                             for (RoadJunction junction : roadJunctions) {
-                                if (testPos.getSquaredDistance(junction.pos) < Math.pow(ROAD_EDGE_BASE_MAX_LENGTH*roadType.edgeMinMaxLengthMultiplier, 2)) {
+                                if (testPos.getSquaredDistance(junction.pos) < Math.pow(ROAD_EDGE_BASE_MAX_LENGTH*roadType.scale, 2)) {
                                     foundPositionNearJunctions = true;
                                 }
                             }
 
                             // Is the test position too close to existing junctions?
                             for (RoadJunction junction : roadJunctions) {
-                                if (testPos.getSquaredDistance(junction.pos) < Math.pow(ROAD_JUNCTION_BASE_SPACE*roadType.edgeMinMaxLengthMultiplier, 2)) {
+                                if (testPos.getSquaredDistance(junction.pos) < Math.pow(ROAD_JUNCTION_BASE_SPACE*roadType.scale, 2)) {
                                     testPosIsValid = false;
                                     break;
                                 }
@@ -936,8 +923,8 @@ public class ServerVillage extends Village {
                                 for (RoadJunction junction : roadJunctions) {
                                     // Is the edge's length okay?
                                     testSquaredDist = newJunction.pos.getSquaredDistance(junction.pos);
-                                    if (testSquaredDist < Math.pow(ROAD_EDGE_BASE_MIN_LENGTH*roadType.edgeMinMaxLengthMultiplier, 2)
-                                            || testSquaredDist > Math.pow(ROAD_EDGE_BASE_MAX_LENGTH*roadType.edgeMinMaxLengthMultiplier, 2)) {
+                                    if (testSquaredDist < Math.pow(ROAD_EDGE_BASE_MIN_LENGTH*roadType.scale, 2)
+                                            || testSquaredDist > Math.pow(ROAD_EDGE_BASE_MAX_LENGTH*roadType.scale, 2)) {
                                         continue;
                                     }
                                     // Create new road edge.
@@ -1034,10 +1021,10 @@ public class ServerVillage extends Village {
                     }
                 }
 
-                addAngle += searchDistanceRoad/searchRadius;
+                addAngle += SEARCH_DISTANCE_ROAD/searchRadius;
             } while (addAngle < 2*Math.PI);
 
-            searchRadius += searchDistanceRoad;
+            searchRadius += SEARCH_DISTANCE_ROAD;
         } while (withinBounds && foundPositionNearJunctions);
 
         return false;
@@ -1116,7 +1103,7 @@ public class ServerVillage extends Village {
      */
     private boolean planSingleStructure(String structureType) {
 
-        int surfaceBlockMaxYOffset = (int)(50*roadType.edgeMinMaxLengthMultiplier);
+        int surfaceBlockMaxYOffset = (int)(50*roadType.scale);
 
         // Randomly select the structure template for this attempt.
         RawStructureTemplate rawTemplate = DataRegistry.getRandomTemplateFor(villageType, structureType, villagerCount, blockPalettes);
@@ -1125,7 +1112,7 @@ public class ServerVillage extends Village {
         }
 
         // Set parameters specific to the structure type.
-        double searchDistance = DataRegistry.getStructureTypeData(structureType).searchDistanceMultiplier * searchDistanceStructure;
+        double searchDistance = DataRegistry.getStructureTypeData(structureType).searchDistanceMultiplier*SEARCH_DISTANCE_STRUCTURE;
 
         // Main body
         double searchRadius = random.nextDouble(searchDistance);
@@ -1154,7 +1141,7 @@ public class ServerVillage extends Village {
                             // Test if enough road junctions are nearby.
                             junctionCount = 0;
                             for (RoadJunction junction : roadJunctions) {
-                                if (junction.pos.isWithinDistance(testPos, roadType.edgeMinMaxLengthMultiplier*POSITIONS_ARE_CLOSE_DISTANCE)) {
+                                if (junction.pos.isWithinDistance(testPos, roadType.scale*POSITIONS_ARE_CLOSE_DISTANCE)) {
                                     junctionCount++;
                                     if (junctionCount >= MIN_NEAR_ROAD_JUNCTIONS) {
                                         break;
@@ -1267,7 +1254,7 @@ public class ServerVillage extends Village {
                 nearDots = new ArrayList<>();
                 for (RoadEdge edge : roadEdges) {
                     for (RoadDot dot : edge.roadDots) {
-                        if (dot.pos.isWithinDistance(accessPoint.pos, ACCESS_PATH_BASE_MAX_LENGTH *roadType.edgeMinMaxLengthMultiplier)
+                        if (dot.pos.isWithinDistance(accessPoint.pos, ACCESS_PATH_BASE_MAX_LENGTH*roadType.scale)
                                 && 1 < MathHelper.square(dot.pos.getX()-accessPoint.pos.getX()) + MathHelper.square(dot.pos.getZ()-accessPoint.pos.getZ())) {
                             nearDots.add(dot);
                         }
