@@ -1,7 +1,7 @@
 {
   "village_types": ["under_water", "under_lava"],
   "available_for_block_palettes": {},
-  "available_for_villager_count": [0, 1000],
+  "available_for_villager_count": [0, 1000000],
   "data_per_structure_type": {
     "storage": {
       "villagers_accounted_for": "6"
@@ -34,12 +34,7 @@
       "subclass_name": "StructureAccessPoint",
       "subclass_data": {
         "pos": [-3, 0, 0],
-        "radius": 0.2,
-        "template_column": {
-          "base_level_index": 1,
-          "block_states": ["dir", "pth", "air", "air", "air"],
-          "ints": [0, 0, 0, 0, 0]
-        }
+        "access_path_road_type": "verdant_villagers:path_1"
       }
     }
   ]

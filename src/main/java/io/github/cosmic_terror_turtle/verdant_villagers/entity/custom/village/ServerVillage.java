@@ -61,7 +61,7 @@ public class ServerVillage extends Village {
     /**
      * The maximum number of junctions that a village can have. If this number is reached, no more roads will be planned.
      */
-    private static final int JUNCTION_LIMIT = 100;
+    private static final int JUNCTION_LIMIT = 50;
 
     /**
      * The distance in positions between different placement attempts in road planning.
@@ -617,7 +617,7 @@ public class ServerVillage extends Village {
                 int ironGolemCount = 0;
                 if (countVillagers) {
                     villagerCount = 0;
-                } else if (villagerCount < 100 && random.nextDouble() < 0.2) {
+                } else if (villagerCount < 150 && random.nextDouble() < 0.25) {
                     villagerCount++;
                 }
                 for (MegaChunk megaChunk : megaChunks) {
@@ -928,7 +928,7 @@ public class ServerVillage extends Village {
                                         continue;
                                     }
                                     // Create new road edge.
-                                    testEdge = new RoadEdge(nextElementID++, world, this, newJunction, junction, true, roadType);
+                                    testEdge = new RoadEdge(nextElementID++, world, this, newJunction, junction, true, roadType, false);
                                     // Is the edge's Y-slope okay?
                                     if (Math.abs(testEdge.getYSlope()) > ROAD_EDGE_MAX_Y_SLOPE) {
                                         continue;
@@ -1054,7 +1054,7 @@ public class ServerVillage extends Village {
             // Attempt to extend pillar while the maximum extension is not reached, the ground is not reached and no
             // position downwards is part of an existing feature.
             for (GeoFeatureBit startBit : pillarStarts) {
-                for (int i=1; i<10; i++) {
+                for (int i=1; i<20; i++) {
                     testPos = startBit.blockPos.down(i);
                     if (posIsPartOfFeature(testPos) || world.getBlockState(testPos).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)) {
                         break;
@@ -1269,18 +1269,18 @@ public class ServerVillage extends Village {
                             roadDot = nearDot;
                         }
                     }
+                    // Test the selected dot.
                     if (roadDot != null) {
-                        // Test the selected dot.
-
                         // Create test edge.
                         RoadEdge testEdge = new RoadEdge(
                                 nextElementID++,
                                 world,
                                 this,
-                                new RoadJunction(nextElementID++, accessPoint.pos, 0, 0.6),
-                                new RoadJunction(nextElementID++, roadDot.pos, 0, 2.0*roadDot.edge.radius),
+                                new RoadJunction(nextElementID++, world, accessPoint.pos, 0, 0.6),
+                                new RoadJunction(nextElementID++, world, roadDot.pos, 0, 2.0*roadDot.edge.radius),
                                 true,
-                                new AccessPathRoadType(accessPoint.radius, accessPoint.templateRoadColumn)
+                                roadTypeProvider.getRoadType(DataRegistry.getAccessPathRoadType(accessPoint.accessPathRoadType)),
+                                true
                         );
                         // Check edge's Y-slope.
                         if (Math.abs(testEdge.getYSlope()) < ROAD_EDGE_MAX_Y_SLOPE) {

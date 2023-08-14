@@ -75,6 +75,32 @@ public class ModResources {
                     }
                 }
 
+                // Road types
+                String tmp;
+                for (Map.Entry<Identifier, Resource> result :
+                        manager.findResources("verdant_village"+File.separator+"road_types"+File.separator+"roads", id -> id.getPath().endsWith(".json")).entrySet()) {
+                    try (JsonReader reader = new JsonReader(new InputStreamReader(result.getValue().getInputStream()))) {
+
+                        tmp = new File(result.getKey().getPath()).getName();
+                        RawRoadType.createNew(reader, result.getKey().getNamespace()+":"+tmp.substring(0, tmp.length()-5), false);
+
+                    } catch (Exception e) {
+                        VerdantVillagers.LOGGER.error("Error occurred while loading resource json " + result.getKey(), e);
+                    }
+                }
+                // Access path road types
+                for (Map.Entry<Identifier, Resource> result :
+                        manager.findResources("verdant_village"+File.separator+"road_types"+File.separator+"access_paths", id -> id.getPath().endsWith(".json")).entrySet()) {
+                    try (JsonReader reader = new JsonReader(new InputStreamReader(result.getValue().getInputStream()))) {
+
+                        tmp = new File(result.getKey().getPath()).getName();
+                        RawRoadType.createNew(reader, result.getKey().getNamespace()+":"+tmp.substring(0, tmp.length()-5), true);
+
+                    } catch (Exception e) {
+                        VerdantVillagers.LOGGER.error("Error occurred while loading resource json " + result.getKey(), e);
+                    }
+                }
+
                 // Structure types
                 for (Map.Entry<Identifier, Resource> result :
                         manager.findResources("verdant_village"+File.separator+"structure_types", id -> id.getPath().endsWith(".json")).entrySet()
@@ -95,18 +121,6 @@ public class ModResources {
                     try (JsonReader reader = new JsonReader(new InputStreamReader(result.getValue().getInputStream()))) {
 
                         RawStructureTemplate.createNew(reader);
-
-                    } catch (Exception e) {
-                        VerdantVillagers.LOGGER.error("Error occurred while loading resource json " + result.getKey(), e);
-                    }
-                }
-
-                // Road types
-                for (Map.Entry<Identifier, Resource> result :
-                        manager.findResources("verdant_village"+File.separator+"road_types", id -> id.getPath().endsWith(".json")).entrySet()) {
-                    try (JsonReader reader = new JsonReader(new InputStreamReader(result.getValue().getInputStream()))) {
-
-                        RawRoadType.createNew(reader);
 
                     } catch (Exception e) {
                         VerdantVillagers.LOGGER.error("Error occurred while loading resource json " + result.getKey(), e);

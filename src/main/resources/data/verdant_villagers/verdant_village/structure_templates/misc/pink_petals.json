@@ -3,7 +3,7 @@
   "available_for_block_palettes": {
     "verdant_villagers:wood": ["verdant_villagers:cherry"]
   },
-  "available_for_villager_count": [0, 1000],
+  "available_for_villager_count": [0, 1000000],
   "data_per_structure_type": {
     "decoration": {
       "villagers_accounted_for": "0.2"

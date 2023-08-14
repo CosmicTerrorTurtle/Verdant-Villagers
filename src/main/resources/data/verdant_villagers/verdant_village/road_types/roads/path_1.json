@@ -60,6 +60,7 @@
   },
   "edge_special_column_space": 6.0,
   "edge_special_block_column_radii": [
+    0.0,
     0.3,
     2.2,
     2.4
@@ -67,16 +68,19 @@
   "edge_special_template_block_columns": {
     "top": {
       "air": [
+        {"base_level_index": 0, "block_states": ["dir","tor","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0]},
         {"base_level_index": -1, "block_states": ["air","air","air","air","air","air"], "ints": [0,0,0,0,0,0]},
         {"base_level_index": -1, "block_states": ["air","air","air","air","air","air"], "ints": [0,0,0,0,0,0]},
         {"base_level_index": -1, "block_states": ["air","air","air","air","air","air"], "ints": [0,0,0,0,0,0]}
       ],
       "terrain": [
+        {"base_level_index": 0, "block_states": ["dir","tor","air","air","air","air","wpl"], "ints": [0,0,0,0,0,0,2]},
         {"base_level_index": -1, "block_states": ["air","air","air","air","air","wpl"], "ints": [0,0,0,0,0,2]},
         {"base_level_index": -1, "block_states": ["air","air","air","air","air","wpl"], "ints": [0,0,0,0,0,2]},
         {"base_level_index": 0, "block_states": ["wlo","wlo","wlo","wlo","wlo","wlo","wlo"], "ints": [2,2,2,2,2,2,2]}
       ],
       "fluid": [
+        {"base_level_index": 0, "block_states": ["dir","tor","air","air","air","air","wpl","wpl"], "ints": [0,0,0,0,0,0,2,2]},
         {"base_level_index": -1, "block_states": ["air","air","air","air","air","wpl","wpl"], "ints": [0,0,0,0,0,2,2]},
         {"base_level_index": -1, "block_states": ["air","air","air","air","wpl","wpl","wpl"], "ints": [0,0,0,0,2,2,2]},
         {"base_level_index": 0, "block_states": ["wlo","wlo","wlo","wlo","wlo","wlo","wlo"], "ints": [2,2,2,2,2,2,2]}
@@ -86,9 +90,11 @@
       "air": [
         {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
         {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
         {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]}
       ],
       "air_above_terrain": [
+        {"base_level_index": 1, "block_states": ["wpl","pth"], "ints": [0,0]},
         {"base_level_index": 1, "block_states": ["wpl","pth"], "ints": [0,0]},
         {"base_level_index": 1, "block_states": ["wpl","pth"], "ints": [0,0]},
         {"base_level_index": 4, "block_states": ["wlo","wlo","wlo","wlo","pth"], "ints": [3,0,0,0,0]}
@@ -96,9 +102,11 @@
       "terrain": [
         {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
         {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
+        {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
         {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]}
       ],
       "fluid": [
+        {"base_level_index": 1, "block_states": ["wpl","wpl"], "ints": [0,0]},
         {"base_level_index": 1, "block_states": ["wpl","wpl"], "ints": [0,0]},
         {"base_level_index": 1, "block_states": ["wpl","wpl"], "ints": [0,0]},
         {"base_level_index": 1, "block_states": ["wpl","wpl"], "ints": [0,0]}
@@ -143,12 +151,26 @@
       ]
     }
   },
-  "junction_special_block_column_radii": [],
+  "junction_special_block_column_radii": [
+    0.0
+  ],
   "junction_special_template_block_columns": {
     "top": {
-      "air": {},
-      "terrain": {},
-      "fluid": {}
+      "air": {
+        "torch": [
+          {"base_level_index": 0, "block_states": ["dir","tor","air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0,0,0]}
+        ]
+      },
+      "terrain": {
+        "torch": [
+          {"base_level_index": 0, "block_states": ["dir","tor","air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0,0,0]}
+        ]
+      },
+      "fluid": {
+        "torch": [
+          {"base_level_index": 0, "block_states": ["dir","tor","air","air","air","air","air","air","air","gla"], "ints": [0,0,0,0,0,0,0,0,0,2]}
+        ]
+      }
     },
     "bottom": {
       "air": {},

@@ -7,24 +7,21 @@ import org.jetbrains.annotations.NotNull;
 
 public class StructureAccessPoint extends PointOfInterest {
 
-    public double radius;
-    public VerticalBlockColumn templateRoadColumn;
+    public String accessPathRoadType;
 
     /**
      * Creates a new structure access point.
      * @param pos The position of this point (can be relative).
-     * @param radius The diameter of the access path that will be connected to this point.
-     * @param templateRoadColumn The surface material of the path.
+     * @param accessPathRoadType The road type of the access path that will be connected to this point.
      */
-    public StructureAccessPoint(BlockPos pos, double radius, VerticalBlockColumn templateRoadColumn) {
+    public StructureAccessPoint(BlockPos pos, String accessPathRoadType) {
         super(pos);
-        this.radius = radius;
-        this.templateRoadColumn = templateRoadColumn;
+        this.accessPathRoadType = accessPathRoadType;
     }
 
     @Override
     public PointOfInterest copy() {
-        return new StructureAccessPoint(new BlockPos(pos), radius, templateRoadColumn);
+        return new StructureAccessPoint(new BlockPos(pos), accessPathRoadType);
     }
 
     /**
@@ -33,8 +30,7 @@ public class StructureAccessPoint extends PointOfInterest {
      */
     public StructureAccessPoint(@NotNull NbtCompound nbt) {
         super(nbt);
-        radius = nbt.getDouble("radius");
-        templateRoadColumn = new VerticalBlockColumn(nbt.getCompound("templateRoadColumn"));
+        accessPathRoadType = nbt.getString("accessPathRoadType");
     }
     /**
      * Saves this StructureAccessPoint to an NbtCompound.
@@ -44,8 +40,7 @@ public class StructureAccessPoint extends PointOfInterest {
     public NbtCompound toNbt() {
         NbtCompound nbt = super.toNbt();
         nbt.putString("subclass", "StructureAccessPoint");
-        nbt.putDouble("radius", radius);
-        nbt.put("templateRoadColumn", templateRoadColumn.toNbt());
+        nbt.putString("accessPathRoadType", accessPathRoadType);
         return nbt;
     }
 }

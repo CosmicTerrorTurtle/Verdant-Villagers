@@ -1,7 +1,7 @@
 {
   "village_types": ["default", "coast", "under_ground", "sky", "nether_standard", "nether_coast", "nether_under_ground", "nether_sky"],
   "available_for_block_palettes": {},
-  "available_for_villager_count": [10, 1000],
+  "available_for_villager_count": [30, 1000000],
   "data_per_structure_type": {
     "house": {
       "villagers_accounted_for": "1"
@@ -32,20 +32,15 @@
     [["nul","stf","stf","stf","stf","stf","nul"],["air","wpl","crt","tor","bhe","wpl","air"],["air","gwe","air","air","air","gwe","air"],["air","wpl","air","air","air","wpl","air"],["air","wpl","air","air","air","wpl","air"],["ste","wpl","wpl","wpl","wpl","wpl","ste"],["sbw","sbw","sbw","sbw","sbw","sbw","sbw"]],
     [["nul","stf","stf","stf","stf","stf","nul"],["air","wpl","air","air","bfe","wpl","air"],["air","gwe","air","air","air","gwe","air"],["air","wpl","air","air","air","wpl","air"],["air","wpl","air","air","air","wpl","air"],["stw","wpl","wpl","wpl","wpl","wpl","stw"],["sbe","sbe","sbe","sbe","sbe","sbe","sbe"]],
     [["nul","stf","stf","stf","stf","stf","nul"],["air","wlo","wpl","dle","wpl","wlo","air"],["air","wlo","wpl","due","wpl","wlo","air"],["air","wlo","wpl","wpl","wpl","wlo","air"],["stw","wlo","wpl","wpl","wpl","wlo","stw"],["sbe","sbe","sbe","sbe","sbe","sbe","sbe"],["air","air","air","air","air","air","air"]],
-    [["nul","nul","nul","nul","nul","nul","nul"],["air","air","air","air","air","air","air"],["air","air","air","air","air","air","air"],["air","air","air","air","air","air","air"],["sbe","sbe","sbe","sbe","sbe","sbe","sbe"],["air","air","air","air","air","air","air"],["air","air","air","air","air","air","air"]]
+    [["nul","nul","stf","stf","stf","nul","nul"],["air","air","air","air","air","air","air"],["air","air","air","air","air","air","air"],["air","air","air","air","air","air","air"],["sbe","sbe","sbe","sbe","sbe","sbe","sbe"],["air","air","air","air","air","air","air"],["air","air","air","air","air","air","air"]]
   ],
   "center": [3, 0, 3],
   "points_of_interest": [
     {
       "subclass_name": "StructureAccessPoint",
       "subclass_data": {
-        "pos": [-3, 0, 0],
-        "radius": 0.2,
-        "template_column": {
-          "base_level_index": 1,
-          "block_states": ["stf", "stf", "air", "air", "air"],
-          "ints": [0, 0, 0, 0, 0]
-        }
+        "pos": [-4, 0, 0],
+        "access_path_road_type": "verdant_villagers:stone_path_1"
       }
     }
   ]

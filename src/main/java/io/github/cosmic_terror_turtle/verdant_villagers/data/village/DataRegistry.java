@@ -21,7 +21,8 @@ public class DataRegistry {
     private static final HashMap<String, VillageTypeData> villageTypes = new HashMap<>();
     private static final HashMap<String, StructureTypeData> structureTypes = new HashMap<>();
     private static final HashMap<String, ArrayList<RawStructureTemplate>> templatesPerVillageType = new HashMap<>();
-    private static final ArrayList<RawRoadType> roadTypes = new ArrayList<>();
+    private static final HashMap<String, RawRoadType> roadTypes = new HashMap<>();
+    private static final HashMap<String, RawRoadType> accessPathRoadTypes = new HashMap<>();
     private static final ArrayList<String> villageNames = new ArrayList<>();
 
     private static final HashMap<String, Function<NbtCompound, ? extends PointOfInterest>> pointOfInterestNbtConstructors = new HashMap<>();
@@ -35,6 +36,7 @@ public class DataRegistry {
         structureTypes.clear();
         templatesPerVillageType.clear();
         roadTypes.clear();
+        accessPathRoadTypes.clear();
         villageNames.clear();
     }
 
@@ -75,7 +77,7 @@ public class DataRegistry {
             throw new RuntimeException("No road types found.");
         }
         int radiiNum;
-        for (RawRoadType type : roadTypes) {
+        for (RawRoadType type : roadTypes.values()) {
             // Edge columns
             radiiNum = type.edgeBlockColumnRadii.size();
             for (HashMap<String, ArrayList<RawVerticalBlockColumn>> map : type.edgeTemplateBlockColumns.values()) {
@@ -111,6 +113,31 @@ public class DataRegistry {
                         if (list.size() > radiiNum) {
                             throw new RuntimeException("Invalid road type: Special junction column list must have size <="+radiiNum+".");
                         }
+                    }
+                }
+            }
+        }
+
+        // There must be at least one access path road type present.
+        if (accessPathRoadTypes.isEmpty()) {
+            throw new RuntimeException("No access path road types found.");
+        }
+        for (RawRoadType type : accessPathRoadTypes.values()) {
+            // Edge columns
+            radiiNum = type.edgeBlockColumnRadii.size();
+            for (HashMap<String, ArrayList<RawVerticalBlockColumn>> map : type.edgeTemplateBlockColumns.values()) {
+                for (ArrayList<RawVerticalBlockColumn> list : map.values()) {
+                    if (list.size() > radiiNum) {
+                        throw new RuntimeException("Invalid road type: Edge column list must have size <="+radiiNum+".");
+                    }
+                }
+            }
+            // Special edge columns
+            radiiNum = type.edgeSpecialBlockColumnRadii.size();
+            for (HashMap<String, ArrayList<RawVerticalBlockColumn>> map : type.edgeSpecialTemplateBlockColumns.values()) {
+                for (ArrayList<RawVerticalBlockColumn> list : map.values()) {
+                    if (list.size() > radiiNum) {
+                        throw new RuntimeException("Invalid road type: Special edge column list must have size <="+radiiNum+".");
                     }
                 }
             }
@@ -263,8 +290,18 @@ public class DataRegistry {
         return null;
     }
 
-    public static void addRoadType(RawRoadType type) {
-        roadTypes.add(type);
+    public static void addAccessPathRoadType(String id, RawRoadType type) {
+        accessPathRoadTypes.put(id, type);
+    }
+    public static RawRoadType getAccessPathRoadType(String id) {
+        return accessPathRoadTypes.get(id);
+    }
+
+    public static void addRoadType(String id, RawRoadType type) {
+        roadTypes.put(id, type);
+    }
+    public static RawRoadType getRoadType(String id) {
+        return roadTypes.get(id);
     }
 
     /**
@@ -276,7 +313,7 @@ public class DataRegistry {
     public static RawRoadType getRandomRoadTypeFor(String villageType, int villagerCount) {
         ArrayList<RawRoadType> candidates = new ArrayList<>();
         ArrayList<RawRoadType> bestCandidates = new ArrayList<>();
-        for (RawRoadType type : roadTypes) {
+        for (RawRoadType type : roadTypes.values()) {
             candidates.add(type);
             if (type.availableForVillagerCount.get(0)<=villagerCount && villagerCount<=type.availableForVillagerCount.get(1)) {
                 bestCandidates.add(type);
@@ -309,7 +346,7 @@ public class DataRegistry {
 
     private static void registerPointOfInterestSubclasses() {
         registerPointOfInterestConstructors("StructureAccessPoint", StructureAccessPoint::new, (reader, abbreviationMap) -> {
-            try { return new RawStructureAccessPoint(reader, abbreviationMap); }
+            try { return new RawStructureAccessPoint(reader); }
             catch (IOException e) { throw new RuntimeException(e); }
         });
         registerPointOfInterestConstructors("SaplingLocationPoint", SaplingLocationPoint::new, (reader, abbreviationMap) -> {

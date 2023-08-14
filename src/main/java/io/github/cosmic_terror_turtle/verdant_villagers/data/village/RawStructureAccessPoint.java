@@ -12,32 +12,29 @@ import java.util.HashMap;
 
 public class RawStructureAccessPoint extends RawPointOfInterest {
 
-    public double radius;
-    public RawVerticalBlockColumn rawTemplateRoadColumn;
+    public String accessPathRoadType;
 
-    public RawStructureAccessPoint(JsonReader reader, HashMap<String, String> abbreviationMap) throws IOException {
+    public RawStructureAccessPoint(JsonReader reader) throws IOException {
         pos = null;
-        radius = 0;
-        rawTemplateRoadColumn = null;
+        accessPathRoadType = null;
 
         reader.beginObject();
         while (reader.hasNext()) {
             switch (reader.nextName()) {
                 default -> throw new IOException();
                 case "pos" -> pos = JsonUtils.readList(reader, JsonReader::nextInt);
-                case "radius" -> radius = reader.nextDouble();
-                case "template_column" -> rawTemplateRoadColumn = new RawVerticalBlockColumn(reader, abbreviationMap);
+                case "access_path_road_type" -> accessPathRoadType = reader.nextString();
             }
         }
         reader.endObject();
 
-        if (pos == null || radius < 0 || rawTemplateRoadColumn == null) {
+        if (pos == null || accessPathRoadType == null) {
             throw new IOException("Invalid data for "+RawStructureAccessPoint.class.getName());
         }
     }
 
     @Override
     public PointOfInterest toPointOfInterest(ServerVillage village) {
-        return new StructureAccessPoint(new BlockPos(pos.get(0), pos.get(1), pos.get(2)), radius, rawTemplateRoadColumn.toVerticalBlockColumn(village));
+        return new StructureAccessPoint(new BlockPos(pos.get(0), pos.get(1), pos.get(2)), accessPathRoadType);
     }
 }

@@ -24,13 +24,13 @@ public class RoadJunction extends GeoFeature {
     public String terrainTypeTop;
     public String terrainTypeBottom;
 
-    public RoadJunction(int elementID, BlockPos pos, double radius, double sameHeightRadius) {
+    public RoadJunction(int elementID, World world, BlockPos pos, double radius, double sameHeightRadius) {
         super(elementID);
         this.pos = pos;
         this.radius = radius;
         this.sameHeightRadius = sameHeightRadius;
-        terrainTypeTop = "";
-        terrainTypeBottom = "";
+        terrainTypeTop = RoadType.getTerrainType(true, world, pos);
+        terrainTypeBottom = RoadType.getTerrainType(false, world, pos);
     }
     public RoadJunction(int elementID, World world, BlockPos pos, RoadType type) {
         super(elementID);

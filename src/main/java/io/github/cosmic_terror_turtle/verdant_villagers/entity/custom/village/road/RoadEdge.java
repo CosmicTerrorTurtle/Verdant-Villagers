@@ -47,36 +47,15 @@ public class RoadEdge extends GeoFeature {
      * @param from The {@link RoadJunction} this edge starts from.
      * @param to The {@link RoadJunction} this edge leads to.
      * @param adjustToTerrain If this edge should try to match the terrain slope underneath it.
-     * @param type The {@link RoadType} used for this edge.
+     * @param roadType The {@link RoadType} used for this edge.
+     * @param isAccessPath Whether this edge is an access path.
      */
-    public RoadEdge(int elementID, World world, ServerVillage village, RoadJunction from, RoadJunction to, boolean adjustToTerrain, RoadType type) {
-        this(elementID, world, village, from, to, adjustToTerrain, type, null);
-    }
-    /**
-     * Instantiates an access path road edge.
-     * @param elementID The village-wide unique ID.
-     * @param world The world this path is in.
-     * @param village The {@link ServerVillage} this path belongs to.
-     * @param from The {@link RoadJunction} this path starts from.
-     * @param to The {@link RoadJunction} this path leads to.
-     * @param adjustToTerrain If this path should try to match the terrain slope underneath it.
-     * @param accessPathRoadType The {@link AccessPathRoadType} used for this edge.
-     */
-    public RoadEdge(int elementID, World world, ServerVillage village, RoadJunction from, RoadJunction to, boolean adjustToTerrain, AccessPathRoadType accessPathRoadType) {
-        this(elementID, world, village, from, to, adjustToTerrain, null, accessPathRoadType);
-    }
-    private RoadEdge(int elementID, World world, ServerVillage village, RoadJunction from, RoadJunction to, boolean adjustToTerrain,
-                    RoadType roadType, AccessPathRoadType accessPathRoadType) {
+    public RoadEdge(int elementID, World world, ServerVillage village, RoadJunction from, RoadJunction to,
+                     boolean adjustToTerrain, RoadType roadType, boolean isAccessPath) {
         super(elementID);
         this.from = from;
         this.to = to;
-        if (roadType != null) {
-            radius = roadType.edgeRadius;
-        } else if (accessPathRoadType != null) {
-            radius = accessPathRoadType.radius;
-        } else {
-            throw new RuntimeException("Parameters roadType and accessPathRoadType can't be both null.");
-        }
+        radius = roadType.edgeRadius;
         this.adjustToTerrain = adjustToTerrain;
 
         d = Math.sqrt(MathHelper.square(from.pos.getX()-to.pos.getX())+MathHelper.square(from.pos.getZ()-to.pos.getZ()));
@@ -85,7 +64,7 @@ public class RoadEdge extends GeoFeature {
         }
 
         preparePolynomialFunction(village.random);
-        setBitsMegaBlocksAndRoadDots(world, village, roadType, accessPathRoadType);
+        setBitsMegaBlocksAndRoadDots(world, village, roadType, isAccessPath);
     }
 
     private void preparePolynomialFunction(Random random) {
@@ -149,15 +128,8 @@ public class RoadEdge extends GeoFeature {
         }
     }
 
-    private void setBitsMegaBlocksAndRoadDots(World world, ServerVillage village, RoadType roadType, AccessPathRoadType accessPathRoadType) {
-        boolean overwriteJunctions;
-        if (roadType != null) {
-            overwriteJunctions = false;
-        } else if (accessPathRoadType != null) {
-            overwriteJunctions = true;
-        } else {
-            throw new RuntimeException("Parameters roadType and accessPathRoadType can't be both null.");
-        }
+    private void setBitsMegaBlocksAndRoadDots(World world, ServerVillage village, RoadType roadType, boolean isAccessPath) {
+        boolean overwriteJunctions = isAccessPath;
 
         ArrayList<VerticalBlockColumn> normalColumns = new ArrayList<>();
         ArrayList<VerticalBlockColumn> specialColumns = new ArrayList<>();
@@ -202,18 +174,16 @@ public class RoadEdge extends GeoFeature {
         double spaceAfterLastTerrainCheck = 0.0;
         String topTerrain;
         String bottomTerrain;
-        ArrayList<VerticalBlockColumn> columnsTop = null;
-        ArrayList<VerticalBlockColumn> columnsBottom = null;
-        ArrayList<VerticalBlockColumn> specialColumnsTop = null;
-        ArrayList<VerticalBlockColumn> specialColumnsBottom = null;
-        if (roadType != null) {
-            topTerrain = from.terrainTypeTop;
-            bottomTerrain = from.terrainTypeBottom;
-            columnsTop = roadType.edgeTemplateBlockColumns.get("top").get(topTerrain);
-            columnsBottom = roadType.edgeTemplateBlockColumns.get("bottom").get(bottomTerrain);
-            specialColumnsTop = roadType.edgeSpecialTemplateBlockColumns.get("top").get(topTerrain);
-            specialColumnsBottom = roadType.edgeSpecialTemplateBlockColumns.get("bottom").get(bottomTerrain);
-        }
+        ArrayList<VerticalBlockColumn> columnsTop;
+        ArrayList<VerticalBlockColumn> columnsBottom;
+        ArrayList<VerticalBlockColumn> specialColumnsTop;
+        ArrayList<VerticalBlockColumn> specialColumnsBottom;
+        topTerrain = from.terrainTypeTop;
+        bottomTerrain = from.terrainTypeBottom;
+        columnsTop = roadType.edgeTemplateBlockColumns.get("top").get(topTerrain);
+        columnsBottom = roadType.edgeTemplateBlockColumns.get("bottom").get(bottomTerrain);
+        specialColumnsTop = roadType.edgeSpecialTemplateBlockColumns.get("top").get(topTerrain);
+        specialColumnsBottom = roadType.edgeSpecialTemplateBlockColumns.get("bottom").get(bottomTerrain);
         for (double a=0; a<d; a+=ROAD_STEP) {
             f_of_a = getFunctionAt(a);
             f_slope = getSlopeAt(a);
@@ -231,7 +201,7 @@ public class RoadEdge extends GeoFeature {
             }
             // Check terrain above and underneath the road, if outside the junction radii.
             spaceAfterLastTerrainCheck += ROAD_STEP;
-            if (spaceAfterLastTerrainCheck > ROAD_TYPE_TERRAIN_SPACE && roadType != null && from.radius < a && a < d-to.radius) {
+            if (spaceAfterLastTerrainCheck > ROAD_TYPE_TERRAIN_SPACE && from.radius < a && a < d-to.radius) {
                 spaceAfterLastTerrainCheck = 0;
                 terrainProbingPos = from.pos.add(BlockPos.ofFloored(
                         a*cos - f_of_a*sin + ROUNDING_OFFSET,
@@ -247,7 +217,7 @@ public class RoadEdge extends GeoFeature {
             }
             // Determine if special columns need to be calculated.
             spaceAfterLastSpecialColumn += ROAD_STEP;
-            if (roadType != null && spaceAfterLastSpecialColumn > roadType.edgeSpecialColumnSpace) {
+            if (spaceAfterLastSpecialColumn > roadType.edgeSpecialColumnSpace) {
                 spaceAfterLastSpecialColumn = 0.0;
             }
             // Bits
@@ -264,22 +234,47 @@ public class RoadEdge extends GeoFeature {
                             aCoord*sin + faCoord*cos + ROUNDING_OFFSET
                     ));
                 }
-                if (roadType != null) {
-                    // Normal columns
-                    columnsToAddTo = normalColumns;
+                // Normal columns
+                columnsToAddTo = normalColumns;
+                columnTop = null;
+                columnBottom = null;
+                for (int i=0; i<roadType.edgeBlockColumnRadii.size(); i++) {
+                    if (rad <= roadType.edgeBlockColumnRadii.get(i)) {
+                        if (i < columnsTop.size()) {
+                            columnTop = columnsTop.get(i);
+                        }
+                        if (i < columnsBottom.size()) {
+                            columnBottom = columnsBottom.get(i);
+                        }
+                        // If the column is the outermost column, replace old columns.
+                        if (i==roadType.edgeBlockColumnRadii.size()-1) {
+                            columnsToAddTo = outerNormalColumns;
+                        }
+                        break;
+                    }
+                }
+                // Avoid placing the default merge column.
+                if (columnTop != null || columnBottom != null) {
+                    merged = VerticalBlockColumn.merge(columnTop, columnBottom);
+                    for (BlockPos anchor : anchorPositions) {
+                        addToColumns(columnsToAddTo, merged.copyWith(anchor), false);
+                    }
+                }
+                // Special columns (only place when outside the junction's same height radii)
+                if (spaceAfterLastSpecialColumn==0 && from.sameHeightRadius<a && a<d-to.sameHeightRadius) {
+                    columnsToAddTo = specialColumns;
                     columnTop = null;
                     columnBottom = null;
-                    for (int i=0; i<roadType.edgeBlockColumnRadii.size(); i++) {
-                        if (rad <= roadType.edgeBlockColumnRadii.get(i)) {
-                            if (i < columnsTop.size()) {
-                                columnTop = columnsTop.get(i);
+                    for (int i=0; i<roadType.edgeSpecialBlockColumnRadii.size(); i++) {
+                        if (rad <= roadType.edgeSpecialBlockColumnRadii.get(i)) {
+                            if (i < specialColumnsTop.size()) {
+                                columnTop = specialColumnsTop.get(i);
                             }
-                            if (i < columnsBottom.size()) {
-                                columnBottom = columnsBottom.get(i);
+                            if (i < specialColumnsBottom.size()) {
+                                columnBottom = specialColumnsBottom.get(i);
                             }
-                            // If the column is the outermost column, replace old columns.
-                            if (i==roadType.edgeBlockColumnRadii.size()-1) {
-                                columnsToAddTo = outerNormalColumns;
+                            if (i==roadType.edgeSpecialBlockColumnRadii.size()-1) {
+                                columnsToAddTo = outerSpecialColumns;
                             }
                             break;
                         }
@@ -291,41 +286,11 @@ public class RoadEdge extends GeoFeature {
                             addToColumns(columnsToAddTo, merged.copyWith(anchor), false);
                         }
                     }
-                    // Special columns (only place when outside the junction's same height radii)
-                    if (spaceAfterLastSpecialColumn==0 && from.sameHeightRadius<a && a<d-to.sameHeightRadius) {
-                        columnsToAddTo = specialColumns;
-                        columnTop = null;
-                        columnBottom = null;
-                        for (int i=0; i<roadType.edgeSpecialBlockColumnRadii.size(); i++) {
-                            if (rad <= roadType.edgeSpecialBlockColumnRadii.get(i)) {
-                                if (i < specialColumnsTop.size()) {
-                                    columnTop = specialColumnsTop.get(i);
-                                }
-                                if (i < specialColumnsBottom.size()) {
-                                    columnBottom = specialColumnsBottom.get(i);
-                                }
-                                if (i==roadType.edgeSpecialBlockColumnRadii.size()-1) {
-                                    columnsToAddTo = outerSpecialColumns;
-                                }
-                                break;
-                            }
-                        }
-                        // Avoid placing the default merge column.
-                        if (columnTop != null || columnBottom != null) {
-                            merged = VerticalBlockColumn.merge(columnTop, columnBottom);
-                            for (BlockPos anchor : anchorPositions) {
-                                addToColumns(columnsToAddTo, merged.copyWith(anchor), false);
-                            }
-                        }
-                    }
-                } else if (accessPathRoadType != null) {
-                    addToColumns(normalColumns, accessPathRoadType.column.copyWith(anchorPositions.get(0)), false);
-                    addToColumns(normalColumns, accessPathRoadType.column.copyWith(anchorPositions.get(1)), false);
                 }
             }
             // Road dots
             spaceAfterLastDot += ROAD_STEP;
-            if (roadType != null && spaceAfterLastDot > ROAD_DOT_SPACE) {
+            if (!isAccessPath && spaceAfterLastDot > ROAD_DOT_SPACE) {
                 spaceAfterLastDot = 0;
                 for (double offset : new double[]{roadType.edgeRoadDotRadius, -roadType.edgeRoadDotRadius}) {
                     tmp = offset/Math.sqrt(1+f_slope*f_slope);
@@ -534,7 +499,6 @@ public class RoadEdge extends GeoFeature {
     public class TerrainAdjustment {
 
         public static final double TERRAIN_ADJUSTING_SPACE = 4.0; // Space between terrain adjusting points
-        public static final double MAX_SLOPE_DEVIATION = 0.15; // Maximum difference between overall slope and the slopes from the adjusted points
         public static final double SMOOTHING_FACTOR = 0.2; // Factor by which a point gets adjusted towards its neighbors
         public static final int MAX_SMOOTHING_ITERATIONS = 40; // The maximum number of iterations that smooth the adjusting offsets.
 

@@ -47,9 +47,10 @@ public class RawRoadType {
     /**
      * Creates a new RawStructureTemplate and registers it to RawStructureTemplates.templatesPerVillageType.
      * @param reader The reader used to read the template from a json file.
+     * @param id The name of the template.
      * @throws IOException If something goes wrong.
      */
-    public static void createNew(JsonReader reader) throws IOException {
+    public static void createNew(JsonReader reader, String id, boolean isAccessPath) throws IOException {
         final HashMap<String, String> abbreviationMap;
         ArrayList<Integer> availableForVillagerCount = null;
         double scale = 1.0;
@@ -89,19 +90,19 @@ public class RawRoadType {
         }
         reader.endObject();
 
-        if (availableForVillagerCount==null || availableForVillagerCount.size()!=2
+        if (!isAccessPath && (availableForVillagerCount==null || availableForVillagerCount.size()!=2)
                 || edgeBlockColumnRadii==null
                 || edgeTemplateBlockColumns==null
                 || edgeSpecialBlockColumnRadii==null
                 || edgeSpecialTemplateBlockColumns==null
-                || junctionBlockColumnRadii==null
-                || junctionTemplateBlockColumns==null
-                || junctionSpecialBlockColumnRadii==null
-                || junctionSpecialTemplateBlockColumns==null) {
+                || !isAccessPath && junctionBlockColumnRadii==null
+                || !isAccessPath && junctionTemplateBlockColumns==null
+                || !isAccessPath && junctionSpecialBlockColumnRadii==null
+                || !isAccessPath && junctionSpecialTemplateBlockColumns==null) {
             throw new IOException("RawRoadType could not be created from json.");
         }
 
-        DataRegistry.addRoadType(new RawRoadType(
+        RawRoadType type = new RawRoadType(
                 availableForVillagerCount,
                 scale,
                 edgeRoadDotRadius,
@@ -113,7 +114,13 @@ public class RawRoadType {
                 junctionBlockColumnRadii,
                 junctionTemplateBlockColumns,
                 junctionSpecialBlockColumnRadii,
-                junctionSpecialTemplateBlockColumns));
+                junctionSpecialTemplateBlockColumns
+        );
+        if (isAccessPath) {
+            DataRegistry.addAccessPathRoadType(id, type);
+        } else {
+            DataRegistry.addRoadType(id, type);
+        }
     }
 
     public RawRoadType(

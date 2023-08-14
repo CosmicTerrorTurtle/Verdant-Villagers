@@ -1,7 +1,7 @@
 {
   "village_types": ["default", "desert", "coast", "desert_coast", "under_ground", "sky", "nether_standard", "nether_coast", "nether_under_ground", "nether_sky"],
   "available_for_block_palettes": {},
-  "available_for_villager_count": [10, 1000],
+  "available_for_villager_count": [15, 1000000],
   "data_per_structure_type": {
     "storage": {
       "villagers_accounted_for": "16"
@@ -10,8 +10,6 @@
   "abbreviation_map": {
     "nul": "null",
     "air": "state:minecraft:air",
-    "pth": "state:minecraft:dirt_path",
-    "dir": "state:minecraft:dirt",
     "stf": "palette:0:verdant_villagers:stone___minecraft:stone_bricks",
     "wlo": "palette:0:verdant_villagers:wood___minecraft:oak_log:axis:y",
     "wlx": "palette:0:verdant_villagers:wood___minecraft:oak_log:axis:x",
@@ -42,8 +40,8 @@
     [["nul","stf","stf","stf","stf","stf","stf","stf","stf","stf","stf","stf","stf","stf","nul"],["nul","stf","stf","stf","stf","stf","stf","stf","stf","stf","stf","stf","stf","stf","nul"],["air","fwe","air","air","air","air","air","air","air","air","air","air","air","fwe","air"],["air","air","air","air","air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air","air","air","air","air"],["air","wlo","air","air","air","air","air","air","air","air","air","air","air","wlo","air"],["air","wpl","air","air","air","air","air","air","air","air","air","air","air","wpl","air"],["air","wpl","wpl","wpl","air","air","air","air","air","air","air","wpl","wpl","wpl","air"],["air","air","air","air","wsb","wpl","air","air","air","wpl","wsb","air","air","air","air"],["air","air","air","air","air","air","wsb","wlx","wsb","air","air","air","air","air","air"]],
     [["nul","stf","stf","stf","stf","stf","stf","stf","stf","stf","stf","stf","stf","stf","nul"],["nul","stf","stf","stf","stf","stf","stf","stf","stf","stf","stf","stf","stf","stf","nul"],["air","fwe","air","air","air","air","air","air","air","air","air","air","air","fwe","air"],["air","air","air","air","air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air","air","air","air","air"],["air","wlo","air","air","air","air","air","air","air","air","air","air","air","wlo","air"],["air","wpl","air","air","air","air","air","air","air","air","air","air","air","wpl","air"],["air","wpl","air","air","air","air","air","air","air","air","air","air","air","wpl","air"],["air","wsb","wsb","wpl","air","air","air","air","air","air","air","wpl","wsb","wsb","air"],["air","air","air","air","wsb","wpl","air","air","air","wpl","wsb","air","air","air","air"],["air","air","air","air","air","air","wsb","wlx","wsb","air","air","air","air","air","air"]],
     [["nul","stf","stf","stf","stf","stf","stf","stf","stf","stf","stf","stf","stf","stf","nul"],["nul","stf","stf","stf","stf","stf","stf","stf","stf","stf","stf","stf","stf","stf","nul"],["air","wlo","fns","fns","fns","wlo","air","air","air","wlo","fns","fns","fns","wlo","air"],["air","wlo","air","air","air","wlo","air","air","air","wlo","air","air","air","wlo","air"],["air","wlo","air","air","air","wlo","air","air","air","wlo","air","air","air","wlo","air"],["air","wlo","wlo","air","wlo","wpl","wlo","air","wlo","wpl","wlo","air","wlo","wlo","air"],["air","wlo","wpl","wlo","wpl","wpl","wlo","air","wlo","wpl","wpl","wlo","wpl","wlo","air"],["air","wlo","wpl","wpl","wpl","wpl","wpl","wlo","wpl","wpl","wpl","wpl","wpl","wlo","air"],["air","wlo","wsb","wpl","wpl","gns","wpl","wlo","wpl","gns","wpl","wpl","wsb","wlo","air"],["air","wlo","air","air","wsb","wpl","wpl","wlo","wpl","wpl","wsb","air","air","wlo","air"],["air","tor","air","air","air","air","wsb","wlx","wsb","air","air","air","air","tor","air"]],
-    [["nul","nul","nul","nul","nul","nul","dir","dir","dir","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","pth","pth","pth","nul","nul","nul","nul","nul","nul"],["air","air","air","air","air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","wlx","air","air","air","air","air","air","air"]],
-    [["nul","nul","nul","nul","nul","nul","dir","dir","dir","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","pth","pth","pth","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","air","air","air","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","air","air","air","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","air","air","air","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul"]]
+    [["nul","nul","nul","nul","nul","nul","stf","stf","stf","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","stf","stf","stf","nul","nul","nul","nul","nul","nul"],["air","air","air","air","air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","wlx","air","air","air","air","air","air","air"]],
+    [["nul","nul","nul","nul","nul","nul","stf","stf","stf","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","stf","stf","stf","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","air","air","air","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","air","air","air","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","air","air","air","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul"]]
   ],
   "center": [8, 1, 7],
   "points_of_interest": [
@@ -51,12 +49,7 @@
       "subclass_name": "StructureAccessPoint",
       "subclass_data": {
         "pos": [-8, 0, 0],
-        "radius": 1.0,
-        "template_column": {
-          "base_level_index": 1,
-          "block_states": ["dir", "pth", "air", "air", "air", "air", "air"],
-          "ints": [0, 0, 0, 0, 0, 0, 0]
-        }
+        "access_path_road_type": "verdant_villagers:stone_path_1"
       }
     }
   ]
