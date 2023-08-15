@@ -49,7 +49,7 @@ public class GeoFeature {
     private int zMin = 0;
     private int zMax = 0;
     private final ArrayList<BlockPos> touchedMegaBlocks;
-    private final ArrayList<GeoFeatureBit> bits;
+    protected final ArrayList<GeoFeatureBit> bits;
 
     public GeoFeature(int elementID) {
         this.elementID = elementID;
@@ -69,6 +69,15 @@ public class GeoFeature {
         return bits;
     }
 
+    /**
+     * Updates the list of touched mega blocks.
+     */
+    protected void updateMegaBlocks() {
+        touchedMegaBlocks.clear();
+        for (GeoFeatureBit bit : bits) {
+            addPosToTouchedMegaBlocks(bit.blockPos);
+        }
+    }
     /**
      * Attempts to add a new mega block to the list.
      * @param pos The block position of a normal block (pos will be converted to a mega block position in this method).
@@ -134,6 +143,22 @@ public class GeoFeature {
             addPosToTouchedMegaBlocks(bit.blockPos);
         }
         updateBounds();
+    }
+
+    /**
+     * Removes all bits that match the given positions from this feature. Updates bounds and mega blocks afterwards.
+     * @param absolutePositions The list of positions to be removed.
+     */
+    public void removeBits(ArrayList<BlockPos> absolutePositions) {
+        ArrayList<GeoFeatureBit> toBeRemoved = new ArrayList<>();
+        for (GeoFeatureBit bit : bits) {
+            if (absolutePositions.contains(bit.blockPos)) {
+                toBeRemoved.add(bit);
+            }
+        }
+        bits.removeAll(toBeRemoved);
+        updateBounds();
+        updateMegaBlocks();
     }
 
     /**

@@ -43,22 +43,38 @@ public class GeoFeatureCollision {
         return false;
     }
 
-    static boolean featuresOverlapIgnoreMatchingBlockStates(GeoFeature feature1, GeoFeature feature2) {
+    /**
+     * Tests if two features overlap, but ignores collisions if both bits are air or both are non-air. For those, the
+     * overlapping bit is removed from {@code feature2} instead.
+     * @param feature1 The first feature.
+     * @param feature2 The second feature.
+     * @return True if the features overlap.
+     */
+    static boolean featuresOverlapIgnoreAirCollisionsAndNonAirCollisions(GeoFeature feature1, GeoFeature feature2) {
         // Check bounds.
         if (!feature1.boundsCollideWith(feature2)) {
             return false;
         }
 
         // Check the bits for collision.
+        ArrayList<BlockPos> toBeRemoved = new ArrayList<>();
         for (GeoFeatureBit feature1Bit : feature1.getBits()) {
             for (GeoFeatureBit feature2Bit : feature2.getBits()) {
                 if (feature1Bit.blockPos.equals(feature2Bit.blockPos)
                         && feature1Bit.blockState!=null && feature2Bit.blockState!=null
-                        && !feature1Bit.blockState.equals(feature2Bit.blockState)) {
-                    return true;
+                ) {
+                    // Bits overlap
+                    if (feature1Bit.blockState.isOf(Blocks.AIR) && !feature2Bit.blockState.isOf(Blocks.AIR)
+                            || !feature1Bit.blockState.isOf(Blocks.AIR) && feature2Bit.blockState.isOf(Blocks.AIR)) {
+                        return true;
+                    } else {
+                        toBeRemoved.add(feature2Bit.blockPos);
+                    }
                 }
             }
         }
+        // No collision; remove the overlapping bits.
+        feature2.removeBits(toBeRemoved);
         return false;
     }
 
@@ -83,13 +99,13 @@ public class GeoFeatureCollision {
             sharedJunctions.add(newEdge.to);
         }
         // Check the bits for collision.
-        ArrayList<GeoFeatureBit> toBeRemoved = new ArrayList<>();
+        ArrayList<BlockPos> toBeRemoved = new ArrayList<>();
         for (GeoFeatureBit newBit : newEdge.getBits()) {
             for (GeoFeatureBit oldBit : oldEdge.getBits()) {
                 // If the bits collide and their position is not close to one of the shared junctions, return true.
                 if (newBit.blockPos.equals(oldBit.blockPos)) {
                     if (posIsInSameHeightRadii(newBit.blockPos, sharedJunctions)) {
-                        toBeRemoved.add(newBit);
+                        toBeRemoved.add(newBit.blockPos);
                     } else {
                         return true;
                     }
@@ -97,12 +113,7 @@ public class GeoFeatureCollision {
             }
         }
         // No collision; remove the overlapping bits and their sidewalk positions.
-        for (GeoFeatureBit bit : toBeRemoved) {
-            newEdge.getBits().remove(bit);
-            newEdge.sidewalkPositions.remove(bit.blockPos);
-            newEdge.archPositions.remove(bit.blockPos);
-            newEdge.pillarStartBits.removeIf(pillarBit -> pillarBit.blockPos.equals(bit.blockPos));
-        }
+        newEdge.removeBits(toBeRemoved);
         return false;
     }
     private static boolean posIsInSameHeightRadii(BlockPos pos, ArrayList<RoadJunction> junctions) {
@@ -131,7 +142,7 @@ public class GeoFeatureCollision {
         }
 
         // Check the bits for collision.
-        ArrayList<GeoFeatureBit> toBeRemoved = new ArrayList<>();
+        ArrayList<BlockPos> toBeRemoved = new ArrayList<>();
         for (GeoFeatureBit accessPathBit : accessPath.getBits()) {
             for (GeoFeatureBit edgeBit : edge.getBits()) {
                 if (accessPathBit.blockPos.equals(edgeBit.blockPos) && accessPathBit.blockState!=null && edgeBit.blockState!=null) {
@@ -142,7 +153,7 @@ public class GeoFeatureCollision {
                     // Are both bits air or both bits non-air?
                     if ((accessPathBit.blockState.isOf(Blocks.AIR) && edgeBit.blockState.isOf(Blocks.AIR))
                             || (!accessPathBit.blockState.isOf(Blocks.AIR) && !edgeBit.blockState.isOf(Blocks.AIR))) {
-                        toBeRemoved.add(accessPathBit);
+                        toBeRemoved.add(accessPathBit.blockPos);
                     } else {
                         return true;
                     }
@@ -150,9 +161,7 @@ public class GeoFeatureCollision {
             }
         }
         // No collision; remove the overlapping bits.
-        for (GeoFeatureBit bit : toBeRemoved) {
-            accessPath.getBits().remove(bit);
-        }
+        accessPath.removeBits(toBeRemoved);
         return false;
     }
 }

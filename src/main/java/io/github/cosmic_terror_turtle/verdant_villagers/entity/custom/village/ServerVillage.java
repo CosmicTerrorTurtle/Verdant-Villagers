@@ -617,7 +617,7 @@ public class ServerVillage extends Village {
                 int ironGolemCount = 0;
                 if (countVillagers) {
                     villagerCount = 0;
-                } else if (villagerCount < 150 && random.nextDouble() < 0.25) {
+                } else if (villagerCount < 150 && random.nextDouble() < 0.3) {
                     villagerCount++;
                 }
                 for (MegaChunk megaChunk : megaChunks) {
@@ -1056,7 +1056,7 @@ public class ServerVillage extends Village {
             for (GeoFeatureBit startBit : pillarStarts) {
                 for (int i=1; i<20; i++) {
                     testPos = startBit.blockPos.down(i);
-                    if (posIsPartOfFeature(testPos) || world.getBlockState(testPos).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)) {
+                    if (posIsPartOfFeature(testPos) || world.getBlockState(testPos.up()).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)) {
                         break;
                     }
                     pillarBits.add(new GeoFeatureBit(startBit.blockState, testPos));
@@ -1297,7 +1297,7 @@ public class ServerVillage extends Village {
                                         break;
                                     }
                                 }
-                                if (GeoFeatureCollision.featuresOverlapIgnoreMatchingBlockStates(testEdge, structure)) {
+                                if (GeoFeatureCollision.featuresOverlapIgnoreAirCollisionsAndNonAirCollisions(structure, testEdge)) {
                                     noCollision = false;
                                 }
                             }

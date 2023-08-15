@@ -129,6 +129,25 @@ public class RoadJunction extends GeoFeature {
         setBits(relativeBits, pos, ROTATE_NOT);
     }
 
+    @Override
+    public void removeBits(ArrayList<BlockPos> absolutePositions) {
+        ArrayList<GeoFeatureBit> toBeRemoved = new ArrayList<>();
+        for (GeoFeatureBit bit : bits) {
+            if (absolutePositions.contains(bit.blockPos)) {
+                toBeRemoved.add(bit);
+
+            }
+        }
+        for (GeoFeatureBit bit : toBeRemoved) {
+            bits.remove(bit);
+            sidewalkPositions.remove(bit.blockPos);
+            archPositions.remove(bit.blockPos);
+            pillarStartBits.removeIf(pillarBit -> pillarBit.blockPos.equals(bit.blockPos));
+        }
+        updateBounds();
+        updateMegaBlocks();
+    }
+
     /**
      * Creates a new RoadJunction from an NbtCompound.
      * @param nbt The compound representing a RoadJunction.

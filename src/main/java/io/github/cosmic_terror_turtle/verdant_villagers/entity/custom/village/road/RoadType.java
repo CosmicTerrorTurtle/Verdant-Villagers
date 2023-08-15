@@ -130,21 +130,29 @@ public class RoadType {
         BlockPos pos;
         int terrain = 0;
         if (top) {
-            // Top
+            // Top (check the four positions around startPos as well)
+            ArrayList<BlockPos> startPositions = new ArrayList<>();
+            startPositions.add(startPos);
+            startPositions.add(startPos.north(2));
+            startPositions.add(startPos.south(2));
+            startPositions.add(startPos.east(2));
+            startPositions.add(startPos.west(2));
             int total = 10;
             int fluid = 0;
             for (int i=1; i<=total; i++) {
-                pos = startPos.up(i);
-                if (world.getBlockState(pos).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)) {
-                    terrain++;
-                } else if (!world.getBlockState(pos).getFluidState().isEmpty()) {
-                    fluid++;
+                for (BlockPos p : startPositions) {
+                    pos = p.up(i);
+                    if (world.getBlockState(pos).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)) {
+                        terrain++;
+                    } else if (!world.getBlockState(pos).getFluidState().isEmpty()) {
+                        fluid++;
+                    }
                 }
             }
             // Return fluid if the first block above is a fluid or if a decent amount of the blocks above are fluids.
-            if (fluid >= 0.2*total || !world.getFluidState(startPos.up()).isEmpty()) {
+            if (fluid >= 0.15*total*5 || !world.getFluidState(startPos.up()).isEmpty()) {
                 return "fluid";
-            } else if (terrain >= 0.4*total) {
+            } else if (terrain >= 0.4*total*5) {
                 return "terrain";
             }
             return "air";
