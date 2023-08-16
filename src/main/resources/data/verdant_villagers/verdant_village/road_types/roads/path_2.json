@@ -11,7 +11,6 @@
   },
   "available_for_villager_count": [5, 39],
   "scale": 1.1,
-  "edge_road_dot_radius": 1.9,
   "edge_block_column_radii": [
     0.7,
     2.7,

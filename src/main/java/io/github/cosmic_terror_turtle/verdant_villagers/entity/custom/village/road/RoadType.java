@@ -16,7 +16,6 @@ public class RoadType {
 
     public double scale;
 
-    public double edgeRoadDotRadius;
     public double edgeRadius;
     ArrayList<Double> edgeBlockColumnRadii;
     HashMap<String, HashMap<String, ArrayList<VerticalBlockColumn>>> edgeTemplateBlockColumns;
@@ -34,7 +33,6 @@ public class RoadType {
     public RoadType(ServerVillage village, RawRoadType rawRoadType) {
         // Edge
         scale = rawRoadType.scale;
-        edgeRoadDotRadius = rawRoadType.edgeRoadDotRadius;
         edgeRadius = 0.0;
         edgeBlockColumnRadii = rawRoadType.edgeBlockColumnRadii;
         for (Double d : edgeBlockColumnRadii) {
@@ -164,7 +162,7 @@ public class RoadType {
                 return "fluid";
             }
             // Return air when no terrain was found.
-            for (int i=0; i<20; i++) {
+            for (int i=0; i<ServerVillage.ROAD_PILLAR_EXTENSION_LENGTH; i++) {
                 pos = startPos.down(i);
                 if (world.getBlockState(pos).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)) {
                     terrain++;

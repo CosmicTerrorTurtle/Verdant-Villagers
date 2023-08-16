@@ -11,6 +11,7 @@
     "nul": "null",
     "csp": "collision_space",
     "air": "state:minecraft:air",
+    "stf": "palette:0:verdant_villagers:stone___minecraft:stone_bricks",
     "fnc": "palette:0:verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:false:south:false:west:false:east:false",
     "woo": "palette:0:verdant_villagers:color___minecraft:white_wool",
     "ton": "state:minecraft:wall_torch:facing:north",
@@ -20,7 +21,7 @@
   },
   "block_state_cube": [
     [["nul","nul","nul"],["csp","air","csp"],["csp","air","csp"],["csp","air","csp"],["csp","toe","csp"],["csp","air","csp"]],
-    [["nul","csp","nul"],["air","fnc","air"],["air","fnc","air"],["air","fnc","air"],["ton","woo","tos"],["air","air","air"]],
+    [["nul","stf","nul"],["air","fnc","air"],["air","fnc","air"],["air","fnc","air"],["ton","woo","tos"],["air","air","air"]],
     [["nul","nul","nul"],["csp","air","csp"],["csp","air","csp"],["csp","air","csp"],["csp","tow","csp"],["csp","air","csp"]]
   ],
   "center": [1, 0, 1],

@@ -162,7 +162,7 @@ public class RoadEdge extends RoadFeature {
         double tmp;
         double yCoord;
         double yAdjustingOffset;
-        BlockPos terrainProbingPos;
+        BlockPos centerPos;
         ArrayList<BlockPos> anchorPositions = new ArrayList<>();
         VerticalBlockColumn columnTop;
         VerticalBlockColumn columnBottom;
@@ -197,17 +197,23 @@ public class RoadEdge extends RoadFeature {
             } else {
                 yAdjustingOffset = 0;
             }
+            centerPos = from.pos.add(BlockPos.ofFloored(
+                    a*cos - f_of_a*sin + ROUNDING_OFFSET,
+                    yCoord + yAdjustingOffset + ROUNDING_OFFSET,
+                    a*sin + f_of_a*cos + ROUNDING_OFFSET
+            ));
+            // Road dots
+            spaceAfterLastDot += ROAD_STEP;
+            if (!isAccessPath && spaceAfterLastDot > ROAD_DOT_SPACE) {
+                spaceAfterLastDot = 0;
+                roadDots.add(new RoadDot(this, centerPos));
+            }
             // Check terrain above and underneath the road, if outside the junction radii.
             spaceAfterLastTerrainCheck += ROAD_STEP;
             if (spaceAfterLastTerrainCheck > ROAD_TYPE_TERRAIN_SPACE && from.radius < a && a < d-to.radius) {
                 spaceAfterLastTerrainCheck = 0;
-                terrainProbingPos = from.pos.add(BlockPos.ofFloored(
-                        a*cos - f_of_a*sin + ROUNDING_OFFSET,
-                        yCoord + yAdjustingOffset + ROUNDING_OFFSET,
-                        a*sin + f_of_a*cos + ROUNDING_OFFSET
-                ));
-                topTerrain = RoadType.getTerrainType(true, world, terrainProbingPos);
-                bottomTerrain = RoadType.getTerrainType(false, world, terrainProbingPos);
+                topTerrain = RoadType.getTerrainType(true, world, centerPos);
+                bottomTerrain = RoadType.getTerrainType(false, world, centerPos);
                 columnsTop = roadType.edgeTemplateBlockColumns.get("top").get(topTerrain);
                 columnsBottom = roadType.edgeTemplateBlockColumns.get("bottom").get(bottomTerrain);
                 specialColumnsTop = roadType.edgeSpecialTemplateBlockColumns.get("top").get(topTerrain);
@@ -284,21 +290,6 @@ public class RoadEdge extends RoadFeature {
                             addToColumns(columnsToAddTo, merged.copyWith(anchor), false);
                         }
                     }
-                }
-            }
-            // Road dots
-            spaceAfterLastDot += ROAD_STEP;
-            if (!isAccessPath && spaceAfterLastDot > ROAD_DOT_SPACE) {
-                spaceAfterLastDot = 0;
-                for (double offset : new double[]{roadType.edgeRoadDotRadius, -roadType.edgeRoadDotRadius}) {
-                    tmp = offset/Math.sqrt(1+f_slope*f_slope);
-                    aCoord = a+f_slope*tmp;
-                    faCoord = f_of_a-tmp;
-                    roadDots.add(new RoadDot(this, from.pos.add(BlockPos.ofFloored(
-                            aCoord*cos - faCoord*sin + ROUNDING_OFFSET,
-                            yCoord + yAdjustingOffset + ROUNDING_OFFSET,
-                            aCoord*sin + faCoord*cos + ROUNDING_OFFSET
-                    ))));
                 }
             }
         }

@@ -99,6 +99,7 @@ public class ServerVillage extends Village {
      * The basic maximum length that an access path can have.
      */
     private static final int ACCESS_PATH_BASE_MAX_LENGTH = 20;
+    public static final int ROAD_PILLAR_EXTENSION_LENGTH = 20;
 
     /**
      * If true, the villagers get counted normally. If false, the count is incremented every update() call and can be
@@ -1036,25 +1037,17 @@ public class ServerVillage extends Village {
      * @param newEdges A list of newly planned edges.
      */
     private void extendPillars(RoadJunction newJunction, ArrayList<RoadEdge> newEdges) {
-        ArrayList<GeoFeature> features = new ArrayList<>();
+        ArrayList<RoadFeature> features = new ArrayList<>();
         features.add(newJunction);
         features.addAll(newEdges);
-        ArrayList<GeoFeatureBit> pillarStarts;
         ArrayList<GeoFeatureBit> pillarBits;
         BlockPos testPos;
-        for (GeoFeature feature : features) {
-            if (feature instanceof RoadJunction junction) {
-                pillarStarts = junction.pillarStartBits;
-            } else if (feature instanceof  RoadEdge edge) {
-                pillarStarts = edge.pillarStartBits;
-            } else {
-                throw new RuntimeException();
-            }
+        for (RoadFeature feature : features) {
             pillarBits = new ArrayList<>();
             // Attempt to extend pillar while the maximum extension is not reached, the ground is not reached and no
             // position downwards is part of an existing feature.
-            for (GeoFeatureBit startBit : pillarStarts) {
-                for (int i=1; i<20; i++) {
+            for (GeoFeatureBit startBit : feature.pillarStartBits) {
+                for (int i=1; i<ROAD_PILLAR_EXTENSION_LENGTH; i++) {
                     testPos = startBit.blockPos.down(i);
                     if (posIsPartOfFeature(testPos) || world.getBlockState(testPos.up()).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)) {
                         break;
