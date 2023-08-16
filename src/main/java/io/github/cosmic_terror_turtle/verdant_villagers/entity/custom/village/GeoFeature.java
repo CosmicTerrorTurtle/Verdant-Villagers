@@ -48,13 +48,11 @@ public class GeoFeature {
     private int yMax = 0;
     private int zMin = 0;
     private int zMax = 0;
-    private final ArrayList<BlockPos> touchedMegaBlocks;
-    protected final ArrayList<GeoFeatureBit> bits;
+    private final ArrayList<BlockPos> touchedMegaBlocks = new ArrayList<>();
+    protected final ArrayList<GeoFeatureBit> bits = new ArrayList<>();
 
     public GeoFeature(int elementID) {
         this.elementID = elementID;
-        touchedMegaBlocks = new ArrayList<>();
-        bits = new ArrayList<>();
     }
 
     /**
@@ -227,12 +225,10 @@ public class GeoFeature {
      */
     public GeoFeature(@NotNull NbtCompound nbt) {
         elementID = nbt.getInt("id");
-        touchedMegaBlocks = new ArrayList<>();
         NbtCompound megaBlocksNbt = nbt.getCompound("megaBlocks");
         for (String key : megaBlocksNbt.getKeys()) {
             touchedMegaBlocks.add(NbtUtils.blockPosFromNbt(megaBlocksNbt.getCompound(key)));
         }
-        bits = new ArrayList<>();
         NbtCompound bitsNbt = nbt.getCompound("bits");
         for (String key : bitsNbt.getKeys()) {
             bits.add(new GeoFeatureBit(bitsNbt.getCompound(key)));

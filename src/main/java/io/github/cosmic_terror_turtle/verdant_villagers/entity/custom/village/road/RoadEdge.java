@@ -1,8 +1,9 @@
 package io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.road;
 
-import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.*;
+import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.GeoFeatureBit;
+import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.ServerVillage;
+import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.VerticalBlockColumn;
 import io.github.cosmic_terror_turtle.verdant_villagers.util.MathUtils;
-import io.github.cosmic_terror_turtle.verdant_villagers.util.NbtUtils;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class RoadEdge extends GeoFeature {
+public class RoadEdge extends RoadFeature {
 
     public static final double ROUNDING_OFFSET = 0.5; // Makes the block position coordinates be centered in a block.
     public static final double ROAD_STEP = 0.1; // Lower step -> higher precision in placing the road blocks
@@ -27,9 +28,6 @@ public class RoadEdge extends GeoFeature {
 
     public RoadJunction from;
     public RoadJunction to;
-    public ArrayList<BlockPos> sidewalkPositions = new ArrayList<>();
-    public ArrayList<BlockPos> archPositions = new ArrayList<>();
-    public ArrayList<GeoFeatureBit> pillarStartBits = new ArrayList<>();
     public ArrayList<RoadDot> roadDots = new ArrayList<>();
     public final double radius;
     private int polynomialDegree;
@@ -388,25 +386,6 @@ public class RoadEdge extends GeoFeature {
         return ySlope;
     }
 
-    @Override
-    public void removeBits(ArrayList<BlockPos> absolutePositions) {
-        ArrayList<GeoFeatureBit> toBeRemoved = new ArrayList<>();
-        for (GeoFeatureBit bit : bits) {
-            if (absolutePositions.contains(bit.blockPos)) {
-                toBeRemoved.add(bit);
-
-            }
-        }
-        for (GeoFeatureBit bit : toBeRemoved) {
-            bits.remove(bit);
-            sidewalkPositions.remove(bit.blockPos);
-            archPositions.remove(bit.blockPos);
-            pillarStartBits.removeIf(pillarBit -> pillarBit.blockPos.equals(bit.blockPos));
-        }
-        updateBounds();
-        updateMegaBlocks();
-    }
-
     /**
      * Creates a new RoadEdge from an NbtCompound.
      * @param nbt The compound representing a RoadEdge.
@@ -435,18 +414,6 @@ public class RoadEdge extends GeoFeature {
             // Access path
             from = new RoadJunction(nbt.getCompound("from"));
             to = new RoadJunction(nbt.getCompound("to"));
-        }
-        NbtCompound sidewalkNbt = nbt.getCompound("sidewalk");
-        for (String key : sidewalkNbt.getKeys()) {
-            sidewalkPositions.add(NbtUtils.blockPosFromNbt(sidewalkNbt.getCompound(key)));
-        }
-        NbtCompound archNbt = nbt.getCompound("arch");
-        for (String key : archNbt.getKeys()) {
-            archPositions.add(NbtUtils.blockPosFromNbt(archNbt.getCompound(key)));
-        }
-        NbtCompound pillarNbt = nbt.getCompound("pillar");
-        for (String key : pillarNbt.getKeys()) {
-            pillarStartBits.add(new GeoFeatureBit(pillarNbt.getCompound(key)));
         }
         NbtCompound roadDotsNbt = nbt.getCompound("roadDots");
         for (String key : roadDotsNbt.getKeys()) {
@@ -477,27 +444,6 @@ public class RoadEdge extends GeoFeature {
             nbt.put("from", from.toNbt());
             nbt.put("to", to.toNbt());
         }
-        NbtCompound sidewalkNbt = new NbtCompound();
-        i=0;
-        for (BlockPos pos : sidewalkPositions) {
-            sidewalkNbt.put(Integer.toString(i), NbtUtils.blockPosToNbt(pos));
-            i++;
-        }
-        nbt.put("sidewalk", sidewalkNbt);
-        NbtCompound archNbt = new NbtCompound();
-        i=0;
-        for (BlockPos pos : archPositions) {
-            archNbt.put(Integer.toString(i), NbtUtils.blockPosToNbt(pos));
-            i++;
-        }
-        nbt.put("arch", archNbt);
-        NbtCompound pillarNbt = new NbtCompound();
-        i=0;
-        for (GeoFeatureBit bit : pillarStartBits) {
-            pillarNbt.put(Integer.toString(i), bit.toNbt());
-            i++;
-        }
-        nbt.put("pillar", pillarNbt);
         NbtCompound roadDotsNbt = new NbtCompound();
         i=0;
         for (RoadDot dot : roadDots) {
