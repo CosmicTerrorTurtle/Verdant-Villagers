@@ -499,7 +499,8 @@ public class RoadEdge extends RoadFeature {
             if (surfaceBlock != null) {
                 terrainOffset = surfaceBlock.getY() - yCoord - from.pos.getY();
             } else {
-                terrainOffset = 0;
+                // No surface block found -> air. Start offset at max in order to get a bridge-like arched slope.
+                terrainOffset = maxOffset;
             }
             if (terrainOffset > 0) {
                 return Math.min(terrainOffset, maxOffset);

@@ -613,6 +613,15 @@ public class ServerVillage extends Village {
                 // Update position
                 pos = villageHeart.getBlockPos();
 
+                // Update road type
+                roadType = roadTypeProvider.getRoadType(DataRegistry.getRandomRoadTypeFor(villageType, villagerCount));
+
+                // Add new block palettes if necessary.
+                if (getUpdatedBlockPaletteLevel() > blockPaletteLevel) {
+                    blockPaletteLevel = getUpdatedBlockPaletteLevel();
+                    addBlockPalettesForAllTypes(blockCounts);
+                }
+
                 // Count iron golems and villagers
                 Box box;
                 int ironGolemCount = 0;
@@ -630,7 +639,7 @@ public class ServerVillage extends Village {
                 }
 
                 // Spawn iron golems if necessary
-                if (ironGolemCount * 8 < villagerCount && random.nextDouble() < 0.1) {
+                if (ironGolemCount * 8 < villagerCount && random.nextDouble() < 0.08) {
                     LargeEntitySpawnHelper.trySpawnAt(EntityType.IRON_GOLEM, SpawnReason.MOB_SUMMONED, (ServerWorld) world, pos,
                             10, (int)(roadType.scale*50), 30, LargeEntitySpawnHelper.Requirements.IRON_GOLEM);
                 }
@@ -640,14 +649,6 @@ public class ServerVillage extends Village {
                     //<try to spawn villager>
                 }
 
-                // Add new block palettes if necessary.
-                if (getUpdatedBlockPaletteLevel() > blockPaletteLevel) {
-                    blockPaletteLevel = getUpdatedBlockPaletteLevel();
-                    addBlockPalettesForAllTypes(blockCounts);
-                }
-
-                // Update road type
-                roadType = roadTypeProvider.getRoadType(DataRegistry.getRandomRoadTypeFor(villageType, villagerCount));
                 cyclePhase = UpdateCyclePhase.STRUCTURES;
             }
             case STRUCTURES -> {
@@ -743,7 +744,7 @@ public class ServerVillage extends Village {
     public BlockPos getSurfaceBlock(BlockPos startPosition, int minY, int maxY, boolean isForGeoFeature) {
         // For underground or sky terrain categories, sometimes return random position in the given range.
         String terrainCategory = DataRegistry.getVillageTypeData(villageType).terrainCategory;
-        if (isForGeoFeature && random.nextDouble() < 0.3 && (
+        if (isForGeoFeature && random.nextDouble() < 0.5 && (
                 terrainCategory.equals("under_ground")
                 || terrainCategory.equals("sky")
         )) {
