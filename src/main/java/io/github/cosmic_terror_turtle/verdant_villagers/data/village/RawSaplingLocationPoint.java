@@ -12,10 +12,12 @@ import java.io.IOException;
 public class RawSaplingLocationPoint extends RawPointOfInterest {
 
     public int saplings;
+    public int treeDiameter;
 
     public RawSaplingLocationPoint(JsonReader reader) throws IOException {
         pos = null;
         saplings = 1;
+        treeDiameter = 5;
 
         reader.beginObject();
         while (reader.hasNext()) {
@@ -23,6 +25,7 @@ public class RawSaplingLocationPoint extends RawPointOfInterest {
                 default -> throw new IOException();
                 case "pos" -> pos = JsonUtils.readList(reader, JsonReader::nextInt);
                 case "saplings" -> saplings = reader.nextInt();
+                case "tree_diameter" -> treeDiameter = reader.nextInt();
             }
         }
         reader.endObject();
@@ -34,6 +37,6 @@ public class RawSaplingLocationPoint extends RawPointOfInterest {
 
     @Override
     public PointOfInterest toPointOfInterest(ServerVillage village) {
-        return new SaplingLocationPoint(new BlockPos(pos.get(0), pos.get(1), pos.get(2)), saplings);
+        return new SaplingLocationPoint(new BlockPos(pos.get(0), pos.get(1), pos.get(2)), saplings, treeDiameter);
     }
 }

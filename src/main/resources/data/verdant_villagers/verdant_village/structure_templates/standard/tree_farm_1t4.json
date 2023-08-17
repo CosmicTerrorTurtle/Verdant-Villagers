@@ -49,28 +49,32 @@
       "subclass_name": "SaplingLocationPoint",
       "subclass_data": {
         "pos": [0, 1, 0],
-        "saplings": "4"
+        "saplings": "4",
+        "tree_diameter": 8
       }
     },
     {
       "subclass_name": "SaplingLocationPoint",
       "subclass_data": {
         "pos": [1, 1, 0],
-        "saplings": "4"
+        "saplings": "4",
+        "tree_diameter": 8
       }
     },
     {
       "subclass_name": "SaplingLocationPoint",
       "subclass_data": {
         "pos": [0, 1, 1],
-        "saplings": "4"
+        "saplings": "4",
+        "tree_diameter": 8
       }
     },
     {
       "subclass_name": "SaplingLocationPoint",
       "subclass_data": {
         "pos": [1, 1, 1],
-        "saplings": "4"
+        "saplings": "4",
+        "tree_diameter": 8
       }
     }
   ]

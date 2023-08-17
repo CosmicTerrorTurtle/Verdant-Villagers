@@ -654,8 +654,7 @@ public class ServerVillage extends Village {
 
                 // Plan structures (select one type at random).
 
-                ArrayList<String> structureTypesToBuild = DataRegistry.getVillageTypeData(villageType).structureTypesToBuild;
-                String selectedStructureType = structureTypesToBuild.get(random.nextInt(structureTypesToBuild.size()));
+                String selectedStructureType = DataRegistry.getVillageTypeData(villageType).getRandomStructureTypeToBuild(random);
 
                 // Determine whether there are enough structures of the selected structure type present
                 switch (DataRegistry.getStructureTypeData(selectedStructureType).structureCheckMethod) {
