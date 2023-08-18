@@ -102,8 +102,8 @@ public class ServerVillage extends Village {
     public static final int ROAD_PILLAR_EXTENSION_LENGTH = 20;
 
     /**
-     * If true, the villagers get counted normally. If false, the count is incremented every update() call and can be
-     * manually adjusted by the player.
+     * If true, the villagers get counted normally. If false, the count is incremented every {@link ServerVillage#update()}
+     * call and can be manually adjusted by the player.
      */
     public static boolean countVillagers = false;
 
@@ -639,9 +639,9 @@ public class ServerVillage extends Village {
                 }
 
                 // Spawn iron golems if necessary
-                if (ironGolemCount * 8 < villagerCount && random.nextDouble() < 0.08) {
+                if (ironGolemCount * 10 < villagerCount && random.nextDouble() < 0.08) {
                     LargeEntitySpawnHelper.trySpawnAt(EntityType.IRON_GOLEM, SpawnReason.MOB_SUMMONED, (ServerWorld) world, pos,
-                            10, (int)(roadType.scale*50), 30, LargeEntitySpawnHelper.Requirements.IRON_GOLEM);
+                            10, (int)(roadType.scale*50), 35, LargeEntitySpawnHelper.Requirements.IRON_GOLEM);
                 }
 
                 // Spawn villagers if necessary
@@ -836,198 +836,165 @@ public class ServerVillage extends Village {
      * @return True if the attempt was successful.
      */
     private boolean planSingleJunctionWithEdges() {
-
-        int surfaceBlockMaxYOffset = (int)(50*roadType.scale);
-        double searchRadius = random.nextDouble(SEARCH_DISTANCE_ROAD);
-        boolean withinBounds;
-        boolean foundPositionNearJunctions;
+        boolean withinBounds = true;
+        boolean foundPositionNearJunctions = true;
         double startAngle;
-        double addAngle;
 
         BlockPos testPos;
-        boolean testPosIsValid;
+        int surfaceBlockMaxYOffset = (int)(50*roadType.scale);
+        MegaChunk testPosMegaChunk;
         RoadJunction newJunction;
         RoadEdge testEdge;
         ArrayList<RoadEdge> newEdges = new ArrayList<>();
         double testSquaredDist;
-        boolean edgeCollides;
-        do {
+
+        // Loop through different search radii.
+        for (double searchRadius = random.nextDouble(SEARCH_DISTANCE_ROAD);
+             withinBounds && foundPositionNearJunctions;
+             searchRadius += SEARCH_DISTANCE_ROAD
+        ) {
             withinBounds = false;
             foundPositionNearJunctions = false;
             startAngle = random.nextDouble(2*Math.PI);
-            addAngle = 0;
-            do {
+
+            // Loop through different points on the circle.
+            angleFor: for (double addAngle = 0;
+                 addAngle < 2*Math.PI;
+                 addAngle += SEARCH_DISTANCE_ROAD/searchRadius
+            ) {
+                // Determine the test position.
                 testPos = pos.add((int) (searchRadius*Math.cos(startAngle+addAngle)), -1, (int) (searchRadius*Math.sin(startAngle+addAngle)));
                 testPos = getSurfaceBlock(testPos, testPos.getY()-surfaceBlockMaxYOffset, testPos.getY()+surfaceBlockMaxYOffset, true);
-                if (testPos!= null) {
-                    testPosIsValid = true;
-                    for (MegaChunk megaChunk : megaChunks) {
-                        // Find the mega chunk that this position is a part of.
-                        if (megaChunk.posIsWithin(testPos)) {
-                            withinBounds = true;
-
-                            // Is the test position close enough to existing junctions?
-                            for (RoadJunction junction : roadJunctions) {
-                                if (testPos.getSquaredDistance(junction.pos) < Math.pow(ROAD_EDGE_BASE_MAX_LENGTH*roadType.scale, 2)) {
-                                    foundPositionNearJunctions = true;
-                                }
-                            }
-
-                            // Is the test position too close to existing junctions?
-                            for (RoadJunction junction : roadJunctions) {
-                                if (testPos.getSquaredDistance(junction.pos) < Math.pow(ROAD_JUNCTION_BASE_SPACE*roadType.scale, 2)) {
-                                    testPosIsValid = false;
-                                    break;
-                                }
-                            }
-                            if (!testPosIsValid) {
-                                break;
-                            }
-
-                            // Create new junction.
-                            newJunction = new RoadJunction(nextElementID++, world, testPos, roadType);
-
-                            // Does the new junction collide with any existing structures, edges or access paths?
-                            for (Structure structure : structures) {
-                                if (GeoFeatureCollision.featuresOverlap(newJunction, structure, true)) {
-                                    testPosIsValid = false;
-                                    break;
-                                }
-                            }
-                            if (!testPosIsValid) {
-                                break;
-                            }
-                            for (RoadEdge edge : roadEdges) {
-                                if (GeoFeatureCollision.featuresOverlap(newJunction, edge, true)) {
-                                    testPosIsValid = false;
-                                    break;
-                                }
-                            }
-                            if (!testPosIsValid) {
-                                break;
-                            }
-                            for (RoadEdge edge : accessPaths) {
-                                if (GeoFeatureCollision.featuresOverlap(newJunction, edge, true)) {
-                                    testPosIsValid = false;
-                                    break;
-                                }
-                            }
-                            if (!testPosIsValid) {
-                                break;
-                            }
-                            // New junction does not collide with anything.
-
-                            // Create between one and two edges (if not, then fail the test position).
-                            if (!roadJunctions.isEmpty()) {
-                                // Search for existing junctions to connect the new junction to.
-                                Collections.shuffle(roadJunctions);
-                                for (RoadJunction junction : roadJunctions) {
-                                    // Is the edge's length okay?
-                                    testSquaredDist = newJunction.pos.getSquaredDistance(junction.pos);
-                                    if (testSquaredDist < Math.pow(ROAD_EDGE_BASE_MIN_LENGTH*roadType.scale, 2)
-                                            || testSquaredDist > Math.pow(ROAD_EDGE_BASE_MAX_LENGTH*roadType.scale, 2)) {
-                                        continue;
-                                    }
-                                    // Create new road edge.
-                                    testEdge = new RoadEdge(nextElementID++, world, this, newJunction, junction, true, roadType, false);
-                                    // Is the edge's Y-slope okay?
-                                    if (Math.abs(testEdge.getYSlope()) > ROAD_EDGE_MAX_Y_SLOPE) {
-                                        continue;
-                                    }
-                                    // Check if the test edge collides with any structures, other edges or junctions.
-                                    edgeCollides = false;
-                                    for (Structure structure : structures) {
-                                        if (GeoFeatureCollision.featuresOverlap(testEdge, structure, true)) {
-                                            edgeCollides = true;
-                                            break;
-                                        }
-                                    }
-                                    if (edgeCollides) {
-                                        continue;
-                                    }
-                                    for (RoadJunction roadJunction : roadJunctions) {
-                                        if (roadJunction != junction && GeoFeatureCollision.featuresOverlap(roadJunction, testEdge, true)) {
-                                            edgeCollides = true;
-                                            break;
-                                        }
-                                    }
-                                    if (edgeCollides) {
-                                        continue;
-                                    }
-                                    for (RoadEdge edge : roadEdges) {
-                                        if (GeoFeatureCollision.edgesOverlap(testEdge, edge)) {
-                                            edgeCollides = true;
-                                            break;
-                                        }
-                                    }
-                                    if (edgeCollides) {
-                                        continue;
-                                    }
-                                    for (RoadEdge edge : newEdges) {
-                                        if (GeoFeatureCollision.edgesOverlap(testEdge, edge)) {
-                                            edgeCollides = true;
-                                            break;
-                                        }
-                                    }
-                                    if (edgeCollides) {
-                                        continue;
-                                    }
-                                    for (RoadEdge accessPath : accessPaths) {
-                                        if (GeoFeatureCollision.featuresOverlap(testEdge, accessPath, true)) {
-                                            edgeCollides = true;
-                                            break;
-                                        }
-                                    }
-                                    if (edgeCollides) {
-                                        continue;
-                                    }
-
-                                    // Test edge is okay.
-                                    newEdges.add(testEdge);
-                                    // Only add a maximum of two edges.
-                                    if (newEdges.size() >= 2) {
-                                        // Break the loop that searches for junctions to connect to, since the
-                                        // new junction is already connected to enough ones.
-                                        break;
-                                    }
-
-                                }
-                                if (newEdges.isEmpty()) {
-                                    break;
-                                }
-                            }
-
-                            // Add the new junction and edges to the network.
-                            roadJunctions.add(newJunction);
-                            roadEdges.addAll(newEdges);
-                            // Extend pillars to the ground.
-                            extendPillars(newJunction, newEdges);
-                            // Add new chunks around the added junction.
-                            addMegaChunksAround(megaChunk.getLowerTip());
-
-                            // Build the junction and its edges
-                            if (PLACE_BLOCKS_DIRECTLY) {
-                                for (GeoFeatureBit bit : newJunction.getBits()) {
-                                    attemptToPlace(bit);
-                                }
-                                for (RoadEdge edge : newEdges) {
-                                    for (GeoFeatureBit bit : edge.getBits()) {
-                                        attemptToPlace(bit);
-                                    }
-                                }
-                            }
-
-                            return true;
+                if (testPos == null) {
+                    continue;
+                }
+                // Find the mega chunk that this position is a part of.
+                testPosMegaChunk = null;
+                for (MegaChunk megaChunk : megaChunks) {
+                    if (megaChunk.posIsWithin(testPos)) {
+                        testPosMegaChunk = megaChunk;
+                        withinBounds = true;
+                        break;
+                    }
+                }
+                if (testPosMegaChunk == null) {
+                    continue;
+                }
+                // Is the test position close enough to existing junctions? (Relevant for outer loop)
+                if (!foundPositionNearJunctions) {
+                    for (RoadJunction junction : roadJunctions) {
+                        if (testPos.getSquaredDistance(junction.pos) < Math.pow(ROAD_EDGE_BASE_MAX_LENGTH*roadType.scale, 2)) {
+                            foundPositionNearJunctions = true;
+                            break;
                         }
                     }
                 }
+                // Is the test position too close to existing junctions?
+                for (RoadJunction junction : roadJunctions) {
+                    if (testPos.getSquaredDistance(junction.pos) < Math.pow(ROAD_JUNCTION_BASE_SPACE*roadType.scale, 2)) {
+                        continue angleFor;
+                    }
+                }
 
-                addAngle += SEARCH_DISTANCE_ROAD/searchRadius;
-            } while (addAngle < 2*Math.PI);
+                // Create new junction.
+                newJunction = new RoadJunction(nextElementID++, world, testPos, roadType);
+                // Does the new junction collide with any existing structures, edges or access paths?
+                for (Structure structure : structures) {
+                    if (GeoFeatureCollision.featuresOverlap(newJunction, structure, true)) {
+                        continue angleFor;
+                    }
+                }
+                for (RoadEdge edge : roadEdges) {
+                    if (GeoFeatureCollision.featuresOverlap(newJunction, edge, true)) {
+                        continue angleFor;
+                    }
+                }
+                for (RoadEdge edge : accessPaths) {
+                    if (GeoFeatureCollision.featuresOverlap(newJunction, edge, true)) {
+                        continue angleFor;
+                    }
+                }
 
-            searchRadius += SEARCH_DISTANCE_ROAD;
-        } while (withinBounds && foundPositionNearJunctions);
+                // Create between one and two edges connecting the new junction to the road network. The first junction
+                // does not require any edges.
+                if (!roadJunctions.isEmpty()) {
+                    // Search for existing junctions to connect the new junction to.
+                    Collections.shuffle(roadJunctions);
+                    junctionCollisionFor: for (RoadJunction junction : roadJunctions) {
+                        // Will the test edge's length be okay?
+                        testSquaredDist = newJunction.pos.getSquaredDistance(junction.pos);
+                        if (testSquaredDist < Math.pow(ROAD_EDGE_BASE_MIN_LENGTH*roadType.scale, 2)
+                                || testSquaredDist > Math.pow(ROAD_EDGE_BASE_MAX_LENGTH*roadType.scale, 2)) {
+                            continue;
+                        }
+                        // Create new road edge.
+                        testEdge = new RoadEdge(nextElementID++, world, this, newJunction, junction, true, roadType, false);
+                        // Is the edge's Y-slope okay?
+                        if (Math.abs(testEdge.getYSlope()) > ROAD_EDGE_MAX_Y_SLOPE) {
+                            // Sometimes recreate the test edge with spiral ramp mode enabled
+                            //if random val < 0.1: do ??? instead of continue
+                            continue;
+                        }
+                        // Check if the test edge collides with any structures, other edges or junctions.
+                        for (Structure structure : structures) {
+                            if (GeoFeatureCollision.featuresOverlap(testEdge, structure, true)) {
+                                continue junctionCollisionFor;
+                            }
+                        }
+                        for (RoadJunction roadJunction : roadJunctions) {
+                            if (roadJunction != junction && GeoFeatureCollision.featuresOverlap(roadJunction, testEdge, true)) {
+                                continue junctionCollisionFor;
+                            }
+                        }
+                        for (RoadEdge edge : roadEdges) {
+                            if (GeoFeatureCollision.edgesOverlap(testEdge, edge)) {
+                                continue junctionCollisionFor;
+                            }
+                        }
+                        for (RoadEdge edge : newEdges) {
+                            if (GeoFeatureCollision.edgesOverlap(testEdge, edge)) {
+                                continue junctionCollisionFor;
+                            }
+                        }
+                        for (RoadEdge accessPath : accessPaths) {
+                            if (GeoFeatureCollision.featuresOverlap(testEdge, accessPath, true)) {
+                                continue junctionCollisionFor;
+                            }
+                        }
 
+                        // Add edge to accepted edges list.
+                        newEdges.add(testEdge);
+                        // Only add a maximum of two edges.
+                        if (newEdges.size() >= 2) {
+                            // Break the loop that searches for junctions to connect to, since the new junction
+                            // is already connected to a sufficient number.
+                            break;
+                        }
+
+                    }
+                    // Has at least one edge been created to connect the new junction to the road network?
+                    if (newEdges.isEmpty()) {
+                        continue ;
+                    }
+                }
+
+                // Add the new junction and edges to the network.
+                roadJunctions.add(newJunction);
+                roadEdges.addAll(newEdges);
+                // Extend pillars to the ground.
+                extendPillars(newJunction, newEdges);
+                // Add new chunks around the added junction.
+                addMegaChunksAround(testPosMegaChunk.getLowerTip());
+                // Place the junction and its edges into the world.
+                if (PLACE_BLOCKS_DIRECTLY) {
+                    attemptToPlace(newJunction);
+                    for (RoadEdge edge : newEdges) {
+                        attemptToPlace(edge);
+                    }
+                }
+                return true;
+            }
+        }
         return false;
     }
 
@@ -1095,129 +1062,113 @@ public class ServerVillage extends Village {
      * @return True if the attempt was successful.
      */
     private boolean planSingleStructure(String structureType) {
-
-        int surfaceBlockMaxYOffset = (int)(50*roadType.scale);
-
         // Randomly select the structure template for this attempt.
         RawStructureTemplate rawTemplate = DataRegistry.getRandomTemplateFor(villageType, structureType, villagerCount, blockPalettes);
         if (rawTemplate == null) {
             return false;
         }
-
-        // Set parameters specific to the structure type.
+        // Set parameter specific to the structure type.
         double searchDistance = DataRegistry.getStructureTypeData(structureType).searchDistanceMultiplier*SEARCH_DISTANCE_STRUCTURE;
 
-        // Main body
-        double searchRadius = random.nextDouble(searchDistance);
-        boolean withinBounds;
-        boolean foundPositionNearJunctions;
+        boolean withinBounds = true;
+        boolean foundPositionNearJunctions = true;
+
         int junctionCount;
         double startAngle;
-        double addAngle;
         BlockPos testPos;
+        int surfaceBlockMaxYOffset = (int)(50*roadType.scale);
+        MegaChunk testPosMegaChunk;
         Structure newStructure;
-        boolean doesNotCollide;
-        do {
+
+        // Loop through different search radii.
+        for (double searchRadius = random.nextDouble(searchDistance);
+             withinBounds && foundPositionNearJunctions;
+             searchRadius += searchDistance
+        ) {
             withinBounds = false;
             foundPositionNearJunctions = false;
             startAngle = random.nextDouble(2*Math.PI);
-            addAngle = 0;
-            do {
+
+            // Loop through different points on the circle.
+            angleFor: for (double addAngle = 0;
+                 addAngle < 2*Math.PI;
+                 addAngle += searchDistance /searchRadius
+            ) {
+                // Determine the test position.
                 testPos = pos.add((int) (searchRadius*Math.cos(startAngle+addAngle)), -1, (int) (searchRadius*Math.sin(startAngle+addAngle)));
                 testPos = getSurfaceBlock(testPos, testPos.getY()-surfaceBlockMaxYOffset, testPos.getY()+surfaceBlockMaxYOffset, true);
-                if (testPos != null) {
-                    for (MegaChunk megaChunk : megaChunks) {
-                        // Find the mega chunk that this position is a part of.
-                        if (megaChunk.posIsWithin(testPos)) {
-                            withinBounds = true;
-
-                            // Test if enough road junctions are nearby.
-                            junctionCount = 0;
-                            for (RoadJunction junction : roadJunctions) {
-                                if (junction.pos.isWithinDistance(testPos, roadType.scale*POSITIONS_ARE_CLOSE_DISTANCE)) {
-                                    junctionCount++;
-                                    if (junctionCount >= MIN_NEAR_ROAD_JUNCTIONS) {
-                                        break;
-                                    }
-                                }
-                            }
-                            if (junctionCount < MIN_NEAR_ROAD_JUNCTIONS) {
-                                break;
-                            }
-                            foundPositionNearJunctions = true;
-
-                            // Test if the house collides with any other structures or edges.
-                            newStructure = structureProvider.getStructure(nextElementID++, testPos, rawTemplate);
-                            if (newStructure == null) {
-                                return false;
-                            }
-                            doesNotCollide = true;
-                            for (Structure structure : structures) {
-                                if (GeoFeatureCollision.featuresOverlap(newStructure, structure, true)) {
-                                    doesNotCollide = false;
-                                    break;
-                                }
-                            }
-                            if (!doesNotCollide) {
-                                break;
-                            }
-                            for (RoadEdge edge : roadEdges) {
-                                if (GeoFeatureCollision.featuresOverlap(newStructure, edge, true)) {
-                                    doesNotCollide = false;
-                                    break;
-                                }
-                            }
-                            if (!doesNotCollide) {
-                                break;
-                            }
-                            for (RoadEdge accessPath : accessPaths) {
-                                if (GeoFeatureCollision.featuresOverlap(newStructure, accessPath, true)) {
-                                    doesNotCollide = false;
-                                    break;
-                                }
-                            }
-                            if (!doesNotCollide) {
-                                break;
-                            }
-                            for (RoadJunction junction : roadJunctions) {
-                                if (GeoFeatureCollision.featuresOverlap(newStructure, junction, true)) {
-                                    doesNotCollide = false;
-                                    break;
-                                }
-                            }
-                            if (!doesNotCollide) {
-                                break;
-                            }
-                            // House does not collide with anything.
-
-                            // Try to connect all access points.
-                            if (!connectAccessPoints(newStructure)) {
-                                break;
-                            }
-
-                            // Add the new house.
-                            structures.add(newStructure);
-                            // Add new chunks around the added house.
-                            addMegaChunksAround(megaChunk.getLowerTip());
-
-                            // Build the structure
-                            if (PLACE_BLOCKS_DIRECTLY) {
-                                for (GeoFeatureBit bit : newStructure.getBits()) {
-                                    attemptToPlace(bit);
-                                }
-                            }
-
-                            return true;
+                if (testPos == null) {
+                    continue;
+                }
+                // Find the mega chunk that this position is a part of.
+                testPosMegaChunk = null;
+                for (MegaChunk megaChunk : megaChunks) {
+                    if (megaChunk.posIsWithin(testPos)) {
+                        testPosMegaChunk = megaChunk;
+                        withinBounds = true;
+                        break;
+                    }
+                }
+                if (testPosMegaChunk == null) {
+                    continue;
+                }
+                // Test if enough road junctions are nearby.
+                junctionCount = 0;
+                for (RoadJunction junction : roadJunctions) {
+                    if (junction.pos.isWithinDistance(testPos, roadType.scale * POSITIONS_ARE_CLOSE_DISTANCE)) {
+                        junctionCount++;
+                        if (junctionCount >= MIN_NEAR_ROAD_JUNCTIONS) {
+                            break;
                         }
                     }
                 }
+                if (junctionCount < MIN_NEAR_ROAD_JUNCTIONS) {
+                    continue ;
+                }
+                foundPositionNearJunctions = true;
 
-                addAngle += searchDistance /searchRadius;
-            } while (addAngle < 2*Math.PI);
+                // Create new structure.
+                newStructure = structureProvider.getStructure(nextElementID++, testPos, rawTemplate);
+                if (newStructure == null) {
+                    return false;
+                }
+                // Test if the structure collides with any existing features.
+                for (Structure structure : structures) {
+                    if (GeoFeatureCollision.featuresOverlap(newStructure, structure, true)) {
+                        continue angleFor;
+                    }
+                }
+                for (RoadEdge edge : roadEdges) {
+                    if (GeoFeatureCollision.featuresOverlap(newStructure, edge, true)) {
+                        continue angleFor;
+                    }
+                }
+                for (RoadEdge accessPath : accessPaths) {
+                    if (GeoFeatureCollision.featuresOverlap(newStructure, accessPath, true)) {
+                        continue angleFor;
+                    }
+                }
+                for (RoadJunction junction : roadJunctions) {
+                    if (GeoFeatureCollision.featuresOverlap(newStructure, junction, true)) {
+                        continue angleFor;
+                    }
+                }
+                // Try to connect all access points.
+                if (!connectAccessPoints(newStructure)) {
+                    continue;
+                }
 
-            searchRadius += searchDistance;
-        } while (withinBounds && foundPositionNearJunctions);
-
+                // Add the new structure.
+                structures.add(newStructure);
+                // Add new chunks around the added structure.
+                addMegaChunksAround(testPosMegaChunk.getLowerTip());
+                // Place the structure in the world.
+                if (PLACE_BLOCKS_DIRECTLY) {
+                    attemptToPlace(newStructure);
+                }
+                return true;
+            }
+        }
         return false;
     }
 
@@ -1232,132 +1183,117 @@ public class ServerVillage extends Village {
 
         StructureAccessPoint accessPoint;
         boolean pointApproved;
-        ArrayList<RoadDot> nearDots;
+        ArrayList<RoadDot> nearDotsToTest;
         RoadDot roadDot;
-        boolean noCollision;
 
         // Iterate through all access points.
         for (PointOfInterest point : structure.pointsOfInterest) {
-            if (point instanceof StructureAccessPoint) {
-                accessPoint = (StructureAccessPoint) point;
-                pointApproved = false;
+            if (!(point instanceof StructureAccessPoint)) {
+                continue;
+            }
+            accessPoint = (StructureAccessPoint) point;
+            pointApproved = false;
 
-                // Attempt to connect the access point.
-                // Find all road dots within a distance (and x-z-distance of at least 1).
-                nearDots = new ArrayList<>();
-                for (RoadEdge edge : roadEdges) {
-                    for (RoadDot dot : edge.roadDots) {
-                        if (dot.pos.isWithinDistance(accessPoint.pos, ACCESS_PATH_BASE_MAX_LENGTH*roadType.scale)
-                                && 1 < MathHelper.square(dot.pos.getX()-accessPoint.pos.getX()) + MathHelper.square(dot.pos.getZ()-accessPoint.pos.getZ())) {
-                            nearDots.add(dot);
-                        }
+            // Attempt to connect the access point.
+            // Find all road dots within a distance (and x-z-distance of more than 1).
+            nearDotsToTest = new ArrayList<>();
+            for (RoadEdge edge : roadEdges) {
+                for (RoadDot dot : edge.roadDots) {
+                    if (dot.pos.isWithinDistance(accessPoint.pos, ACCESS_PATH_BASE_MAX_LENGTH*roadType.scale)
+                            && 1 < MathHelper.square(dot.pos.getX()-accessPoint.pos.getX()) + MathHelper.square(dot.pos.getZ()-accessPoint.pos.getZ())) {
+                        nearDotsToTest.add(dot);
                     }
                 }
-                // Try to connect to a road dot and repeat a couple of times in case of failure.
-                for (int i=0; i<10 && nearDots.size() > 0; i++) {
-                    // Find the nearest dot.
-                    roadDot = null;
-                    for (RoadDot nearDot : nearDots) {
-                        if (roadDot == null || nearDot.pos.getSquaredDistance(accessPoint.pos) < roadDot.pos.getSquaredDistance(accessPoint.pos)) {
-                            roadDot = nearDot;
-                        }
+            }
+            // Try to connect to a road dot and repeat a couple of times in case of failure.
+            connectDotFor: for (int i=0; i<10 && nearDotsToTest.size() > 0; i++) {
+                // Find the nearest dot.
+                roadDot = null;
+                for (RoadDot nearDot : nearDotsToTest) {
+                    if (roadDot == null || nearDot.pos.getSquaredDistance(accessPoint.pos) < roadDot.pos.getSquaredDistance(accessPoint.pos)) {
+                        roadDot = nearDot;
                     }
-                    // Test the selected dot.
-                    if (roadDot != null) {
-                        // Create test edge.
-                        RoadEdge testEdge = new RoadEdge(
-                                nextElementID++,
-                                world,
-                                this,
-                                new RoadJunction(nextElementID++, world, accessPoint.pos, 0, 0.6),
-                                new RoadJunction(nextElementID++, world, roadDot.pos, 0, 2.0*roadDot.edge.radius),
-                                true,
-                                roadTypeProvider.getRoadType(DataRegistry.getAccessPathRoadType(accessPoint.accessPathRoadType)),
-                                true
-                        );
-                        // Check edge's Y-slope.
-                        if (Math.abs(testEdge.getYSlope()) < ROAD_EDGE_MAX_Y_SLOPE) {
-                            noCollision = true;
-                            // Check if the test edge collides with the road edge it is trying to connect to.
-                            if (GeoFeatureCollision.accessPathCollidesWithEdge(testEdge, roadDot.edge)) {
-                                noCollision = false;
-                            }
-                            // Check if the test edge collides with any structures.
-                            if (noCollision) {
-                                for (Structure collisionTestStructure : structures) {
-                                    if (GeoFeatureCollision.featuresOverlap(testEdge, collisionTestStructure, false)) {
-                                        noCollision = false;
-                                        break;
-                                    }
-                                }
-                                if (GeoFeatureCollision.featuresOverlapIgnoreAirCollisionsAndNonAirCollisions(structure, testEdge)) {
-                                    noCollision = false;
-                                }
-                            }
-                            // Check if the test edge collides with any other paths.
-                            if (noCollision) {
-                                for (RoadEdge path : accessPaths) {
-                                    if (GeoFeatureCollision.featuresOverlap(testEdge, path, false)) {
-                                        noCollision = false;
-                                        break;
-                                    }
-                                }
-                                for (RoadEdge path : approvedPaths) {
-                                    if (GeoFeatureCollision.featuresOverlap(testEdge, path, false)) {
-                                        noCollision = false;
-                                        break;
-                                    }
-                                }
-                            }
-                            // Check if the test edge collides with any junctions.
-                            if (noCollision) {
-                                for (RoadJunction junction : roadJunctions) {
-                                    if (GeoFeatureCollision.featuresOverlap(testEdge, junction, false)) {
-                                        noCollision = false;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (noCollision) {
-                                // Test edge is okay.
-                                approvedPaths.add(testEdge);
-                                pointApproved = true;
-
-                                // Access point successfully connected, no more attempts necessary.
-                                break;
-                            }
-                        }
+                }
+                if (roadDot == null) {
+                    continue;
+                }
+                nearDotsToTest.remove(roadDot);
+                // Create test edge connecting the selected dot.
+                RoadEdge testEdge = new RoadEdge(
+                        nextElementID++,
+                        world,
+                        this,
+                        new RoadJunction(nextElementID++, world, accessPoint.pos, 0, 0.6),
+                        new RoadJunction(nextElementID++, world, roadDot.pos, 0, 2.0*roadDot.edge.radius),
+                        true,
+                        roadTypeProvider.getRoadType(DataRegistry.getAccessPathRoadType(accessPoint.accessPathRoadType)),
+                        true
+                );
+                // Check edge's Y-slope.
+                if (Math.abs(testEdge.getYSlope()) > ROAD_EDGE_MAX_Y_SLOPE) {
+                    continue;
+                }
+                // Check if the test edge collides with the road edge it is trying to connect to.
+                if (GeoFeatureCollision.accessPathCollidesWithEdge(testEdge, roadDot.edge)) {
+                    continue;
+                }
+                // Check if the test edge collides with any structures.
+                if (GeoFeatureCollision.featuresOverlapIgnoreAirCollisionsAndNonAirCollisions(structure, testEdge)) {
+                    continue;
+                }
+                for (Structure collisionTestStructure : structures) {
+                    if (GeoFeatureCollision.featuresOverlap(testEdge, collisionTestStructure, false)) {
+                        continue connectDotFor;
                     }
-                    // If this point is reached, the access point has not been connected to the dot.
-                    nearDots.remove(roadDot);
                 }
-                if (!pointApproved) {
-                    return false;
+                // Check if the test edge collides with any other paths.
+                for (RoadEdge path : accessPaths) {
+                    if (GeoFeatureCollision.featuresOverlap(testEdge, path, false)) {
+                        continue connectDotFor;
+                    }
                 }
+                for (RoadEdge path : approvedPaths) {
+                    if (GeoFeatureCollision.featuresOverlap(testEdge, path, false)) {
+                        continue connectDotFor;
+                    }
+                }
+                // Check if the test edge collides with any junctions.
+                for (RoadJunction junction : roadJunctions) {
+                    if (GeoFeatureCollision.featuresOverlap(testEdge, junction, false)) {
+                        continue connectDotFor;
+                    }
+                }
+                // Access point successfully connected, no more attempts necessary.
+                approvedPaths.add(testEdge);
+                pointApproved = true;
+                break;
+            }
+            if (!pointApproved) {
+                return false;
             }
         }
 
+        // Add the new access paths to the network.
         accessPaths.addAll(approvedPaths);
-
-        // Build the access paths
+        // Place the access paths in the world.
         if (PLACE_BLOCKS_DIRECTLY) {
             for (RoadEdge approvedPath : approvedPaths) {
-                for (GeoFeatureBit bit : approvedPath.getBits()) {
-                    attemptToPlace(bit);
-                }
+                attemptToPlace(approvedPath);
             }
         }
-
         return true;
     }
 
     /**
-     * Tries to place a block in the world. Some blocks remain untouched (see tag JFP_VILLAGE_UNTOUCHED_BLOCKS).
-     * @param bit The bit that holds the position and block state that should be used for placing.
+     * Tries to place all blocks of a {@link GeoFeature} in the world. Some blocks remain untouched (see tag
+     * {@link ModTags.Blocks#VILLAGE_UNTOUCHED_BLOCKS}).
+     * @param feature The feature that should be placed.
      */
-    private void attemptToPlace(GeoFeatureBit bit) {
-        if (world != null && bit.blockState != null && !world.getBlockState(bit.blockPos).isIn(ModTags.Blocks.VILLAGE_UNTOUCHED_BLOCKS)) {
-            world.setBlockState(bit.blockPos, bit.blockState);
+    private void attemptToPlace(GeoFeature feature) {
+        for (GeoFeatureBit bit: feature.getBits()) {
+            if (world != null && bit.blockState != null && !world.getBlockState(bit.blockPos).isIn(ModTags.Blocks.VILLAGE_UNTOUCHED_BLOCKS)) {
+                world.setBlockState(bit.blockPos, bit.blockState);
+            }
         }
     }
 }

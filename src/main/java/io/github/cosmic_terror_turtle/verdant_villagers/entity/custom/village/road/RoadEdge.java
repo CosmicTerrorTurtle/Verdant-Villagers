@@ -456,7 +456,7 @@ public class RoadEdge extends RoadFeature {
 
         public static final double TERRAIN_ADJUSTING_SPACE = 4.0; // Space between terrain adjusting points
         public static final double SMOOTHING_FACTOR = 0.2; // Factor by which a point gets adjusted towards its neighbors
-        public static final int MAX_SMOOTHING_ITERATIONS = 40; // The maximum number of iterations that smooth the adjusting offsets.
+        public static final int MAX_SMOOTHING_ITERATIONS = 45; // The maximum number of iterations that smooth the adjusting offsets.
 
 
         private final double aOffsetStart;
