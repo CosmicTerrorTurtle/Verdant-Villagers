@@ -20,6 +20,8 @@ public class RoadEdge extends RoadFeature {
     public static final double ROAD_STEP = 0.1; // Lower step -> higher precision in placing the road blocks
     public static final double ROAD_DOT_SPACE = 2.5; // Space between road dots
     public static final double ROAD_TYPE_TERRAIN_SPACE = 1.5;
+    public static final int SPIRAL_BASE_Y_DIFF = 20;
+    public static final int SPIRAL_BASE_RADIUS = 15;
 
     public static final int FIRST = 1;
     public static final int SECOND = 2;
@@ -36,6 +38,8 @@ public class RoadEdge extends RoadFeature {
     private double e;
     private final boolean adjustToTerrain;
     private double ySlope; // The slope of this edge's delta-Y versus d.
+    private int spiralNum; // The number of upward spirals. If negative, the spirals go down.
+    private boolean spiralsLeft; // Whether the spirals are to the left or the right (starting at 'from').
 
     /**
      * Instantiates a normal road edge using {@link RoadType}.
@@ -47,9 +51,10 @@ public class RoadEdge extends RoadFeature {
      * @param adjustToTerrain If this edge should try to match the terrain slope underneath it.
      * @param roadType The {@link RoadType} used for this edge.
      * @param isAccessPath Whether this edge is an access path.
+     * @param spiral Whether this edge should overcome great height differences using spiral ramps.
      */
     public RoadEdge(int elementID, World world, ServerVillage village, RoadJunction from, RoadJunction to,
-                     boolean adjustToTerrain, RoadType roadType, boolean isAccessPath) {
+                     boolean adjustToTerrain, RoadType roadType, boolean isAccessPath, boolean spiral) {
         super(elementID);
         this.from = from;
         this.to = to;
@@ -61,13 +66,13 @@ public class RoadEdge extends RoadFeature {
             throw new RuntimeException("Illegal road edge length (on the x-z-plane).");
         }
 
-        preparePolynomialFunction(village.random);
-        setBitsMegaBlocksAndRoadDots(world, village, roadType, isAccessPath);
+        preparePolynomialFunction(village.random, spiral);
+        setBitsMegaBlocksAndRoadDots(world, village, roadType, isAccessPath, spiral);
     }
 
-    private void preparePolynomialFunction(Random random) {
+    private void preparePolynomialFunction(Random random, boolean spiral) {
         double fraction; // The fraction of d that abs(function) should return at max.
-        int deg = MathUtils.nextInt(1, 3);
+        int deg = spiral ? 1 : MathUtils.nextInt(1, 3);
         switch (deg) {
             case 1 -> {
                 polynomialDegree = FIRST;
@@ -126,7 +131,8 @@ public class RoadEdge extends RoadFeature {
         }
     }
 
-    private void setBitsMegaBlocksAndRoadDots(World world, ServerVillage village, RoadType roadType, boolean isAccessPath) {
+    private void setBitsMegaBlocksAndRoadDots(World world, ServerVillage village, RoadType roadType,
+                                              boolean isAccessPath, boolean spiral) {
         boolean overwriteJunctions = isAccessPath;
 
         ArrayList<VerticalBlockColumn> normalColumns = new ArrayList<>();
@@ -144,8 +150,17 @@ public class RoadEdge extends RoadFeature {
         double cos = Math.cos(angleAtFrom);
         double aOffsetStart = from.sameHeightRadius;
         double aOffsetEnd = to.sameHeightRadius;
+        spiralNum = 0;
+        spiralsLeft = true;
+        double spiralYDiff = SPIRAL_BASE_Y_DIFF*roadType.scale;
+        double spiralRadius = SPIRAL_BASE_RADIUS*roadType.scale;
         if (d > aOffsetStart + aOffsetEnd) {
-            ySlope = (to.pos.getY()-from.pos.getY())/(d-aOffsetStart-aOffsetEnd);
+            int yDiff = to.pos.getY()-from.pos.getY();
+            if (spiral) {
+                spiralNum = (int) (yDiff/spiralYDiff);
+                spiralsLeft = village.random.nextBoolean();
+            }
+            ySlope = (yDiff-spiralNum*spiralYDiff)/(d-aOffsetStart-aOffsetEnd);
         } else {
             ySlope = 1000000;
         }
@@ -155,6 +170,7 @@ public class RoadEdge extends RoadFeature {
         } else {
             terrainAdjustment = null;
         }
+        double aCopy;
         double aCoord;
         double faCoord;
         double f_of_a;
@@ -162,6 +178,9 @@ public class RoadEdge extends RoadFeature {
         double tmp;
         double yCoord;
         double yAdjustingOffset;
+        int completedSpirals = 0;
+        boolean onSpiral;
+        double spiralAngle = 0;
         BlockPos centerPos;
         ArrayList<BlockPos> anchorPositions = new ArrayList<>();
         VerticalBlockColumn columnTop;
@@ -183,12 +202,36 @@ public class RoadEdge extends RoadFeature {
         specialColumnsTop = roadType.edgeSpecialTemplateBlockColumns.get("top").get(topTerrain);
         specialColumnsBottom = roadType.edgeSpecialTemplateBlockColumns.get("bottom").get(bottomTerrain);
         for (double a=0; a<d; a+=ROAD_STEP) {
-            f_of_a = getFunctionAt(a);
-            f_slope = getSlopeAt(a);
+            if (spiral && completedSpirals<Math.abs(spiralNum) && a > d/2) {
+                a-=ROAD_STEP;
+                onSpiral = true;
+            } else {
+                onSpiral = false;
+            }
+            if (onSpiral) {
+                aCopy = a + Math.sin(spiralAngle) * spiralRadius;
+                f_of_a = (1-Math.cos(spiralAngle)) * spiralRadius * (spiralsLeft ? 1: -1);
+                tmp = f_of_a - spiralRadius * (spiralsLeft ? 1: -1);
+                if (tmp == 0) {
+                    f_slope = -(aCopy-a) * 1000000.0;
+                } else {
+                    f_slope = -(aCopy-a)/tmp;
+                }
+            } else {
+                aCopy = a;
+                f_of_a = getFunctionAt(a);
+                f_slope = getSlopeAt(a);
+            }
             if (a<aOffsetStart) {
                 yCoord = 0;
             } else if (a<d-aOffsetEnd) {
                 yCoord = ySlope*(a-aOffsetStart);
+                if (spiral) {
+                    yCoord += completedSpirals*spiralYDiff * (spiralNum>=0 ? 1: -1);
+                    if (onSpiral) {
+                        yCoord += spiralAngle/(2*Math.PI)*spiralYDiff * (spiralNum>=0 ? 1: -1);
+                    }
+                }
             } else {
                 yCoord = to.pos.getY()-from.pos.getY();
             }
@@ -198,9 +241,9 @@ public class RoadEdge extends RoadFeature {
                 yAdjustingOffset = 0;
             }
             centerPos = from.pos.add(BlockPos.ofFloored(
-                    a*cos - f_of_a*sin + ROUNDING_OFFSET,
+                    aCopy*cos - f_of_a*sin + ROUNDING_OFFSET,
                     yCoord + yAdjustingOffset + ROUNDING_OFFSET,
-                    a*sin + f_of_a*cos + ROUNDING_OFFSET
+                    aCopy*sin + f_of_a*cos + ROUNDING_OFFSET
             ));
             // Road dots
             spaceAfterLastDot += ROAD_STEP;
@@ -230,7 +273,7 @@ public class RoadEdge extends RoadFeature {
                 anchorPositions.clear();
                 for (double offset : new Double[]{rad, -rad}) {
                     tmp = offset/Math.sqrt(1+f_slope*f_slope);
-                    aCoord = a+f_slope*tmp;
+                    aCoord = aCopy+f_slope*tmp;
                     faCoord = f_of_a-tmp;
                     anchorPositions.add(BlockPos.ofFloored(
                             aCoord*cos - faCoord*sin + ROUNDING_OFFSET,
@@ -291,6 +334,13 @@ public class RoadEdge extends RoadFeature {
                         }
                     }
                 }
+            }
+            if (onSpiral) {
+               spiralAngle += ROAD_STEP/(spiralRadius);
+               if (spiralAngle > 2*Math.PI) {
+                   spiralAngle = 0;
+                   completedSpirals++;
+               }
             }
         }
         // Merge the lists of columns: First the outer special/normal columns, then the inner special/normal columns.
@@ -362,7 +412,7 @@ public class RoadEdge extends RoadFeature {
      */
     private static void addToColumns(ArrayList<VerticalBlockColumn> columns, VerticalBlockColumn newColumn, boolean replaceOld) {
         for (VerticalBlockColumn oldColumn : columns) {
-            if (oldColumn.anchor.getX()==newColumn.anchor.getX() && oldColumn.anchor.getZ()==newColumn.anchor.getZ()) {
+            if (VerticalBlockColumn.columnsOverlap(oldColumn, newColumn)) {
                 if (replaceOld) {
                     columns.remove(oldColumn);
                     columns.add(newColumn);

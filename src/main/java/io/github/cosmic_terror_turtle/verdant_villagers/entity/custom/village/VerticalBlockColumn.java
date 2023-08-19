@@ -22,25 +22,6 @@ public class VerticalBlockColumn {
     public int[] ints;
     public int baseLevelIndex;
 
-    public VerticalBlockColumn(BlockState[] baseStates, int baseLevelIndex, BlockState topState, int addOnTopCount) {
-        this(baseStates, new int[baseStates.length], baseLevelIndex, topState, addOnTopCount);
-    }
-    public VerticalBlockColumn(BlockState[] baseStates, int[] baseInts, int baseLevelIndex, BlockState topState, int addOnTopCount) {
-        states = new BlockState[baseStates.length+addOnTopCount];
-        ints = new int[states.length];
-        for (int i=0; i<states.length; i++) {
-            if (i<baseStates.length) {
-                states[i] = baseStates[i];
-                ints[i] = baseInts[i];
-            } else {
-                states[i] = topState;
-            }
-        }
-        this.baseLevelIndex = baseLevelIndex;
-    }
-    public VerticalBlockColumn(BlockState[] states, int baseLevelIndex) {
-        this(states, new int[states.length], baseLevelIndex);
-    }
     public VerticalBlockColumn(BlockState[] states, int[] ints, int baseLevelIndex) {
         this.states = states;
         this.ints = ints;
@@ -55,6 +36,19 @@ public class VerticalBlockColumn {
 
     public VerticalBlockColumn copyWith(BlockPos anchor) {
         return new VerticalBlockColumn(states, ints, baseLevelIndex, anchor);
+    }
+
+    /**
+     * Tests of two columns overlap.
+     * @param column1 The first columns to test.
+     * @param column2 The second columns to test.
+     * @return True if the columns overlap.
+     */
+    public static boolean columnsOverlap(VerticalBlockColumn column1, VerticalBlockColumn column2) {
+        return column1.anchor.getX()==column2.anchor.getX()
+                && column1.anchor.getZ()==column2.anchor.getZ()
+                && column1.anchor.getY()-column1.baseLevelIndex <= column2.anchor.getY()-column2.baseLevelIndex+column2.states.length-1
+                && column2.anchor.getY()-column2.baseLevelIndex <= column1.anchor.getY()-column1.baseLevelIndex+column1.states.length-1;
     }
 
     /**

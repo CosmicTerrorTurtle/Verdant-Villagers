@@ -922,18 +922,44 @@ public class ServerVillage extends Village {
                     Collections.shuffle(roadJunctions);
                     junctionCollisionFor: for (RoadJunction junction : roadJunctions) {
                         // Will the test edge's length be okay?
-                        testSquaredDist = newJunction.pos.getSquaredDistance(junction.pos);
+                        testSquaredDist = Math.pow(newJunction.pos.getX()-junction.pos.getX(), 2)
+                                + Math.pow(newJunction.pos.getZ()-junction.pos.getZ(), 2);
                         if (testSquaredDist < Math.pow(ROAD_EDGE_BASE_MIN_LENGTH*roadType.scale, 2)
                                 || testSquaredDist > Math.pow(ROAD_EDGE_BASE_MAX_LENGTH*roadType.scale, 2)) {
                             continue;
                         }
                         // Create new road edge.
-                        testEdge = new RoadEdge(nextElementID++, world, this, newJunction, junction, true, roadType, false);
+                        testEdge = new RoadEdge(
+                                nextElementID++,
+                                world,
+                                this,
+                                newJunction,
+                                junction,
+                                true,
+                                roadType,
+                                false,
+                                false
+                        );
                         // Is the edge's Y-slope okay?
                         if (Math.abs(testEdge.getYSlope()) > ROAD_EDGE_MAX_Y_SLOPE) {
-                            // Sometimes recreate the test edge with spiral ramp mode enabled
-                            //if random val < 0.1: do ??? instead of continue
-                            continue;
+                            // Sometimes recreate the test edge with spiral ramp mode enabled, if the number of spirals
+                            // will not be larger than 3.
+                            if (Math.abs((junction.pos.getY()-newJunction.pos.getY())/(RoadEdge.SPIRAL_BASE_Y_DIFF*roadType.scale)) <= 3
+                                    && random.nextFloat() < 0.1) {
+                                testEdge = new RoadEdge(
+                                        nextElementID++,
+                                        world,
+                                        this,
+                                        newJunction,
+                                        junction,
+                                        false,
+                                        roadType,
+                                        false,
+                                        true
+                                );
+                            } else {
+                                continue;
+                            }
                         }
                         // Check if the test edge collides with any structures, other edges or junctions.
                         for (Structure structure : structures) {
@@ -1227,7 +1253,8 @@ public class ServerVillage extends Village {
                         new RoadJunction(nextElementID++, world, roadDot.pos, 0, 2.0*roadDot.edge.radius),
                         true,
                         roadTypeProvider.getRoadType(DataRegistry.getAccessPathRoadType(accessPoint.accessPathRoadType)),
-                        true
+                        true,
+                        false
                 );
                 // Check edge's Y-slope.
                 if (Math.abs(testEdge.getYSlope()) > ROAD_EDGE_MAX_Y_SLOPE) {
