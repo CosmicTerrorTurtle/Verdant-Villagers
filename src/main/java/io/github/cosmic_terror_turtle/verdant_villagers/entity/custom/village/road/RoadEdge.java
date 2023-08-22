@@ -467,6 +467,8 @@ public class RoadEdge extends RoadFeature {
         e = nbt.getDouble("e");
         adjustToTerrain = nbt.getBoolean("adjustToTerrain");
         ySlope = nbt.getDouble("ySlope");
+        spiralNum = nbt.getInt("spiralNum");
+        spiralsLeft = nbt.getBoolean("spiralsLeft");
     }
     /**
      * Saves this RoadEdge to an NbtCompound.
@@ -499,6 +501,8 @@ public class RoadEdge extends RoadFeature {
         nbt.putDouble("e", e);
         nbt.putBoolean("adjustToTerrain", adjustToTerrain);
         nbt.putDouble("ySlope", ySlope);
+        nbt.putInt("ySlope", spiralNum);
+        nbt.putBoolean("ySlope", spiralsLeft);
         return nbt;
     }
 

@@ -2,7 +2,7 @@ package io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village;
 
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.VillageHeartEntity;
 
-public class Village {
+public abstract class Village {
 
     protected final VillageHeartEntity villageHeart;
     protected int villagerCount = 0;
@@ -18,7 +18,5 @@ public class Village {
         villagerCount = count;
     }
 
-    public void tick() {
-
-    }
+    public abstract void tick();
 }
