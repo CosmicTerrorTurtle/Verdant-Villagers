@@ -5,6 +5,7 @@ import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.Ve
 import io.github.cosmic_terror_turtle.verdant_villagers.util.MathUtils;
 import io.github.cosmic_terror_turtle.verdant_villagers.util.NbtUtils;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -61,21 +62,27 @@ public class RoadJunction extends RoadFeature {
             specialColumnsBottom = specialColumnsMapBottom.get(specialKey);
         }
 
-        ArrayList<GeoFeatureBit> relativeBits = new ArrayList<>();
-        BlockPos position;
+        int squaredRadius;
         VerticalBlockColumn templateColumn;
         VerticalBlockColumn templateColumnTop;
         VerticalBlockColumn templateColumnBottom;
+        BlockPos position;
+        GeoFeatureBit bit;
+        boolean rotateAlternative = MathUtils.getRandom().nextBoolean();
+        BlockRotation rotation;
+        double angle;
+        ArrayList<GeoFeatureBit> relativeBits = new ArrayList<>();
         for (int x = (int) -radius; x<=radius; x++) {
             for (int z = (int) -radius; z<=radius; z++) {
-                if (x*x+z*z > radius*radius) {
+                squaredRadius = x*x+z*z;
+                if (squaredRadius > radius*radius) {
                     continue;
                 }
                 // Get normal columns.
                 templateColumnTop = null;
                 templateColumnBottom = null;
                 for (int i = 0; i<type.junctionBlockColumnRadii.size(); i++) {
-                    if (x*x+z*z <= type.junctionBlockColumnRadii.get(i)*type.junctionBlockColumnRadii.get(i)) {
+                    if (squaredRadius <= type.junctionBlockColumnRadii.get(i)*type.junctionBlockColumnRadii.get(i)) {
                         // Both top and bottom need to have the same length as the radii list or less.
                         if (i < templateBlockColumnsTop.size()) {
                             templateColumnTop = templateBlockColumnsTop.get(i);
@@ -88,7 +95,7 @@ public class RoadJunction extends RoadFeature {
                 }
                 // If possible, use special instead of normal columns.
                 for (int i = 0; i<type.junctionSpecialBlockColumnRadii.size(); i++) {
-                    if (x*x+z*z <= type.junctionSpecialBlockColumnRadii.get(i)*type.junctionSpecialBlockColumnRadii.get(i)) {
+                    if (squaredRadius <= type.junctionSpecialBlockColumnRadii.get(i)*type.junctionSpecialBlockColumnRadii.get(i)) {
                         // Check if the special columns top/bottom have an entry here (the radii list should be as long
                         // as the longest columns list).
                         if (specialColumnsTop != null && i < specialColumnsTop.size()) {
@@ -106,11 +113,56 @@ public class RoadJunction extends RoadFeature {
                 }
                 // Merge both columns.
                 templateColumn = VerticalBlockColumn.merge(templateColumnTop, templateColumnBottom);
+                // Determine rotation.
+                if (Math.abs(x) == Math.abs(z)) {
+                    if (z <= 0) {
+                        // Northern half
+                        if (x >= 0) {
+                            rotation = BlockRotation.NONE;
+                        } else {
+                            rotation = BlockRotation.COUNTERCLOCKWISE_90;
+                        }
+                    } else {
+                        // Southern half
+                        if (x >= 0) {
+                            rotation = BlockRotation.CLOCKWISE_90;
+                        } else {
+                            rotation = BlockRotation.CLOCKWISE_180;
+                        }
+                    }
+                    if (rotateAlternative) {
+                        rotation = rotation.rotate(BlockRotation.CLOCKWISE_90);
+                    }
+                } else {
+                    angle = Math.asin(x/Math.sqrt(squaredRadius))/Math.PI;
+                    if (z<0) {
+                        // Northern half
+                        if (angle <= -0.25) {
+                            rotation = BlockRotation.COUNTERCLOCKWISE_90;
+                        } else if (-0.25 < angle && angle <= 0.25) {
+                            rotation = BlockRotation.NONE;
+                        } else {
+                            rotation = BlockRotation.CLOCKWISE_90;
+                        }
+                    } else {
+                        // Southern half
+                        if (angle < -0.25) {
+                            rotation = BlockRotation.COUNTERCLOCKWISE_90;
+                        } else if (-0.25 <= angle && angle < 0.25) {
+                            rotation = BlockRotation.CLOCKWISE_180;
+                        } else {
+                            rotation = BlockRotation.CLOCKWISE_90;
+                        }
+                    }
+                }
                 // Create bits.
                 position = new BlockPos(x, 0, z);
                 for (int i=0; i<templateColumn.states.length; i++) {
                     // Add bit.
-                    GeoFeatureBit bit = new GeoFeatureBit(templateColumn.states[i], position.up(i-templateColumn.baseLevelIndex));
+                    bit = new GeoFeatureBit(templateColumn.states[i], position.up(i-templateColumn.baseLevelIndex));
+                    if (bit.blockState != null) {
+                        bit.blockState = bit.blockState.rotate(rotation);
+                    }
                     relativeBits.add(bit);
                     // Check ints of the column: 1 for sidewalk, 2 for arch, 3 for pillar.
                     switch (templateColumn.ints[i]) {

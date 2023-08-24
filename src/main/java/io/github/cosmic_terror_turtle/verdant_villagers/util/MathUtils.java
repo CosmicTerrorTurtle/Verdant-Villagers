@@ -6,6 +6,10 @@ public class MathUtils {
 
     private static final Random random = new Random();
 
+    public static Random getRandom() {
+        return random;
+    }
+
     /**
      * Generates a random int from within the given bounds.
      * @param min Minimum value - inclusive.
