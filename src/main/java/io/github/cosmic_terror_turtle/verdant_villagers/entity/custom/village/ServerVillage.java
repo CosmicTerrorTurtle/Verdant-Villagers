@@ -190,7 +190,7 @@ public class ServerVillage extends Village {
                     }
                     if (j<0) totalB++; else totalA++;
                     if (world.getFluidState(testPos).isEmpty()) {
-                        if (world.getBlockState(testPos).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)) {
+                        if (world.getBlockState(testPos).isIn(ModTags.Blocks.NATURAL_GROUND_BLOCKS)) {
                             // Ground
                             if (j<0) landB++; else landA++;
                         } else {
@@ -807,16 +807,16 @@ public class ServerVillage extends Village {
         } else {
             return switch (surfaceFluidMode) {
                 case NONE ->
-                        world.getBlockState(position).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)
-                        && !world.getBlockState(position.up()).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)
+                        world.getBlockState(position).isIn(ModTags.Blocks.NATURAL_GROUND_BLOCKS)
+                        && !world.getBlockState(position.up()).isIn(ModTags.Blocks.NATURAL_GROUND_BLOCKS)
                         && world.getFluidState(position.up()).isEmpty();
                 case AS_GROUND ->
-                        (world.getBlockState(position).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS) || !world.getFluidState(position).isEmpty())
-                        && !world.getBlockState(position.up()).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)
+                        (world.getBlockState(position).isIn(ModTags.Blocks.NATURAL_GROUND_BLOCKS) || !world.getFluidState(position).isEmpty())
+                        && !world.getBlockState(position.up()).isIn(ModTags.Blocks.NATURAL_GROUND_BLOCKS)
                         && world.getFluidState(position.up()).isEmpty();
                 case AS_AIR ->
-                        world.getBlockState(position).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)
-                        && !world.getBlockState(position.up()).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS);
+                        world.getBlockState(position).isIn(ModTags.Blocks.NATURAL_GROUND_BLOCKS)
+                        && !world.getBlockState(position.up()).isIn(ModTags.Blocks.NATURAL_GROUND_BLOCKS);
             };
         }
     }
@@ -943,8 +943,8 @@ public class ServerVillage extends Village {
                         // Is the edge's Y-slope okay?
                         if (Math.abs(testEdge.getYSlope()) > ROAD_EDGE_MAX_Y_SLOPE) {
                             // Sometimes recreate the test edge with spiral ramp mode enabled, if the number of spirals
-                            // will not be larger than 3.
-                            if (Math.abs((junction.pos.getY()-newJunction.pos.getY())/(RoadEdge.SPIRAL_BASE_Y_DIFF*roadType.scale)) <= 3
+                            // will not be larger than the allowed amount.
+                            if (Math.abs((junction.pos.getY()-newJunction.pos.getY())/(RoadEdge.SPIRAL_BASE_Y_DIFF*roadType.scale)) <= RoadEdge.MAX_SPIRALS
                                     && random.nextFloat() < 0.1) {
                                 testEdge = new RoadEdge(
                                         nextElementID++,
@@ -1040,7 +1040,7 @@ public class ServerVillage extends Village {
             for (GeoFeatureBit startBit : feature.pillarStartBits) {
                 for (int i=1; i<ROAD_PILLAR_EXTENSION_LENGTH; i++) {
                     testPos = startBit.blockPos.down(i);
-                    if (posIsPartOfFeature(testPos) || (i>1 && world.getBlockState(testPos.up()).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS))) {
+                    if (posIsPartOfFeature(testPos) || (i>1 && world.getBlockState(testPos.up()).isIn(ModTags.Blocks.NATURAL_GROUND_BLOCKS))) {
                         break;
                     }
                     pillarBits.add(new GeoFeatureBit(startBit.blockState, testPos));

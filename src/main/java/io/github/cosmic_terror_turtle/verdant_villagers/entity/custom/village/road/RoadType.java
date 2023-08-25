@@ -140,7 +140,7 @@ public class RoadType {
             for (int i=1; i<=total; i++) {
                 for (BlockPos p : startPositions) {
                     pos = p.up(i);
-                    if (world.getBlockState(pos).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)) {
+                    if (world.getBlockState(pos).isIn(ModTags.Blocks.NATURAL_GROUND_BLOCKS)) {
                         terrain++;
                     } else if (!world.getBlockState(pos).getFluidState().isEmpty()) {
                         fluid++;
@@ -164,7 +164,7 @@ public class RoadType {
             // Return air when no terrain was found.
             for (int i=0; i<ServerVillage.ROAD_PILLAR_EXTENSION_LENGTH; i++) {
                 pos = startPos.down(i);
-                if (world.getBlockState(pos).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)) {
+                if (world.getBlockState(pos).isIn(ModTags.Blocks.NATURAL_GROUND_BLOCKS)) {
                     terrain++;
                 }
             }
@@ -173,8 +173,8 @@ public class RoadType {
             }
             // Terrain was found.
             // If the first two blocks below startPos are not terrain, it is air above terrain (the block at startPos is ignored).
-            if (!world.getBlockState(startPos.down()).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)
-                    && !world.getBlockState(startPos.down(2)).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)) {
+            if (!world.getBlockState(startPos.down()).isIn(ModTags.Blocks.NATURAL_GROUND_BLOCKS)
+                    && !world.getBlockState(startPos.down(2)).isIn(ModTags.Blocks.NATURAL_GROUND_BLOCKS)) {
                 return "air_above_terrain";
             }
             // It's probably terrain.

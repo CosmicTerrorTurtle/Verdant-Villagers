@@ -41,7 +41,7 @@ public class VillageAnchorBlockEntity extends BlockEntity {
      */
     private void callVillageHeart() {
         if (world != null) {
-            List<VillageHeartEntity> list = world.getEntitiesByClass(VillageHeartEntity.class, new Box(pos).expand(VillageHeartEntity.ANCHOR_DISTANCE), entity -> true);
+            List<VillageHeartEntity> list = world.getEntitiesByClass(VillageHeartEntity.class, new Box(pos).expand(VillageHeartEntity.MAX_ANCHOR_CALL_DISTANCE), entity -> true);
             double bestD = -1.0;
             double d;
             VillageHeartEntity closestVillageHeart = null;

@@ -19,6 +19,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -30,8 +31,9 @@ import software.bernie.geckolib.core.object.PlayState;
 
 public class VillageHeartEntity extends PathAwareEntity implements GeoEntity {
 
-    public static final double ANCHOR_DISTANCE = 100.0;
+    public static final double MAX_ANCHOR_CALL_DISTANCE = 100.0;
     public static final double ANCHOR_HOVER_HEIGHT = 5;
+    public static final double MIN_DISTANCE_BETWEEN_HEARTS = 800.0;
 
     private final AnimatableInstanceCache cache;
 
@@ -54,7 +56,7 @@ public class VillageHeartEntity extends PathAwareEntity implements GeoEntity {
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, 1)
                 .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3)
                 .add(EntityAttributes.GENERIC_FLYING_SPEED, 0.3)
-                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, ANCHOR_DISTANCE);
+                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, MAX_ANCHOR_CALL_DISTANCE);
     }
 
     @Override
@@ -135,7 +137,12 @@ public class VillageHeartEntity extends PathAwareEntity implements GeoEntity {
         setNoGravity(true);
         super.tick();
 
-        if (village!=null) {
+        // Only perform a village tick if no other village hearts are close.
+        if (village!=null && world.getEntitiesByClass(
+                VillageHeartEntity.class,
+                new Box(getBlockPos()).expand(MIN_DISTANCE_BETWEEN_HEARTS),
+                entity -> true
+        ).isEmpty()) {
             village.tick();
         }
     }

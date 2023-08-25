@@ -3,19 +3,13 @@
   "values": [
     "#minecraft:base_stone_overworld",
     "#minecraft:base_stone_nether",
-    "#minecraft:coal_ores",
-    "#minecraft:copper_ores",
-    "#minecraft:diamond_ores",
     "#minecraft:dirt",
-    "#minecraft:emerald_ores",
-    "#minecraft:gold_ores",
     "#minecraft:ice",
-    "#minecraft:iron_ores",
-    "#minecraft:lapis_ores",
     "#minecraft:nylium",
-    "#minecraft:redstone_ores",
     "#minecraft:sand",
     "#minecraft:terracotta",
+
+    "#c:ores",
 
     "minecraft:amethyst_block",
     "minecraft:ancient_debris",
@@ -31,7 +25,6 @@
     "minecraft:gravel",
     "minecraft:magma_block",
     "minecraft:mossy_cobblestone",
-    "minecraft:nether_quartz_ore",
     "minecraft:obsidian",
     "minecraft:powder_snow",
     "minecraft:raw_copper_block",
@@ -39,6 +32,8 @@
     "minecraft:raw_iron_block",
     "minecraft:red_sandstone",
     "minecraft:sandstone",
+    "minecraft:sculk",
+    "minecraft:smooth_basalt",
     "minecraft:snow_block",
     "minecraft:soul_sand",
     "minecraft:soul_soil"
