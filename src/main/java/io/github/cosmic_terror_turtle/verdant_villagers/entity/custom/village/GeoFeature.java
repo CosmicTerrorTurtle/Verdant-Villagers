@@ -176,15 +176,15 @@ public class GeoFeature {
             } else if (bit.blockPos.getX() > xMax) {
                 xMax = bit.blockPos.getX();
             }
-            if (bit.blockPos.getX() < yMin) {
-                yMin = bit.blockPos.getX();
-            } else if (bit.blockPos.getX() > yMax) {
-                yMax = bit.blockPos.getX();
+            if (bit.blockPos.getY() < yMin) {
+                yMin = bit.blockPos.getY();
+            } else if (bit.blockPos.getY() > yMax) {
+                yMax = bit.blockPos.getY();
             }
-            if (bit.blockPos.getX() < zMin) {
-                zMin = bit.blockPos.getX();
-            } else if (bit.blockPos.getX() > zMax) {
-                zMax = bit.blockPos.getX();
+            if (bit.blockPos.getZ() < zMin) {
+                zMin = bit.blockPos.getZ();
+            } else if (bit.blockPos.getZ() > zMax) {
+                zMax = bit.blockPos.getZ();
             }
         }
     }

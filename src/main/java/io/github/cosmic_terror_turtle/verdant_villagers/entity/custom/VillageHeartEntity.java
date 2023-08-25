@@ -142,7 +142,7 @@ public class VillageHeartEntity extends PathAwareEntity implements GeoEntity {
                 VillageHeartEntity.class,
                 new Box(getBlockPos()).expand(MIN_DISTANCE_BETWEEN_HEARTS),
                 entity -> true
-        ).isEmpty()) {
+        ).size() <= 1) {
             village.tick();
         }
     }
