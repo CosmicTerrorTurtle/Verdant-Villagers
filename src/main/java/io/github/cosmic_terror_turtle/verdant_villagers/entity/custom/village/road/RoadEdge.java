@@ -21,8 +21,8 @@ public class RoadEdge extends RoadFeature {
     public static final double ROAD_DOT_SPACE = 2.5; // Space between road dots
     public static final double ROAD_TYPE_TERRAIN_SPACE = 1.5;
     public static final int SPIRAL_BASE_Y_DIFF = 16;
-    public static final int SPIRAL_BASE_RADIUS = 11;
-    public static final int MAX_SPIRALS = 4;
+    public static final int SPIRAL_BASE_RADIUS = 10;
+    public static final int MAX_SPIRALS = 3;
 
     public static final int FIRST = 1;
     public static final int SECOND = 2;

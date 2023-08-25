@@ -18,6 +18,7 @@ public class DataRegistry {
     private static final HashMap<String, BlockPaletteType> blockPaletteTypes = new HashMap<>();
     private static final HashMap<String, HashMap<String, BlockPalette>> blockPalettes = new HashMap<>();
     private static final HashMap<String, HashMap<String, BlockPalette>> defaultBlockPalettes = new HashMap<>();
+    private static final HashMap<String, SaplingData> saplingData = new HashMap<>();
     private static final HashMap<String, VillageTypeData> villageTypes = new HashMap<>();
     private static final HashMap<String, StructureTypeData> structureTypes = new HashMap<>();
     private static final HashMap<String, ArrayList<RawStructureTemplate>> templatesPerVillageType = new HashMap<>();
@@ -32,6 +33,7 @@ public class DataRegistry {
         blockPaletteTypes.clear();
         blockPalettes.clear();
         defaultBlockPalettes.clear();
+        saplingData.clear();
         villageTypes.clear();
         structureTypes.clear();
         templatesPerVillageType.clear();
@@ -217,6 +219,13 @@ public class DataRegistry {
         } else {
             return null;
         }
+    }
+
+    public static void addSaplingData(HashMap<String, SaplingData> newData) {
+        saplingData.putAll(newData);
+    }
+    public static SaplingData getSaplingData(String id) {
+        return saplingData.get(id);
     }
 
     public static void addVillageTypes(HashMap<String, VillageTypeData> newVillageTypes) {

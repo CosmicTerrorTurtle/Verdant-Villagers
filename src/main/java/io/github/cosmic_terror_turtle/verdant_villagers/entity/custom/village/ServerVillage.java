@@ -1,18 +1,14 @@
 package io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village;
 
-import io.github.cosmic_terror_turtle.verdant_villagers.data.village.BlockPalette;
-import io.github.cosmic_terror_turtle.verdant_villagers.data.village.DataRegistry;
-import io.github.cosmic_terror_turtle.verdant_villagers.data.village.RawStructureTemplate;
-import io.github.cosmic_terror_turtle.verdant_villagers.data.village.VillageTypeData;
+import io.github.cosmic_terror_turtle.verdant_villagers.VerdantVillagers;
+import io.github.cosmic_terror_turtle.verdant_villagers.data.village.*;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.VillageHeartEntity;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.road.*;
-import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure.PointOfInterest;
-import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure.Structure;
-import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure.StructureAccessPoint;
-import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure.StructureProvider;
+import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure.*;
 import io.github.cosmic_terror_turtle.verdant_villagers.util.MathUtils;
 import io.github.cosmic_terror_turtle.verdant_villagers.util.ModTags;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LargeEntitySpawnHelper;
@@ -42,7 +38,7 @@ public class ServerVillage extends Village {
     /**
      * The different phases that the village cycles through when updating.
      */
-    private enum UpdateCyclePhase {PAUSE, STRUCTURES, ROADS}
+    private enum UpdateCyclePhase {PAUSE, STRUCTURES, ROADS, VILLAGERS}
     /**
      * Used for defining what block positions are valid ground positions. {@link SurfaceFluidMode#NONE} is for normal
      * positions on land, {@link SurfaceFluidMode#AS_GROUND} is for positions on land and on the fluid surface, and
@@ -491,8 +487,12 @@ public class ServerVillage extends Village {
             return 0;
         } else if (villagerCount < 20) {
             return 1;
+        } else if (villagerCount < 40) {
+            return 2;
+        } else if (villagerCount < 60) {
+            return 3;
         }
-        return 2;
+        return 4;
     }
 
     /**
@@ -618,7 +618,6 @@ public class ServerVillage extends Village {
     private void update() {
         switch (cyclePhase) {
             case PAUSE -> {
-
                 // Reset variables
                 needForRoads = 0;
 
@@ -690,6 +689,43 @@ public class ServerVillage extends Village {
             case ROADS -> {
                 // Based on the need for roads, attempt to plan new road junctions and edges.
                 planNewRoads(needForRoads);
+                cyclePhase = UpdateCyclePhase.VILLAGERS;
+            }
+            case VILLAGERS -> {
+                // Plant saplings
+                ArrayList<Integer> groupCounts = new ArrayList<>();
+                ArrayList<BlockPalette> woodBlockPalettes = blockPalettes.get(VerdantVillagers.MOD_ID+":wood");
+                BlockState saplingState;
+                SaplingData saplingData;
+                int requiredTreeDiameter;
+                for (Structure structure : structures) {
+                    if (structure.dataPerStructureType.containsKey("tree_farm_1")) {
+                        groupCounts.add(1);
+                    }
+                    if (structure.dataPerStructureType.containsKey("tree_farm_4")) {
+                        groupCounts.add(4);
+                    }
+                    for (Integer saplingGroupCount : groupCounts) {
+                        // For each group count, select a random sapling block from the wood block palettes.
+                        saplingState = woodBlockPalettes.get(random.nextInt(0, woodBlockPalettes.size())).getBlockState(Blocks.OAK_SAPLING.getDefaultState());
+                        saplingData = DataRegistry.getSaplingData(Registries.BLOCK.getId(saplingState.getBlock()).toString());
+                        if (saplingData.diametersPerTreeType.containsKey(saplingGroupCount)) {
+                            requiredTreeDiameter = saplingData.diametersPerTreeType.get(saplingGroupCount);
+                            for (PointOfInterest poi : structure.pointsOfInterest) {
+                                if (poi instanceof SaplingLocationPoint saplingLocationPoint
+                                        && saplingLocationPoint.saplings == saplingGroupCount
+                                        && saplingLocationPoint.treeDiameter >= requiredTreeDiameter
+                                        && world.getBlockState(saplingLocationPoint.pos).isOf(Blocks.AIR)) {
+                                    if (PLACE_BLOCKS_DIRECTLY) {
+                                        attemptToPlace(new GeoFeatureBit(saplingState, saplingLocationPoint.pos));
+                                    } else {
+                                        // Task villagers with planting the saplings (all at the same time for the same sapling group count!!!)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
 
                 //output name and villager count for testing
                 for (PlayerEntity player : world.getPlayers()) {
@@ -945,7 +981,7 @@ public class ServerVillage extends Village {
                             // Sometimes recreate the test edge with spiral ramp mode enabled, if the number of spirals
                             // will not be larger than the allowed amount.
                             if (Math.abs((junction.pos.getY()-newJunction.pos.getY())/(RoadEdge.SPIRAL_BASE_Y_DIFF*roadType.scale)) <= RoadEdge.MAX_SPIRALS
-                                    && random.nextFloat() < 0.1) {
+                                    && random.nextFloat() < 0.15) {
                                 testEdge = new RoadEdge(
                                         nextElementID++,
                                         this,
@@ -1315,9 +1351,17 @@ public class ServerVillage extends Village {
      */
     private void attemptToPlace(GeoFeature feature) {
         for (GeoFeatureBit bit: feature.getBits()) {
-            if (world != null && bit.blockState != null && !world.getBlockState(bit.blockPos).isIn(ModTags.Blocks.VILLAGE_UNTOUCHED_BLOCKS)) {
-                world.setBlockState(bit.blockPos, bit.blockState);
-            }
+            attemptToPlace(bit);
+        }
+    }
+    /**
+     * Tries to place a {@link GeoFeatureBit} in the world. Some blocks remain untouched (see tag
+     * {@link ModTags.Blocks#VILLAGE_UNTOUCHED_BLOCKS}).
+     * @param bit The bit that should be placed.
+     */
+    private void attemptToPlace(GeoFeatureBit bit) {
+        if (world != null && bit.blockState != null && !world.getBlockState(bit.blockPos).isIn(ModTags.Blocks.VILLAGE_UNTOUCHED_BLOCKS)) {
+            world.setBlockState(bit.blockPos, bit.blockState);
         }
     }
 }

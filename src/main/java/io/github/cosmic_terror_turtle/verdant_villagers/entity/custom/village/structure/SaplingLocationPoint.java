@@ -1,9 +1,6 @@
 package io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure;
 
-import net.minecraft.block.Block;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 

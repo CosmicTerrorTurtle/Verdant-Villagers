@@ -62,6 +62,19 @@ public class ModResources {
                     }
                 }
 
+                // Sapling data
+                for (Map.Entry<Identifier, Resource> result :
+                        manager.findResources("verdant_village"+File.separator+"sapling_info", id -> id.getPath().endsWith(".json")).entrySet()
+                ) {
+                    try (JsonReader reader = new JsonReader(new InputStreamReader(result.getValue().getInputStream()))) {
+
+                        DataRegistry.addSaplingData(SaplingData.readSaplingInfo(reader));
+
+                    } catch (Exception e) {
+                        VerdantVillagers.LOGGER.error("Error occurred while loading resource json " + result.getKey(), e);
+                    }
+                }
+
                 // Village types
                 for (Map.Entry<Identifier, Resource> result :
                         manager.findResources("verdant_village"+File.separator+"village_types", id -> id.getPath().endsWith(".json")).entrySet()
