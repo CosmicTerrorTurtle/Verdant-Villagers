@@ -44,7 +44,6 @@ public class RoadEdge extends RoadFeature {
     /**
      * Instantiates a normal road edge using {@link RoadType}.
      * @param elementID The village-wide unique ID.
-     * @param world The world this path is in.
      * @param village The {@link ServerVillage} this edge belongs to.
      * @param from The {@link RoadJunction} this edge starts from.
      * @param to The {@link RoadJunction} this edge leads to.
@@ -53,7 +52,7 @@ public class RoadEdge extends RoadFeature {
      * @param isAccessPath Whether this edge is an access path.
      * @param spiral Whether this edge should overcome great height differences using spiral ramps.
      */
-    public RoadEdge(int elementID, World world, ServerVillage village, RoadJunction from, RoadJunction to,
+    public RoadEdge(int elementID, ServerVillage village, RoadJunction from, RoadJunction to,
                      boolean adjustToTerrain, RoadType roadType, boolean isAccessPath, boolean spiral) {
         super(elementID);
         this.from = from;
@@ -67,7 +66,7 @@ public class RoadEdge extends RoadFeature {
         }
 
         preparePolynomialFunction(village.random, spiral);
-        setBitsMegaBlocksAndRoadDots(world, village, roadType, isAccessPath, spiral);
+        setBitsMegaBlocksAndRoadDots(village, roadType, isAccessPath, spiral);
     }
 
     private void preparePolynomialFunction(Random random, boolean spiral) {
@@ -131,7 +130,7 @@ public class RoadEdge extends RoadFeature {
         }
     }
 
-    private void setBitsMegaBlocksAndRoadDots(World world, ServerVillage village, RoadType roadType,
+    private void setBitsMegaBlocksAndRoadDots(ServerVillage village, RoadType roadType,
                                               boolean isAccessPath, boolean spiral) {
         boolean overwriteJunctions = isAccessPath;
 
@@ -189,6 +188,7 @@ public class RoadEdge extends RoadFeature {
         double spaceAfterLastSpecialColumn = 0.0;
         double spaceAfterLastDot = 0.0;
         double spaceAfterLastTerrainCheck = 0.0;
+        World world = village.getWorld();
         String topTerrain;
         String bottomTerrain;
         ArrayList<VerticalBlockColumn> columnsTop;
@@ -553,8 +553,13 @@ public class RoadEdge extends RoadFeature {
             if (surfaceBlock != null) {
                 terrainOffset = surfaceBlock.getY() - yCoord - from.pos.getY();
             } else {
-                // No surface block found -> air. Start offset at max in order to get a bridge-like arched slope.
-                terrainOffset = maxOffset;
+                // No surface block found. For air, start offset at max in order to get a bridge-like arched slope. For
+                // other terrain types on top, start at zero.
+                if (RoadType.getTerrainType(true, village.getWorld(), startPosition).equals("air")) {
+                    terrainOffset = maxOffset;
+                } else {
+                    terrainOffset = 0;
+                }
             }
             if (terrainOffset > 0) {
                 return Math.min(terrainOffset, maxOffset);

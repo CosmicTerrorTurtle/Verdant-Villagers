@@ -39,7 +39,15 @@ import java.util.*;
 
 public class ServerVillage extends Village {
 
+    /**
+     * The different phases that the village cycles through when updating.
+     */
     private enum UpdateCyclePhase {PAUSE, STRUCTURES, ROADS}
+    /**
+     * Used for defining what block positions are valid ground positions. {@link SurfaceFluidMode#NONE} is for normal
+     * positions on land, {@link SurfaceFluidMode#AS_GROUND} is for positions on land and on the fluid surface, and
+     * {@link SurfaceFluidMode#AS_AIR} is for positions on land and on the fluid ground (for example, the sea floor).
+     */
     public enum SurfaceFluidMode {NONE, AS_GROUND, AS_AIR}
 
 
@@ -462,6 +470,10 @@ public class ServerVillage extends Village {
         }
     }
 
+    public World getWorld() {
+        return world;
+    }
+
     public void changeVillagerCount(int amount) {
         villagerCount += amount;
         if (villagerCount < 0) {
@@ -474,7 +486,7 @@ public class ServerVillage extends Village {
      * Determines the number of block palettes this village should have depending on the current villager count.
      * @return The number of block palettes.
      */
-    private int getUpdatedBlockPaletteLevel() {
+    private int getBlockPaletteLevel() {
         if (villagerCount < 10) {
             return 0;
         } else if (villagerCount < 20) {
@@ -578,14 +590,15 @@ public class ServerVillage extends Village {
     }
 
     /**
-     * Calculates the time between update cycle steps. It is dependent on the number of villagers (representing the village size;
-     * a bigger village will need more frequent updates). The minimum time is 5 seconds at >>1000 villagers, the maximum time 20 seconds at 0 villagers. If
-     * {@link ServerVillage#PLAN_FAST} is true, the return value will always be 2 seconds.
+     * Calculates the time between update cycle steps. It is dependent on the number of villagers (representing the
+     * village size; a bigger village will need more frequent updates). The minimum time is 5 seconds at >>1000 villagers,
+     * the maximum time 20 seconds at 0 villagers. If {@link ServerVillage#PLAN_FAST} is true, the return value will
+     * always be 1.5 seconds.
      * @return The time in ticks.
      */
     private double getTicksBetweenUpdates() {
         if (PLAN_FAST) {
-            return 20 * 2;
+            return 20 * 1.5;
         }
         return 20 * (5 + 15 * Math.pow(1.03, -villagerCount));
     }
@@ -603,7 +616,6 @@ public class ServerVillage extends Village {
      * Determines the need for more structures, roads etc. and updates the building plan of the village.
      */
     private void update() {
-
         switch (cyclePhase) {
             case PAUSE -> {
 
@@ -617,8 +629,8 @@ public class ServerVillage extends Village {
                 roadType = roadTypeProvider.getRoadType(DataRegistry.getRandomRoadTypeFor(villageType, villagerCount));
 
                 // Add new block palettes if necessary.
-                if (getUpdatedBlockPaletteLevel() > blockPaletteLevel) {
-                    blockPaletteLevel = getUpdatedBlockPaletteLevel();
+                if (getBlockPaletteLevel() > blockPaletteLevel) {
+                    blockPaletteLevel = getBlockPaletteLevel();
                     addBlockPalettesForAllTypes(blockCounts);
                 }
 
@@ -652,11 +664,8 @@ public class ServerVillage extends Village {
                 cyclePhase = UpdateCyclePhase.STRUCTURES;
             }
             case STRUCTURES -> {
-
                 // Plan structures (select one type at random).
-
                 String selectedStructureType = DataRegistry.getVillageTypeData(villageType).getRandomStructureTypeToBuild(random);
-
                 // Determine whether there are enough structures of the selected structure type present
                 switch (DataRegistry.getStructureTypeData(selectedStructureType).structureCheckMethod) {
                     default -> {}
@@ -679,14 +688,14 @@ public class ServerVillage extends Village {
                 cyclePhase = UpdateCyclePhase.ROADS;
             }
             case ROADS -> {
-
                 // Based on the need for roads, attempt to plan new road junctions and edges.
                 planNewRoads(needForRoads);
 
-                // output name and villager count for testing
+                //output name and villager count for testing
                 for (PlayerEntity player : world.getPlayers()) {
                     player.sendMessage(Text.literal(villageHeart.getName().getString()+" ("+villagerCount+")"));
-                }
+                }//
+
                 cyclePhase = UpdateCyclePhase.PAUSE;
             }
         }
@@ -759,21 +768,20 @@ public class ServerVillage extends Village {
             surfaceFluidMode = SurfaceFluidMode.AS_AIR;
         }
 
-        // Increase starting height for accessing different heights
-        int maxStartOffset = 20;
-        int minStartHeight = Math.max(minY, startPosition.getY()-maxStartOffset);
-        int maxStartHeight = Math.min(maxY, startPosition.getY()+maxStartOffset);
-        startPosition = startPosition.withY(MathUtils.nextInt(minStartHeight, maxStartHeight));
+        // Randomly alter starting Y for accessing different heights.
+        startPosition = startPosition.withY(MathUtils.nextInt((minY+startPosition.getY())/2, (maxY+startPosition.getY())/2));
 
-        // Locate surface block
+        // Locate surface block.
         BlockPos result = null;
         if (world != null) {
+            // Check blocks below.
             for (int yCoord=startPosition.getY(); yCoord>=minY; yCoord--) {
                 if (positionIsValidSurfaceLevel(startPosition.withY(yCoord), surfaceFluidMode)) {
                     result = startPosition.withY(yCoord);
                     break;
                 }
             }
+            // Check blocks above.
             for (int yCoord=startPosition.getY(); yCoord<=maxY; yCoord++) {
                 if (positionIsValidSurfaceLevel(startPosition.withY(yCoord), surfaceFluidMode)) {
                     if (result!=null && yCoord-startPosition.getY() > startPosition.getY()-result.getY()) {
@@ -790,10 +798,7 @@ public class ServerVillage extends Village {
     /**
      * Checks if a position is valid.
      * @param position The position that should be checked.
-     * @param surfaceFluidMode Whether position, the block above it or none of them can have fluids. {@link SurfaceFluidMode#NONE}
-     *                         is for normal positions on land, {@link SurfaceFluidMode#AS_GROUND} is for positions on land
-     *                         and on the fluid surface, and {@link SurfaceFluidMode#AS_AIR} is for positions on land and
-     *                         on the fluid ground (for example, the sea floor).
+     * @param surfaceFluidMode Whether position, the block above it or none of them can have fluids.
      * @return True if the position is an (upwards) surface block.
      */
     private boolean positionIsValidSurfaceLevel(BlockPos position, SurfaceFluidMode surfaceFluidMode) {
@@ -823,19 +828,15 @@ public class ServerVillage extends Village {
     private void planNewRoads(double needForRoads) {
         // Attempt to plan new roads if the village has not reached the maximum number of road junctions.
         int maxNewRoads = 1;
-        int numOfFailures = 0;
         for (int i=0; i<needForRoads && i<maxNewRoads && roadJunctions.size() < JUNCTION_LIMIT; i++) {
-            if (!planSingleJunctionWithEdges()) {
-                numOfFailures++;
-            }
+            planSingleJunctionWithEdges();
         }
     }
 
     /**
      * Attempts to add a single junction to the road network.
-     * @return True if the attempt was successful.
      */
-    private boolean planSingleJunctionWithEdges() {
+    private void planSingleJunctionWithEdges() {
         boolean withinBounds = true;
         boolean foundPositionNearJunctions = true;
         double startAngle;
@@ -863,7 +864,7 @@ public class ServerVillage extends Village {
                  addAngle += SEARCH_DISTANCE_ROAD/searchRadius
             ) {
                 // Determine the test position.
-                testPos = pos.add((int) (searchRadius*Math.cos(startAngle+addAngle)), -1, (int) (searchRadius*Math.sin(startAngle+addAngle)));
+                testPos = pos.add((int) (searchRadius*Math.cos(startAngle+addAngle)), 0, (int) (searchRadius*Math.sin(startAngle+addAngle)));
                 testPos = getSurfaceBlock(testPos, testPos.getY()-surfaceBlockMaxYOffset, testPos.getY()+surfaceBlockMaxYOffset, true);
                 if (testPos == null) {
                     continue;
@@ -931,7 +932,6 @@ public class ServerVillage extends Village {
                         // Create new road edge.
                         testEdge = new RoadEdge(
                                 nextElementID++,
-                                world,
                                 this,
                                 newJunction,
                                 junction,
@@ -948,7 +948,6 @@ public class ServerVillage extends Village {
                                     && random.nextFloat() < 0.1) {
                                 testEdge = new RoadEdge(
                                         nextElementID++,
-                                        world,
                                         this,
                                         newJunction,
                                         junction,
@@ -1018,10 +1017,9 @@ public class ServerVillage extends Village {
                         attemptToPlace(edge);
                     }
                 }
-                return true;
+                return;
             }
         }
-        return false;
     }
 
     /**
@@ -1042,7 +1040,7 @@ public class ServerVillage extends Village {
             for (GeoFeatureBit startBit : feature.pillarStartBits) {
                 for (int i=1; i<ROAD_PILLAR_EXTENSION_LENGTH; i++) {
                     testPos = startBit.blockPos.down(i);
-                    if (posIsPartOfFeature(testPos) || world.getBlockState(testPos.up()).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS)) {
+                    if (posIsPartOfFeature(testPos) || (i>1 && world.getBlockState(testPos.up()).isIn(ModTags.Blocks.VILLAGE_GROUND_BLOCKS))) {
                         break;
                     }
                     pillarBits.add(new GeoFeatureBit(startBit.blockState, testPos));
@@ -1121,7 +1119,7 @@ public class ServerVillage extends Village {
                  addAngle += searchDistance /searchRadius
             ) {
                 // Determine the test position.
-                testPos = pos.add((int) (searchRadius*Math.cos(startAngle+addAngle)), -1, (int) (searchRadius*Math.sin(startAngle+addAngle)));
+                testPos = pos.add((int) (searchRadius*Math.cos(startAngle+addAngle)), 0, (int) (searchRadius*Math.sin(startAngle+addAngle)));
                 testPos = getSurfaceBlock(testPos, testPos.getY()-surfaceBlockMaxYOffset, testPos.getY()+surfaceBlockMaxYOffset, true);
                 if (testPos == null) {
                     continue;
@@ -1247,7 +1245,6 @@ public class ServerVillage extends Village {
                 // Create test edge connecting the selected dot.
                 RoadEdge testEdge = new RoadEdge(
                         nextElementID++,
-                        world,
                         this,
                         new RoadJunction(nextElementID++, world, accessPoint.pos, 0, 0.6),
                         new RoadJunction(nextElementID++, world, roadDot.pos, 0, 2.0*roadDot.edge.radius),
