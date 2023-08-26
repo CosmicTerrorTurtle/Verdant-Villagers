@@ -157,17 +157,17 @@
     "top": {
       "air": {
         "torch": [
-          {"base_level_index": 0, "block_states": ["dir","tor","air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0,0,0]}
+          {"base_level_index": 0, "block_states": ["wpl","tor","air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0,0,0]}
         ]
       },
       "terrain": {
         "torch": [
-          {"base_level_index": 0, "block_states": ["dir","tor","air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0,0,0]}
+          {"base_level_index": 0, "block_states": ["wpl","tor","air","air","air","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0,0,0,0]}
         ]
       },
       "fluid": {
         "torch": [
-          {"base_level_index": 0, "block_states": ["dir","tor","air","air","air","air","air","air","air","gla"], "ints": [0,0,0,0,0,0,0,0,0,2]}
+          {"base_level_index": 0, "block_states": ["wpl","tor","air","air","air","air","air","air","air","gla"], "ints": [0,0,0,0,0,0,0,0,0,2]}
         ]
       }
     },

@@ -123,11 +123,15 @@ public class SaveVillageStructureCommand {
             writer.endArray();
             writer.setIndent(normalIndent);
 
+            writer.name("available_for_block_palettes");
+            writer.beginObject();
+            writer.endObject();
+
             writer.name("available_for_villager_count");
             writer.beginArray();
             writer.setIndent(compactIndent);
             writer.value(0L);
-            writer.value(1000L);
+            writer.value(1000000L);
             writer.endArray();
             writer.setIndent(normalIndent);
 
