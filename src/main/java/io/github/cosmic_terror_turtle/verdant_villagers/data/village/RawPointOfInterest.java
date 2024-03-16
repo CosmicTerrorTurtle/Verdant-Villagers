@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 public class RawPointOfInterest {
 
-    ArrayList<Integer> pos;
+    BlockPos pos;
 
     public static RawPointOfInterest createNew(JsonReader reader, HashMap<String, String> abbreviationMap) throws IOException {
         String subclassName;
@@ -32,6 +32,6 @@ public class RawPointOfInterest {
     }
 
     public PointOfInterest toPointOfInterest(ServerVillage village) {
-        return new PointOfInterest(new BlockPos(pos.get(0), pos.get(1), pos.get(2)));
+        return new PointOfInterest(new BlockPos(pos));
     }
 }

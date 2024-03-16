@@ -33,16 +33,7 @@ public class Structure extends GeoFeature {
         PointOfInterest newPoint;
         for (PointOfInterest point : template.pointsOfInterest) {
             newPoint = point.copy();
-            switch (rotation) {
-                default ->
-                        newPoint.pos = anchor.add(point.pos);
-                case ROTATE_COUNTER_CLOCKWISE ->
-                        newPoint.pos = anchor.add(new BlockPos(point.pos.getZ(), point.pos.getY(), -point.pos.getX()));
-                case ROTATE_OPPOSITE ->
-                        newPoint.pos = anchor.add(new BlockPos(-point.pos.getX(), point.pos.getY(), -point.pos.getZ()));
-                case ROTATE_CLOCKWISE ->
-                        newPoint.pos = anchor.add(new BlockPos(-point.pos.getZ(), point.pos.getY(), point.pos.getX()));
-            }
+            newPoint.setToAbsolutePositions(anchor, rotation);
             pointsOfInterest.add(newPoint);
         }
     }

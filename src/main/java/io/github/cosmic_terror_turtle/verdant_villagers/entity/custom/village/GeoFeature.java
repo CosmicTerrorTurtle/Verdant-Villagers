@@ -1,6 +1,7 @@
 package io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village;
 
 import io.github.cosmic_terror_turtle.verdant_villagers.util.NbtUtils;
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
@@ -29,6 +30,31 @@ public class GeoFeature {
             return ROTATE_OPPOSITE;
         } else {
             return ROTATE_NOT;
+        }
+    }
+
+    /**
+     * Rotates a block position on the x-z-plane.
+     * @param anchor The block position around which the rotation happens.
+     * @param relPos The relative block position to be rotated.
+     * @param rotation The rotation index.
+     * @return An absolute block position that is the result of rotating the relative position and adding it to
+     * the anchor.
+     */
+    public static BlockPos rotate(BlockPos anchor, BlockPos relPos, int rotation) {
+        switch (rotation) {
+            default -> {
+                return anchor.add(relPos);
+            }
+            case ROTATE_COUNTER_CLOCKWISE -> {
+                return anchor.add(new BlockPos(relPos.getZ(), relPos.getY(), -relPos.getX()));
+            }
+            case ROTATE_OPPOSITE -> {
+                return anchor.add(new BlockPos(-relPos.getX(), relPos.getY(), -relPos.getZ()));
+            }
+            case ROTATE_CLOCKWISE -> {
+                return anchor.add(new BlockPos(-relPos.getZ(), relPos.getY(), relPos.getX()));
+            }
         }
     }
 
@@ -100,29 +126,19 @@ public class GeoFeature {
         bits.clear();
         touchedMegaBlocks.clear();
 
+        BlockState rotatedState;
         for (GeoFeatureBit bit : relativeBits) {
             if (bit.blockState == null) {
-                bits.add(new GeoFeatureBit(null, anchor.add(bit.blockPos)));
+                rotatedState = null;
             } else {
                 switch (rotation) {
-                    default -> bits.add(new GeoFeatureBit(
-                            bit.blockState,
-                            anchor.add(bit.blockPos)
-                    ));
-                    case ROTATE_COUNTER_CLOCKWISE -> bits.add(new GeoFeatureBit(
-                            bit.blockState.rotate(BlockRotation.COUNTERCLOCKWISE_90),
-                            anchor.add(new BlockPos(bit.blockPos.getZ(), bit.blockPos.getY(), -bit.blockPos.getX()))
-                    ));
-                    case ROTATE_OPPOSITE -> bits.add(new GeoFeatureBit(
-                            bit.blockState.rotate(BlockRotation.CLOCKWISE_180),
-                            anchor.add(new BlockPos(-bit.blockPos.getX(), bit.blockPos.getY(), -bit.blockPos.getZ()))
-                    ));
-                    case ROTATE_CLOCKWISE -> bits.add(new GeoFeatureBit(
-                            bit.blockState.rotate(BlockRotation.CLOCKWISE_90),
-                            anchor.add(new BlockPos(-bit.blockPos.getZ(), bit.blockPos.getY(), bit.blockPos.getX()))
-                    ));
+                    default -> rotatedState = bit.blockState;
+                    case ROTATE_COUNTER_CLOCKWISE -> rotatedState = bit.blockState.rotate(BlockRotation.COUNTERCLOCKWISE_90);
+                    case ROTATE_OPPOSITE -> rotatedState = bit.blockState.rotate(BlockRotation.CLOCKWISE_180);
+                    case ROTATE_CLOCKWISE -> rotatedState = bit.blockState.rotate(BlockRotation.CLOCKWISE_90);
                 }
             }
+            bits.add(new GeoFeatureBit(rotatedState, rotate(anchor, bit.blockPos, rotation)));
         }
         for (GeoFeatureBit bit : bits) {
             addPosToTouchedMegaBlocks(bit.blockPos);

@@ -119,22 +119,31 @@ public class RoadType {
      * Determines the terrain type used for road junctions and edges at the given position.
      * @param top If true, the terrain above {@code pos} will be analyzed, otherwise the terrain below.
      * @param world The world of {@code pos}.
-     * @param startPos The position from which the terrain scan should start. This is usually the height of the road's upmost
-     *            surface blocks.
+     * @param startPos The position from which the terrain scan should start. This is usually the height of the road's
+     *                 upmost surface blocks.
+     * @param radius The maximum x- or z-distance the scanned blocks will have to {@code startPos}.
      * @return A String representing the terrain type that can be used to access the template columns and radii of
      * {@link RoadType}.
      */
-    public static String getTerrainType(boolean top, World world, BlockPos startPos) {
+    public static String getTerrainType(boolean top, World world, BlockPos startPos, int radius) {
         BlockPos pos;
         int terrain = 0;
         if (top) {
             // Top (check the four positions around startPos as well)
+            int distance;
             ArrayList<BlockPos> startPositions = new ArrayList<>();
             startPositions.add(startPos);
-            startPositions.add(startPos.north(2));
-            startPositions.add(startPos.south(2));
-            startPositions.add(startPos.east(2));
-            startPositions.add(startPos.west(2));
+            for (float percentage : new float[]{0.34f, 0.67f, 1.0f}) {
+                distance = (int) (percentage * radius);
+                startPositions.add(startPos.north(distance));
+                startPositions.add(startPos.north(distance).east(distance));
+                startPositions.add(startPos.east(distance));
+                startPositions.add(startPos.east(distance).south(distance));
+                startPositions.add(startPos.south(distance));
+                startPositions.add(startPos.south(distance).west(distance));
+                startPositions.add(startPos.west(distance));
+                startPositions.add(startPos.west(distance).north(distance));
+            }
             int total = 10;
             int fluid = 0;
             for (int i=1; i<=total; i++) {
@@ -147,10 +156,10 @@ public class RoadType {
                     }
                 }
             }
-            // Return fluid if the first block above is a fluid or if a decent amount of the blocks above are fluids.
-            if (fluid >= 0.15*total*5 || !world.getFluidState(startPos.up()).isEmpty()) {
+            // Return fluid if at least one of the blocks above are fluids.
+            if (fluid > 0) {
                 return "fluid";
-            } else if (terrain >= 0.4*total*5) {
+            } else if (terrain >= 0.4*total*startPositions.size()) {
                 return "terrain";
             }
             return "air";
@@ -172,7 +181,8 @@ public class RoadType {
                 return "air";
             }
             // Terrain was found.
-            // If the first two blocks below startPos are not terrain, it is air above terrain (the block at startPos is ignored).
+            // If the first two blocks below startPos are not terrain, it is air above terrain (the block at startPos
+            // is ignored).
             if (!world.getBlockState(startPos.down()).isIn(ModTags.Blocks.NATURAL_GROUND_BLOCKS)
                     && !world.getBlockState(startPos.down(2)).isIn(ModTags.Blocks.NATURAL_GROUND_BLOCKS)) {
                 return "air_above_terrain";

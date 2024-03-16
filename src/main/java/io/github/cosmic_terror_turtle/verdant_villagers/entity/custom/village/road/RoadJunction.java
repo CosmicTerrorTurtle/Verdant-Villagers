@@ -21,21 +21,36 @@ public class RoadJunction extends RoadFeature {
     public String terrainTypeTop;
     public String terrainTypeBottom;
 
-    public RoadJunction(int elementID, World world, BlockPos pos, double radius, double sameHeightRadius) {
+    /**
+     * Creates a {@link RoadJunction} with radius of 0 for access paths.
+     * @param elementID The ID of the junction.
+     * @param world The world the junction being is placed in.
+     * @param pos The position of the junction.
+     * @param sameHeightRadius The same height radius of the junction.
+     */
+    public RoadJunction(int elementID, World world, BlockPos pos, double sameHeightRadius) {
         super(elementID);
         this.pos = pos;
-        this.radius = radius;
+        this.radius = 0.0;
         this.sameHeightRadius = sameHeightRadius;
-        terrainTypeTop = RoadType.getTerrainType(true, world, pos);
-        terrainTypeBottom = RoadType.getTerrainType(false, world, pos);
+        terrainTypeTop = RoadType.getTerrainType(true, world, pos, (int) (radius+2));
+        terrainTypeBottom = RoadType.getTerrainType(false, world, pos, (int) (radius+2));
     }
+
+    /**
+     * Creates a regular {@link RoadJunction}.
+     * @param elementID The ID of the junction.
+     * @param world The world the junction being is placed in.
+     * @param pos The position of the junction.
+     * @param type The road type used.
+     */
     public RoadJunction(int elementID, World world, BlockPos pos, RoadType type) {
         super(elementID);
         this.pos = pos;
         radius = type.junctionRadius;
         sameHeightRadius = type.junctionSameHeightRadius;
-        terrainTypeTop = RoadType.getTerrainType(true, world, pos);
-        terrainTypeBottom = RoadType.getTerrainType(false, world, pos);
+        terrainTypeTop = RoadType.getTerrainType(true, world, pos, (int) (radius+2));
+        terrainTypeBottom = RoadType.getTerrainType(false, world, pos, (int) (radius+2));
 
         setBitsAndMegaBlocks(type);
     }

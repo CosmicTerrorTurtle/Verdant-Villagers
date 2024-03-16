@@ -112,7 +112,7 @@ public class ServerVillage extends Village {
     public static boolean countVillagers = false;
 
 
-    // Fields deleted when the block gets unloaded.
+    // Fields deleted when the entity gets unloaded.
     private int ticksSinceLastUpdate = 0;
     private final World world;
     private BlockPos pos;
@@ -122,8 +122,9 @@ public class ServerVillage extends Village {
     private UpdateCyclePhase cyclePhase = UpdateCyclePhase.PAUSE;
     private RoadType roadType = null;
     private double needForRoads = 0;
+    private final ArrayList<RoadEdge> accessPathsToPlace = new ArrayList<>();
 
-    // Fields persistent when the block gets unloaded.
+    // Fields persistent when the entity gets unloaded.
     private int nextElementID; // The unique id that is given next to a new feature. Always post-increment when assigning the next id.
     // Village type parameters
     private final float landAbove;
@@ -213,7 +214,7 @@ public class ServerVillage extends Village {
             terrainCategory = "sky";
         } else if (landAbove > 0.55) {
             terrainCategory = "under_ground";
-        } else if (fluidAbove > 0.35) {
+        } else if (fluidAbove > 0.30) {
             terrainCategory = "under_fluid";
         } else if (fluidBelow > 0.15) {
             terrainCategory = "on_coast";
@@ -1214,6 +1215,7 @@ public class ServerVillage extends Village {
                     }
                 }
                 // Try to connect all access points.
+                accessPathsToPlace.clear();
                 if (!connectAccessPoints(newStructure)) {
                     continue;
                 }
@@ -1222,10 +1224,14 @@ public class ServerVillage extends Village {
                 structures.add(newStructure);
                 // Add new chunks around the added structure.
                 addMegaChunksAround(testPosMegaChunk.getLowerTip());
-                // Place the structure in the world.
+                // Place the structure and the access paths in the world.
                 if (PLACE_BLOCKS_DIRECTLY) {
                     attemptToPlace(newStructure);
+                    for (RoadEdge approvedPath : accessPathsToPlace) {
+                        attemptToPlace(approvedPath);
+                    }
                 }
+                accessPathsToPlace.clear();
                 return true;
             }
         }
@@ -1282,8 +1288,8 @@ public class ServerVillage extends Village {
                 RoadEdge testEdge = new RoadEdge(
                         nextElementID++,
                         this,
-                        new RoadJunction(nextElementID++, world, accessPoint.pos, 0, 0.6),
-                        new RoadJunction(nextElementID++, world, roadDot.pos, 0, 2.0*roadDot.edge.radius),
+                        new RoadJunction(nextElementID++, world, accessPoint.pos, 0.6),
+                        new RoadJunction(nextElementID++, world, roadDot.pos, 2.0*roadDot.edge.radius),
                         true,
                         roadTypeProvider.getRoadType(DataRegistry.getAccessPathRoadType(accessPoint.accessPathRoadType)),
                         true,
@@ -1294,11 +1300,11 @@ public class ServerVillage extends Village {
                     continue;
                 }
                 // Check if the test edge collides with the road edge it is trying to connect to.
-                if (GeoFeatureCollision.accessPathCollidesWithEdge(testEdge, roadDot.edge)) {
+                if (GeoFeatureCollision.accessPathCollidesWithEdge(testEdge, roadDot)) {
                     continue;
                 }
                 // Check if the test edge collides with any structures.
-                if (GeoFeatureCollision.featuresOverlapIgnoreAirCollisionsAndNonAirCollisions(structure, testEdge)) {
+                if (GeoFeatureCollision.accessPathCollidesWithItsStructure(structure, accessPoint, testEdge)) {
                     continue;
                 }
                 for (Structure collisionTestStructure : structures) {
@@ -1335,12 +1341,7 @@ public class ServerVillage extends Village {
 
         // Add the new access paths to the network.
         accessPaths.addAll(approvedPaths);
-        // Place the access paths in the world.
-        if (PLACE_BLOCKS_DIRECTLY) {
-            for (RoadEdge approvedPath : approvedPaths) {
-                attemptToPlace(approvedPath);
-            }
-        }
+        accessPathsToPlace.addAll(approvedPaths);
         return true;
     }
 

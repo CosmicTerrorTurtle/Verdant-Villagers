@@ -19,7 +19,7 @@ public class RoadEdge extends RoadFeature {
     public static final double ROUNDING_OFFSET = 0.5; // Makes the block position coordinates be centered in a block.
     public static final double ROAD_STEP = 0.1; // Lower step -> higher precision in placing the road blocks
     public static final double ROAD_DOT_SPACE = 2.5; // Space between road dots
-    public static final double ROAD_TYPE_TERRAIN_SPACE = 1.5;
+    public static final double ROAD_TYPE_TERRAIN_SPACE = 1.2; // Space between terrain type checks
     public static final int SPIRAL_BASE_Y_DIFF = 16;
     public static final int SPIRAL_BASE_RADIUS = 10;
     public static final int MAX_SPIRALS = 3;
@@ -43,7 +43,7 @@ public class RoadEdge extends RoadFeature {
     private boolean spiralsLeft; // Whether the spirals are to the left or the right (starting at 'from').
 
     /**
-     * Instantiates a normal road edge using {@link RoadType}.
+     * Instantiates a road edge using {@link RoadType}.
      * @param elementID The village-wide unique ID.
      * @param village The {@link ServerVillage} this edge belongs to.
      * @param from The {@link RoadJunction} this edge starts from.
@@ -256,8 +256,8 @@ public class RoadEdge extends RoadFeature {
             spaceAfterLastTerrainCheck += ROAD_STEP;
             if (spaceAfterLastTerrainCheck > ROAD_TYPE_TERRAIN_SPACE && from.radius < a && a < d-to.radius) {
                 spaceAfterLastTerrainCheck = 0;
-                topTerrain = RoadType.getTerrainType(true, world, centerPos);
-                bottomTerrain = RoadType.getTerrainType(false, world, centerPos);
+                topTerrain = RoadType.getTerrainType(true, world, centerPos, (int) (radius+2));
+                bottomTerrain = RoadType.getTerrainType(false, world, centerPos, (int) (radius+2));
                 columnsTop = roadType.edgeTemplateBlockColumns.get("top").get(topTerrain);
                 columnsBottom = roadType.edgeTemplateBlockColumns.get("bottom").get(bottomTerrain);
                 specialColumnsTop = roadType.edgeSpecialTemplateBlockColumns.get("top").get(topTerrain);
@@ -511,7 +511,7 @@ public class RoadEdge extends RoadFeature {
 
         public static final double TERRAIN_ADJUSTING_SPACE = 4.0; // Space between terrain adjusting points
         public static final double SMOOTHING_FACTOR = 0.2; // Factor by which a point gets adjusted towards its neighbors
-        public static final int MAX_SMOOTHING_ITERATIONS = 45; // The maximum number of iterations that smooth the adjusting offsets.
+        public static final int MAX_SMOOTHING_ITERATIONS = 60; // The maximum number of iterations that smooth the adjusting offsets.
 
 
         private final double aOffsetStart;
@@ -556,7 +556,7 @@ public class RoadEdge extends RoadFeature {
             } else {
                 // No surface block found. For air, start offset at max in order to get a bridge-like arched slope. For
                 // other terrain types on top, start at zero.
-                if (RoadType.getTerrainType(true, village.getWorld(), startPosition).equals("air")) {
+                if (RoadType.getTerrainType(true, village.getWorld(), startPosition, 6).equals("air")) {
                     terrainOffset = maxOffset;
                 } else {
                     terrainOffset = 0;

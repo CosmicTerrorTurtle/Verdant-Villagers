@@ -1,6 +1,7 @@
 package io.github.cosmic_terror_turtle.verdant_villagers.data;
 
 import com.google.gson.stream.JsonReader;
+import net.minecraft.util.math.BlockPos;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,5 +29,24 @@ public class JsonUtils {
     }
     public interface JsonProcessor<T> {
         T process(JsonReader reader) throws IOException;
+    }
+
+    public static BlockPos readBlockPos(JsonReader reader) throws IOException {
+        int x = 0;
+        int y = 0;
+        int z = 0;
+        ArrayList<Integer> coordinates = readList(reader, JsonReader::nextInt);
+        if (coordinates.size() == 3) {
+            if (coordinates.get(0) != null) {
+                x = coordinates.get(0);
+            }
+            if (coordinates.get(1) != null) {
+                y = coordinates.get(1);
+            }
+            if (coordinates.get(2) != null) {
+                z = coordinates.get(2);
+            }
+        }
+        return new BlockPos(x, y, z);
     }
 }

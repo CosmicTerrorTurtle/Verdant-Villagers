@@ -39,15 +39,20 @@
     [["lgy","pla","pla","pla","pla","pla","lgy"],["lgy","css","air","air","air","cnl","lgy"],["lgy","air","air","air","air","air","lgy"],["nul","lgy","air","lan","air","lgy","nul"],["nul","nul","lgz","lgz","lgz","nul","nul"]],
     [["pla","pla","pla","pla","pla","pla","pla"],["gla","stn","fnc","air","air","brn","gla"],["gla","air","prp","air","air","air","gla"],["nul","gla","air","air","air","gla","nul"],["nul","nul","gla","gla","gla","nul","nul"]],
     [["nul","pla","pla","pla","pla","pla","nul"],["nul","gla","stw","air","pot","gla","nul"],["nul","gla","air","air","air","gla","nul"],["nul","nul","gla","air","gla","nul","nul"],["nul","nul","nul","gla","nul","nul","nul"]],
-    [["nul","nul","pla","pla","pla","nul","nul"],["nul","nul","gla","dol","gla","nul","nul"],["nul","nul","gla","dou","gla","nul","nul"],["nul","nul","gla","gla","gla","nul","nul"],["nul","nul","nul","gla","nul","nul","nul"]]
+    [["nul","nul","pla","pla","pla","nul","nul"],["nul","nul","gla","dol","gla","nul","nul"],["nul","nul","gla","dou","gla","nul","nul"],["nul","nul","gla","gla","gla","nul","nul"],["nul","nul","nul","gla","nul","nul","nul"]],
+    [["nul","nul","pla","pla","pla","nul","nul"],["nul","nul","gla","air","gla","nul","nul"],["nul","nul","gla","air","gla","nul","nul"],["nul","nul","gla","air","gla","nul","nul"],["nul","nul","gla","gla","gla","nul","nul"]],
+    [["nul","nul","pla","pla","pla","nul","nul"],["nul","nul","gla","gla","gla","nul","nul"],["nul","nul","gla","gla","gla","nul","nul"],["nul","nul","gla","gla","gla","nul","nul"],["nul","nul","gla","gla","gla","nul","nul"]]
   ],
-  "center": [3, 0, 3],
+  "center": [5, 0, 3],
   "points_of_interest": [
     {
       "subclass_name": "StructureAccessPoint",
       "subclass_data": {
-        "pos": [-4, 0, 0],
-        "access_path_road_type": "verdant_villagers:path_1"
+        "pos": [-5, 0, 0],
+        "access_path_road_type": "verdant_villagers:path_1",
+        "connection_volume": [[-5,0,-1],[-4,4,1]],
+        "sidewalk_positions": [[-5,0,-1],[-5,0,0],[-5,0,1],[-4,0,-1],[-4,0,1]],
+        "arch_positions": [[-5,1,-1],[-5,1,0],[-5,1,1],[-4,1,-1],[-4,1,1],[-5,2,-1],[-5,2,0],[-5,2,1],[-4,2,-1],[-4,2,1],[-5,3,-1],[-5,3,0],[-5,3,1],[-4,3,-1],[-4,3,1],[-5,4,-1],[-5,4,0],[-5,4,1],[-4,4,-1],[-4,4,0],[-4,4,1]]
       }
     }
   ]

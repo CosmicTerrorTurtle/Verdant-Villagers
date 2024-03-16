@@ -1,7 +1,10 @@
 package io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village;
 
+import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.road.RoadDot;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.road.RoadEdge;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.road.RoadJunction;
+import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure.Structure;
+import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure.StructureAccessPoint;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 
@@ -40,41 +43,6 @@ public class GeoFeatureCollision {
                 }
             }
         }
-        return false;
-    }
-
-    /**
-     * Tests if two features overlap, but ignores collisions if both bits are air or both are non-air. For those, the
-     * overlapping bit is removed from {@code feature2} instead.
-     * @param feature1 The first feature.
-     * @param feature2 The second feature.
-     * @return True if the features overlap.
-     */
-    static boolean featuresOverlapIgnoreAirCollisionsAndNonAirCollisions(GeoFeature feature1, GeoFeature feature2) {
-        // Check bounds.
-        if (!feature1.boundsCollideWith(feature2)) {
-            return false;
-        }
-
-        // Check the bits for collision.
-        ArrayList<BlockPos> toBeRemoved = new ArrayList<>();
-        for (GeoFeatureBit feature1Bit : feature1.getBits()) {
-            for (GeoFeatureBit feature2Bit : feature2.getBits()) {
-                if (feature1Bit.blockPos.equals(feature2Bit.blockPos)
-                        && feature1Bit.blockState!=null && feature2Bit.blockState!=null
-                ) {
-                    // Bits overlap
-                    if (feature1Bit.blockState.isOf(Blocks.AIR) && !feature2Bit.blockState.isOf(Blocks.AIR)
-                            || !feature1Bit.blockState.isOf(Blocks.AIR) && feature2Bit.blockState.isOf(Blocks.AIR)) {
-                        return true;
-                    } else {
-                        toBeRemoved.add(feature2Bit.blockPos);
-                    }
-                }
-            }
-        }
-        // No collision; remove the overlapping bits.
-        feature2.removeBits(toBeRemoved);
         return false;
     }
 
@@ -129,33 +97,82 @@ public class GeoFeatureCollision {
     }
 
     /**
-     * Determines whether the access path collides with the edge. When two bits overlap that are either both air or both
-     * not air, this does not count as a collision. Instead, the bit of the access path gets removed from it.
+     * Determines whether the access path collides with the road dot's edge. Bits of the access path that are close to
+     * the road dot get removed unless they are overriding arch or sidewalk positions.
      * @param accessPath The access path that is being planned.
-     * @param edge The edge that the access path is trying to connect to.
+     * @param dot The road dot that the access path is trying to connect to.
      * @return True if the path collides with the edge.
      */
-    static boolean accessPathCollidesWithEdge(RoadEdge accessPath, RoadEdge edge) {
+    static boolean accessPathCollidesWithEdge(RoadEdge accessPath, RoadDot dot) {
+        RoadEdge edge = dot.edge;
         // Check bounds.
         if (!accessPath.boundsCollideWith(edge)) {
             return false;
         }
-
         // Check the bits for collision.
         ArrayList<BlockPos> toBeRemoved = new ArrayList<>();
+        double connectionPointRadiusSquared;
         for (GeoFeatureBit accessPathBit : accessPath.getBits()) {
             for (GeoFeatureBit edgeBit : edge.getBits()) {
-                if (accessPathBit.blockPos.equals(edgeBit.blockPos) && accessPathBit.blockState!=null && edgeBit.blockState!=null) {
-                    // If the position is part of edge's sidewalk or arch, continue (this way, it will be overwritten by the access path).
-                    if (edge.sidewalkPositions.contains(edgeBit.blockPos) || edge.archPositions.contains(edgeBit.blockPos)) {
-                        continue;
-                    }
-                    // Are both bits air or both bits non-air?
-                    if ((accessPathBit.blockState.isOf(Blocks.AIR) && edgeBit.blockState.isOf(Blocks.AIR))
-                            || (!accessPathBit.blockState.isOf(Blocks.AIR) && !edgeBit.blockState.isOf(Blocks.AIR))) {
-                        toBeRemoved.add(accessPathBit.blockPos);
-                    } else {
+                if (accessPathBit.blockPos.equals(edgeBit.blockPos)
+                        && accessPathBit.blockState!=null && edgeBit.blockState!=null) {
+                    // If the position is not close to the road dot, a collision is detected.
+                    connectionPointRadiusSquared = Math.pow(2.0 + edge.radius + accessPath.radius, 2);
+                    if (dot.pos.getSquaredDistance(edgeBit.blockPos) > connectionPointRadiusSquared) {
                         return true;
+                    }
+                    // Remove the bit from the access path unless it should override arch/sidewalk positions of the edge.
+                    if (!edge.archPositions.contains(edgeBit.blockPos)
+                            && (!edge.sidewalkPositions.contains(edgeBit.blockPos)
+                                || accessPath.archPositions.contains(edgeBit.blockPos))
+                    ) {
+                        toBeRemoved.add(edgeBit.blockPos);
+                    }
+                }
+            }
+        }
+        // No collision; remove the overlapping bits.
+        accessPath.removeBits(toBeRemoved);
+        return false;
+    }
+
+    /**
+     * Test for collisions between an access path and its structure. Bits in the access point's connection volume get
+     * removed unless they are overriding arch or sidewalk positions.
+     * @param structure The structure that the access path connects to.
+     * @param accessPath The access path.
+     * @return True if the access path collides with the structure.
+     */
+    static boolean accessPathCollidesWithItsStructure(Structure structure, StructureAccessPoint accessPoint,
+                                                      RoadEdge accessPath) {
+        // Check bounds.
+        if (!structure.boundsCollideWith(accessPath)) {
+            return false;
+        }
+        // Check the bits for collision.
+        ArrayList<BlockPos> toBeRemoved = new ArrayList<>();
+        for (GeoFeatureBit structureBit : structure.getBits()) {
+            for (GeoFeatureBit accessPathBit : accessPath.getBits()) {
+                if (structureBit.blockPos.equals(accessPathBit.blockPos)
+                        && structureBit.blockState!=null && accessPathBit.blockState!=null) {
+                    // If the position is not part of the connection volume, a collision is detected.
+                    if (
+                            structureBit.blockPos.getX() < Math.min(accessPoint.connectionVolume.get(0).getX(), accessPoint.connectionVolume.get(1).getX())
+                            || structureBit.blockPos.getX() > Math.max(accessPoint.connectionVolume.get(0).getX(), accessPoint.connectionVolume.get(1).getX())
+                            || structureBit.blockPos.getY() < Math.min(accessPoint.connectionVolume.get(0).getY(), accessPoint.connectionVolume.get(1).getY())
+                            || structureBit.blockPos.getY() > Math.max(accessPoint.connectionVolume.get(0).getY(), accessPoint.connectionVolume.get(1).getY())
+                            || structureBit.blockPos.getZ() < Math.min(accessPoint.connectionVolume.get(0).getZ(), accessPoint.connectionVolume.get(1).getZ())
+                            || structureBit.blockPos.getZ() > Math.max(accessPoint.connectionVolume.get(0).getZ(), accessPoint.connectionVolume.get(1).getZ())
+                    ) {
+                        return true;
+                    }
+                    // Position is part of the connection volume. Remove the bit from the access path unless it should
+                    // override arch/sidewalk positions of the access point.
+                    if (!accessPoint.archPositions.contains(structureBit.blockPos)
+                            && (!accessPoint.sidewalkPositions.contains(structureBit.blockPos)
+                                || accessPath.archPositions.contains(structureBit.blockPos))
+                    ) {
+                        toBeRemoved.add(structureBit.blockPos);
                     }
                 }
             }

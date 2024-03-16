@@ -23,7 +23,7 @@ public class RawSaplingLocationPoint extends RawPointOfInterest {
         while (reader.hasNext()) {
             switch (reader.nextName()) {
                 default -> throw new IOException();
-                case "pos" -> pos = JsonUtils.readList(reader, JsonReader::nextInt);
+                case "pos" -> pos = JsonUtils.readBlockPos(reader);
                 case "saplings" -> saplings = reader.nextInt();
                 case "tree_diameter" -> treeDiameter = reader.nextInt();
             }
@@ -37,6 +37,6 @@ public class RawSaplingLocationPoint extends RawPointOfInterest {
 
     @Override
     public PointOfInterest toPointOfInterest(ServerVillage village) {
-        return new SaplingLocationPoint(new BlockPos(pos.get(0), pos.get(1), pos.get(2)), saplings, treeDiameter);
+        return new SaplingLocationPoint(new BlockPos(pos), saplings, treeDiameter);
     }
 }

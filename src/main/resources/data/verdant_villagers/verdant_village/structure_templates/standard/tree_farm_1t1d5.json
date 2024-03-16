@@ -38,7 +38,10 @@
       "subclass_name": "StructureAccessPoint",
       "subclass_data": {
         "pos": [-4, 0, 0],
-        "access_path_road_type": "verdant_villagers:path_1"
+        "access_path_road_type": "verdant_villagers:path_1",
+        "connection_volume": [[-4,0,0],[-4,0,0]],
+        "sidewalk_positions": [],
+        "arch_positions": []
       }
     },
     {
