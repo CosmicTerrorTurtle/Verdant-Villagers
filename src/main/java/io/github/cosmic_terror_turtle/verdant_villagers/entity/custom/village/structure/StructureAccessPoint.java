@@ -14,7 +14,7 @@ public class StructureAccessPoint extends PointOfInterest {
     /**
      * A list of two block positions that determine the lower and upper coordinate tips of the volume.
      */
-    public ArrayList<BlockPos> connectionVolume;
+    public ArrayList<BlockPos> connectionVolume = new ArrayList<>();
     public ArrayList<BlockPos> sidewalkPositions = new ArrayList<>();
     public ArrayList<BlockPos> archPositions = new ArrayList<>();
 

@@ -8,7 +8,7 @@
     "gla": "state:minecraft:glass",
     "tor": "state:minecraft:torch"
   },
-  "available_for_villager_count": [40, 89],
+  "available_for_villager_count": [35, 89],
   "scale": 1.2,
   "edge_block_column_radii": [
     1.2,
