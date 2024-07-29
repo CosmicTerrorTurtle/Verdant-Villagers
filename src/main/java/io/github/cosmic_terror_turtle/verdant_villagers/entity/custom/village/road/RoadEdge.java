@@ -21,7 +21,7 @@ public class RoadEdge extends RoadFeature {
     public static final double ROAD_DOT_SPACE = 2.5; // Space between road dots
     public static final double ROAD_TYPE_TERRAIN_SPACE = 1.2; // Space between terrain type checks
     public static final int SPIRAL_BASE_Y_DIFF = 16;
-    public static final int SPIRAL_BASE_RADIUS = 10;
+    public static final int SPIRAL_BASE_RADIUS = 11;
     public static final int MAX_SPIRALS = 3;
 
     public static final int FIRST = 1;
@@ -66,11 +66,11 @@ public class RoadEdge extends RoadFeature {
             throw new RuntimeException("Illegal road edge length (on the x-z-plane).");
         }
 
-        preparePolynomialFunction(village.random, spiral);
+        preparePolynomialFunction(village.random, isAccessPath, spiral);
         setBitsMegaBlocksAndRoadDots(village, roadType, isAccessPath, spiral);
     }
 
-    private void preparePolynomialFunction(Random random, boolean spiral) {
+    private void preparePolynomialFunction(Random random, boolean isAccessPath, boolean spiral) {
         double fraction; // The fraction of d that abs(function) should return at max.
         int deg = spiral ? 1 : MathUtils.nextInt(1, 3);
         switch (deg) {
@@ -81,12 +81,12 @@ public class RoadEdge extends RoadFeature {
             }
             case 2 -> {
                 polynomialDegree = SECOND;
-                fraction = 0.4;
+                fraction = isAccessPath ? 0.35 : 0.4;
                 e = 0;
                 c = random.nextDouble(-4 * fraction / d, 4 * fraction / d);
             }
             case 3 -> {
-                fraction = 0.3;
+                fraction = isAccessPath ? 0.2 : 0.3;
                 polynomialDegree = THIRD;
                 e = random.nextDouble( d / 3, d * 2 / 3);
                 double aMax1 = (d + e) / 3 + Math.sqrt((d + e) * (d + e) / 9 - d * e / 3);
@@ -510,8 +510,8 @@ public class RoadEdge extends RoadFeature {
     public class TerrainAdjustment {
 
         public static final double TERRAIN_ADJUSTING_SPACE = 4.0; // Space between terrain adjusting points
-        public static final double SMOOTHING_FACTOR = 0.2; // Factor by which a point gets adjusted towards its neighbors
-        public static final int MAX_SMOOTHING_ITERATIONS = 60; // The maximum number of iterations that smooth the adjusting offsets.
+        public static final double SMOOTHING_FACTOR = 0.25; // Factor by which a point gets adjusted towards its neighbors
+        public static final int MAX_SMOOTHING_ITERATIONS = 80; // The maximum number of iterations that smooth the adjusting offsets.
 
 
         private final double aOffsetStart;

@@ -98,7 +98,7 @@ public class ServerVillage extends Village {
     /**
      * The maximum slope angle that a road edge can have.
      */
-    public static final double ROAD_EDGE_MAX_Y_SLOPE = 0.45;
+    public static final double ROAD_EDGE_MAX_Y_SLOPE = 0.42;
     /**
      * The basic maximum length that an access path can have.
      */
@@ -1289,7 +1289,7 @@ public class ServerVillage extends Village {
                         nextElementID++,
                         this,
                         new RoadJunction(nextElementID++, world, accessPoint.pos, 0.6),
-                        new RoadJunction(nextElementID++, world, roadDot.pos, 2.0*roadDot.edge.radius),
+                        new RoadJunction(nextElementID++, world, roadDot.pos, 2.5*roadDot.edge.radius),
                         true,
                         roadTypeProvider.getRoadType(DataRegistry.getAccessPathRoadType(accessPoint.accessPathRoadType)),
                         true,
