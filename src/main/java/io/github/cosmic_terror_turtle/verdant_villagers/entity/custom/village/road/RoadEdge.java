@@ -511,7 +511,12 @@ public class RoadEdge extends RoadFeature {
 
         public static final double TERRAIN_ADJUSTING_SPACE = 4.0; // Space between terrain adjusting points
         public static final double SMOOTHING_FACTOR = 0.25; // Factor by which a point gets adjusted towards its neighbors
-        public static final int MAX_SMOOTHING_ITERATIONS = 80; // The maximum number of iterations that smooth the adjusting offsets.
+        public static final int MAX_SMOOTHING_ITERATIONS = 100; // The maximum number of iterations that smooth the adjusting offsets
+        /**
+         * The minimum difference between an adjusting point and the average of its two encompassing points for a point
+         * to be classified as a bump.
+         */
+        public static final double BUMP_THRESHOLD = 0.4;
 
 
         private final double aOffsetStart;
@@ -541,6 +546,8 @@ public class RoadEdge extends RoadFeature {
             }
             // Final smooth
             smoothOffsets(true);
+            // Smooth single adjusting points that stick out
+            smoothOutliers();
         }
 
         private double getTerrainOffset(ServerVillage village, double sin, double cos, double a, double yCoord, double maxOffset) {
@@ -601,6 +608,35 @@ public class RoadEdge extends RoadFeature {
             yOffsetValues = newOffsets;
 
             return smoothingNeeded;
+        }
+
+        /**
+         * Smooths all terrain adjusting points that stick out by themselves compared to their neighbors. This aims to
+         * avoid single-adjusting-point bumps in the road.
+         */
+        private void smoothOutliers() {
+            ArrayList<Double> newOffsets = new ArrayList<>();
+            double a;
+            double average;
+
+            for (int i=0; i<yOffsetValues.size(); i++) {
+                // Only values between the aOffsets can be smoothed.
+                a = i*TERRAIN_ADJUSTING_SPACE;
+                if (a<aOffsetStart || d-aOffsetEnd<a) {
+                    newOffsets.add(yOffsetValues.get(i));
+                    continue;
+                }
+
+                // If there is a bump at this adjusting point, then replace that value with the average of both neighbors.
+                average = (getYOffsetFromIndex(i+1) + getYOffsetFromIndex(i-1)) / 2;
+                if (Math.abs(getYOffsetFromIndex(i) - average) > BUMP_THRESHOLD) {
+                    newOffsets.add(average);
+                } else {
+                    newOffsets.add(yOffsetValues.get(i));
+                }
+            }
+
+            yOffsetValues = newOffsets;
         }
 
         private double getYOffsetFromIndex(int index) {

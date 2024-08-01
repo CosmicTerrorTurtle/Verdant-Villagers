@@ -98,7 +98,7 @@ public class ServerVillage extends Village {
     /**
      * The maximum slope angle that a road edge can have.
      */
-    public static final double ROAD_EDGE_MAX_Y_SLOPE = 0.42;
+    public static final double ROAD_EDGE_MAX_Y_SLOPE = 0.4;
     /**
      * The basic maximum length that an access path can have.
      */
