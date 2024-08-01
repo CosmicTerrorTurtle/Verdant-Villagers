@@ -81,7 +81,7 @@ public class RoadEdge extends RoadFeature {
             }
             case 2 -> {
                 polynomialDegree = SECOND;
-                fraction = isAccessPath ? 0.35 : 0.4;
+                fraction = isAccessPath ? 0.3 : 0.4;
                 e = 0;
                 c = random.nextDouble(-4 * fraction / d, 4 * fraction / d);
             }

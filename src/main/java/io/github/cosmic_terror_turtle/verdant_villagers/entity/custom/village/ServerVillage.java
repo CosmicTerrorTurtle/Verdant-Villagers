@@ -341,11 +341,12 @@ public class ServerVillage extends Village {
         // Block palettes
         NbtCompound blockPalettesNbt = new NbtCompound();
         NbtCompound palettesForTypeNbt;
+        ArrayList<BlockPalette> palettesPerType;
         for (String typeKey : DataRegistry.getBlockPaletteTypeKeys()) {
             palettesForTypeNbt = new NbtCompound();
-            for (BlockPalette palette : blockPalettes.get(typeKey)) {
-                // Boolean value does not get used when reading
-                palettesForTypeNbt.putBoolean(palette.id.toString(), true);
+            palettesPerType = blockPalettes.get(typeKey);
+            for (int i=0; i<palettesPerType.size(); i++) {
+                palettesForTypeNbt.putString(String.valueOf(i), palettesPerType.get(i).id.toString());
             }
             blockPalettesNbt.put(typeKey, palettesForTypeNbt);
         }
@@ -425,12 +426,16 @@ public class ServerVillage extends Village {
 
         // Block palettes
         NbtCompound blockPalettesNbt = nbt.getCompound("blockPalettes");
+        NbtCompound palettesForTypeNbt;
+        int palettesPerTypeCount;
         blockPalettes = new HashMap<>();
         for (String typeKey : DataRegistry.getBlockPaletteTypeKeys()) {
             blockPalettes.put(typeKey, new ArrayList<>());
             if (blockPalettesNbt.contains(typeKey)) {
-                for (String paletteId : blockPalettesNbt.getCompound(typeKey).getKeys()) {
-                    blockPalettes.get(typeKey).add(DataRegistry.getBlockPalette(typeKey, paletteId));
+                palettesForTypeNbt = blockPalettesNbt.getCompound(typeKey);
+                palettesPerTypeCount = palettesForTypeNbt.getKeys().size();
+                for (int i=0; i<palettesPerTypeCount; i++) {
+                    blockPalettes.get(typeKey).add(DataRegistry.getBlockPalette(typeKey, palettesForTypeNbt.getString(String.valueOf(i))));
                 }
             } else {
                 addBlockPaletteFor(typeKey, blockCounts);
