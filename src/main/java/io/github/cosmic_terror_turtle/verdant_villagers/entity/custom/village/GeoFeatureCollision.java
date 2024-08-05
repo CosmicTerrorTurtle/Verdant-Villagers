@@ -5,7 +5,6 @@ import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.ro
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.road.RoadJunction;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure.Structure;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure.StructureAccessPoint;
-import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
@@ -16,30 +15,40 @@ public class GeoFeatureCollision {
      * Determines if the features overlap.
      * @param feature1 First input.
      * @param feature2 Second input.
-     * @param useMegaBlocks Whether the positions of the mega blocks or of the feature bits will be analyzed.
      * @return True if they overlap.
      */
-    static boolean featuresOverlap(GeoFeature feature1, GeoFeature feature2, boolean useMegaBlocks) {
+    static boolean featuresOverlap(GeoFeature feature1, GeoFeature feature2) {
         // Check bounds.
         if (!feature1.boundsCollideWith(feature2)) {
             return false;
         }
-
-        // Check the mega blocks or bits for collision.
-        if (useMegaBlocks) {
-            for (BlockPos feature1BlockPosition : feature1.getTouchedMegaBlocks()) {
-                for (BlockPos feature2BlockPosition : feature2.getTouchedMegaBlocks()) {
-                    if (feature1BlockPosition.equals(feature2BlockPosition)) {
-                        return true;
-                    }
+        // Check the bounding box chunks 16 for collision.
+        boolean chunksOverlap = false;
+        for (BlockPos feature1LowerTip : feature1.getBoundingBoxChunks16()) {
+            for (BlockPos feature2LowerTip : feature2.getBoundingBoxChunks16()) {
+                if (feature1LowerTip.equals(feature2LowerTip)) {
+                    chunksOverlap = true;
+                    break;
                 }
             }
-        } else {
-            for (GeoFeatureBit feature1Bit : feature1.getBits()) {
-                for (GeoFeatureBit feature2Bit : feature2.getBits()) {
-                    if (feature1Bit.blockPos.equals(feature2Bit.blockPos)) {
-                        return true;
-                    }
+        }
+        if (!chunksOverlap) return false;
+        // Check the bounding box chunks 4 for collision.
+        chunksOverlap = false;
+        for (BlockPos feature1LowerTip : feature1.getBoundingBoxChunks4()) {
+            for (BlockPos feature2LowerTip : feature2.getBoundingBoxChunks4()) {
+                if (feature1LowerTip.equals(feature2LowerTip)) {
+                    chunksOverlap = true;
+                    break;
+                }
+            }
+        }
+        if (!chunksOverlap) return false;
+        // Check the bits for collision.
+        for (GeoFeatureBit feature1Bit : feature1.getBits()) {
+            for (GeoFeatureBit feature2Bit : feature2.getBits()) {
+                if (feature1Bit.blockPos.equals(feature2Bit.blockPos)) {
+                    return true;
                 }
             }
         }

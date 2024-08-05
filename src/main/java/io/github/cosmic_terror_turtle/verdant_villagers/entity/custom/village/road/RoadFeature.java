@@ -35,7 +35,7 @@ public class RoadFeature extends GeoFeature {
             pillarStartBits.removeIf(pillarBit -> pillarBit.blockPos.equals(bit.blockPos));
         }
         updateBounds();
-        updateMegaBlocks();
+        updateBoundingBoxChunks();
     }
 
     /**

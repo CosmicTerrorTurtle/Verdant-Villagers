@@ -58,11 +58,6 @@ public class ServerVillage extends Village {
     public static final int VILLAGER_COUNT_DELTA = 5;
 
     /**
-     * The side length of an L*L*L volume of blocks called mega block.
-     */
-    public static final int MEGA_BLOCK_LENGTH = 2;
-
-    /**
      * The maximum number of junctions that a village can have. If this number is reached, no more roads will be planned.
      */
     private static final int JUNCTION_LIMIT = 50;
@@ -98,7 +93,7 @@ public class ServerVillage extends Village {
     /**
      * The maximum slope angle that a road edge can have.
      */
-    public static final double ROAD_EDGE_MAX_Y_SLOPE = 0.4;
+    public static final double ROAD_EDGE_MAX_Y_SLOPE = 0.39;
     /**
      * The basic maximum length that an access path can have.
      */
@@ -914,7 +909,7 @@ public class ServerVillage extends Village {
                 // Find the mega chunk that this position is a part of.
                 testPosMegaChunk = null;
                 for (MegaChunk megaChunk : megaChunks) {
-                    if (megaChunk.posIsWithin(testPos)) {
+                    if (MathUtils.posIsInChunklikeCube(testPos, MegaChunk.LENGTH, megaChunk.getLowerTip())) {
                         testPosMegaChunk = megaChunk;
                         withinBounds = true;
                         break;
@@ -943,17 +938,17 @@ public class ServerVillage extends Village {
                 newJunction = new RoadJunction(nextElementID++, world, testPos, roadType);
                 // Does the new junction collide with any existing structures, edges or access paths?
                 for (Structure structure : structures) {
-                    if (GeoFeatureCollision.featuresOverlap(newJunction, structure, true)) {
+                    if (GeoFeatureCollision.featuresOverlap(newJunction, structure)) {
                         continue angleFor;
                     }
                 }
                 for (RoadEdge edge : roadEdges) {
-                    if (GeoFeatureCollision.featuresOverlap(newJunction, edge, true)) {
+                    if (GeoFeatureCollision.featuresOverlap(newJunction, edge)) {
                         continue angleFor;
                     }
                 }
                 for (RoadEdge edge : accessPaths) {
-                    if (GeoFeatureCollision.featuresOverlap(newJunction, edge, true)) {
+                    if (GeoFeatureCollision.featuresOverlap(newJunction, edge)) {
                         continue angleFor;
                     }
                 }
@@ -1004,12 +999,12 @@ public class ServerVillage extends Village {
                         }
                         // Check if the test edge collides with any structures, other edges or junctions.
                         for (Structure structure : structures) {
-                            if (GeoFeatureCollision.featuresOverlap(testEdge, structure, true)) {
+                            if (GeoFeatureCollision.featuresOverlap(testEdge, structure)) {
                                 continue junctionCollisionFor;
                             }
                         }
                         for (RoadJunction roadJunction : roadJunctions) {
-                            if (roadJunction != junction && GeoFeatureCollision.featuresOverlap(roadJunction, testEdge, true)) {
+                            if (roadJunction != junction && GeoFeatureCollision.featuresOverlap(roadJunction, testEdge)) {
                                 continue junctionCollisionFor;
                             }
                         }
@@ -1024,7 +1019,7 @@ public class ServerVillage extends Village {
                             }
                         }
                         for (RoadEdge accessPath : accessPaths) {
-                            if (GeoFeatureCollision.featuresOverlap(testEdge, accessPath, true)) {
+                            if (GeoFeatureCollision.featuresOverlap(testEdge, accessPath)) {
                                 continue junctionCollisionFor;
                             }
                         }
@@ -1169,7 +1164,7 @@ public class ServerVillage extends Village {
                 // Find the mega chunk that this position is a part of.
                 testPosMegaChunk = null;
                 for (MegaChunk megaChunk : megaChunks) {
-                    if (megaChunk.posIsWithin(testPos)) {
+                    if (MathUtils.posIsInChunklikeCube(testPos, MegaChunk.LENGTH, megaChunk.getLowerTip())) {
                         testPosMegaChunk = megaChunk;
                         withinBounds = true;
                         break;
@@ -1200,22 +1195,22 @@ public class ServerVillage extends Village {
                 }
                 // Test if the structure collides with any existing features.
                 for (Structure structure : structures) {
-                    if (GeoFeatureCollision.featuresOverlap(newStructure, structure, true)) {
+                    if (GeoFeatureCollision.featuresOverlap(newStructure, structure)) {
                         continue angleFor;
                     }
                 }
                 for (RoadEdge edge : roadEdges) {
-                    if (GeoFeatureCollision.featuresOverlap(newStructure, edge, true)) {
+                    if (GeoFeatureCollision.featuresOverlap(newStructure, edge)) {
                         continue angleFor;
                     }
                 }
                 for (RoadEdge accessPath : accessPaths) {
-                    if (GeoFeatureCollision.featuresOverlap(newStructure, accessPath, true)) {
+                    if (GeoFeatureCollision.featuresOverlap(newStructure, accessPath)) {
                         continue angleFor;
                     }
                 }
                 for (RoadJunction junction : roadJunctions) {
-                    if (GeoFeatureCollision.featuresOverlap(newStructure, junction, true)) {
+                    if (GeoFeatureCollision.featuresOverlap(newStructure, junction)) {
                         continue angleFor;
                     }
                 }
@@ -1313,24 +1308,24 @@ public class ServerVillage extends Village {
                     continue;
                 }
                 for (Structure collisionTestStructure : structures) {
-                    if (GeoFeatureCollision.featuresOverlap(testEdge, collisionTestStructure, false)) {
+                    if (GeoFeatureCollision.featuresOverlap(testEdge, collisionTestStructure)) {
                         continue connectDotFor;
                     }
                 }
                 // Check if the test edge collides with any other paths.
                 for (RoadEdge path : accessPaths) {
-                    if (GeoFeatureCollision.featuresOverlap(testEdge, path, false)) {
+                    if (GeoFeatureCollision.featuresOverlap(testEdge, path)) {
                         continue connectDotFor;
                     }
                 }
                 for (RoadEdge path : approvedPaths) {
-                    if (GeoFeatureCollision.featuresOverlap(testEdge, path, false)) {
+                    if (GeoFeatureCollision.featuresOverlap(testEdge, path)) {
                         continue connectDotFor;
                     }
                 }
                 // Check if the test edge collides with any junctions.
                 for (RoadJunction junction : roadJunctions) {
-                    if (GeoFeatureCollision.featuresOverlap(testEdge, junction, false)) {
+                    if (GeoFeatureCollision.featuresOverlap(testEdge, junction)) {
                         continue connectDotFor;
                     }
                 }

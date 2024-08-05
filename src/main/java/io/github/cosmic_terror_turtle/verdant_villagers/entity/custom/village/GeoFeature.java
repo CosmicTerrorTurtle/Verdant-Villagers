@@ -1,5 +1,6 @@
 package io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village;
 
+import io.github.cosmic_terror_turtle.verdant_villagers.util.MathUtils;
 import io.github.cosmic_terror_turtle.verdant_villagers.util.NbtUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.NbtCompound;
@@ -9,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Random;
+
+import static io.github.cosmic_terror_turtle.verdant_villagers.util.MathUtils.getCubeCoordinate;
 
 /**
  * A feature that occupies a physical space.
@@ -58,15 +61,6 @@ public class GeoFeature {
         }
     }
 
-    private static int toMegaCoord(int coord) {
-        int length = ServerVillage.MEGA_BLOCK_LENGTH;
-        if (coord < 0) {
-            return (coord+1)/length*length-length;
-        } else {
-            return coord/length*length;
-        }
-    }
-
     public final int elementID;
     private int xMin = 0;
     private int xMax = 0;
@@ -74,7 +68,14 @@ public class GeoFeature {
     private int yMax = 0;
     private int zMin = 0;
     private int zMax = 0;
-    private final ArrayList<BlockPos> touchedMegaBlocks = new ArrayList<>();
+    /**
+     * A list of cubic chunks (16x16x16 blocks, represented by a BlockPos in the lower tip of the mega block).
+     */
+    private final ArrayList<BlockPos> boundingBoxChunks16 = new ArrayList<>();
+    /**
+     * A list of cubic chunks (4x4x4 blocks, represented by a BlockPos in the lower tip of the mega block).
+     */
+    private final ArrayList<BlockPos> boundingBoxChunks4 = new ArrayList<>();
     protected final ArrayList<GeoFeatureBit> bits = new ArrayList<>();
 
     public GeoFeature(int elementID) {
@@ -82,11 +83,18 @@ public class GeoFeature {
     }
 
     /**
-     * Returns the bounding box of this feature.
-     * @return A list of the mega blocks (2x2x2 blocks, represented by a BlockPos in the lower tip of the mega block).
+     * Gets the cubic chunks with side length 16 defining the bounding box of this feature.
+     * @return The list of chunk-like cubes.
      */
-    public ArrayList<BlockPos> getTouchedMegaBlocks() {
-        return touchedMegaBlocks;
+    public ArrayList<BlockPos> getBoundingBoxChunks16() {
+        return boundingBoxChunks16;
+    }
+    /**
+     * Gets the cubic chunks with side length 4 defining the bounding box of this feature.
+     * @return The list of chunk-like cubes.
+     */
+    public ArrayList<BlockPos> getBoundingBoxChunks4() {
+        return boundingBoxChunks4;
     }
 
     public ArrayList<GeoFeatureBit> getBits() {
@@ -94,26 +102,51 @@ public class GeoFeature {
     }
 
     /**
-     * Updates the list of touched mega blocks.
+     * Updates the lists of touched cubic chunks of all side lengths.
      */
-    protected void updateMegaBlocks() {
-        touchedMegaBlocks.clear();
+    protected void updateBoundingBoxChunks() {
+        boundingBoxChunks16.clear();
+        boundingBoxChunks4.clear();
         for (GeoFeatureBit bit : bits) {
-            addPosToTouchedMegaBlocks(bit.blockPos);
+            addPosToBoundingBoxChunks(bit.blockPos);
         }
     }
     /**
-     * Attempts to add a new mega block to the list.
-     * @param pos The block position of a normal block (pos will be converted to a mega block position in this method).
+     * Attempts to add a cubic chunk to the lists defining the bounding box of this feature.
+     * @param pos The block position of the normal block (pos will be converted to a cubic chunk position in this method).
      */
-    private void addPosToTouchedMegaBlocks(BlockPos pos) {
-        pos = new BlockPos(toMegaCoord(pos.getX()), toMegaCoord(pos.getY()), toMegaCoord(pos.getZ()));
-        for (BlockPos megaPos : touchedMegaBlocks) {
-            if (megaPos.equals(pos)) {
-                return;
+    private void addPosToBoundingBoxChunks(BlockPos pos) {
+        // 16
+        BlockPos newLowerTip = new BlockPos(
+                getCubeCoordinate(16, pos.getX()),
+                getCubeCoordinate(16, pos.getY()),
+                getCubeCoordinate(16, pos.getZ()));
+        boolean tipIsNew = true;
+        for (BlockPos oldLowerTip : boundingBoxChunks16) {
+            if (oldLowerTip.equals(newLowerTip)) {
+                tipIsNew = false;
+                break;
             }
         }
-        touchedMegaBlocks.add(pos);
+        if (tipIsNew) {
+            boundingBoxChunks16.add(newLowerTip);
+        }
+        // 4
+        newLowerTip = new BlockPos(
+                getCubeCoordinate(4, pos.getX()),
+                getCubeCoordinate(4, pos.getY()),
+                getCubeCoordinate(4, pos.getZ()));
+        tipIsNew = true;
+        for (BlockPos oldLowerTip : boundingBoxChunks4) {
+            if (oldLowerTip.equals(newLowerTip)) {
+                tipIsNew = false;
+                break;
+            }
+        }
+        if (tipIsNew) {
+            boundingBoxChunks4.add(newLowerTip);
+        }
+
     }
 
     /**
@@ -124,7 +157,8 @@ public class GeoFeature {
      */
     protected void setBits(ArrayList<GeoFeatureBit> relativeBits, BlockPos anchor, int rotation) {
         bits.clear();
-        touchedMegaBlocks.clear();
+        boundingBoxChunks16.clear();
+        boundingBoxChunks4.clear();
 
         BlockState rotatedState;
         for (GeoFeatureBit bit : relativeBits) {
@@ -141,20 +175,19 @@ public class GeoFeature {
             bits.add(new GeoFeatureBit(rotatedState, rotate(anchor, bit.blockPos, rotation)));
         }
         for (GeoFeatureBit bit : bits) {
-            addPosToTouchedMegaBlocks(bit.blockPos);
+            addPosToBoundingBoxChunks(bit.blockPos);
         }
-
         updateBounds();
     }
 
     /**
-     * Adds new {@link GeoFeatureBit}s to this feature. Updates mega blocks and bounds afterwards.
+     * Adds new {@link GeoFeatureBit}s to this feature. Updates bounding box chunks and bounds afterwards.
      * @param absoluteBits A list of bits to add that should only contain bits with new positions.
      */
     public void addBits(ArrayList<GeoFeatureBit> absoluteBits) {
         for (GeoFeatureBit bit : absoluteBits) {
             bits.add(bit);
-            addPosToTouchedMegaBlocks(bit.blockPos);
+            addPosToBoundingBoxChunks(bit.blockPos);
         }
         updateBounds();
     }
@@ -172,7 +205,7 @@ public class GeoFeature {
         }
         bits.removeAll(toBeRemoved);
         updateBounds();
-        updateMegaBlocks();
+        updateBoundingBoxChunks();
     }
 
     /**
@@ -222,11 +255,31 @@ public class GeoFeature {
      * @return True if a match was found, false otherwise.
      */
     public boolean bitsCollideWith(BlockPos testPos) {
+        // Test bounds.
         if (testPos.getX() < xMin || xMax < testPos.getX()
                 || testPos.getY() < yMin || yMax < testPos.getY()
                 || testPos.getZ() < zMin || zMax < testPos.getZ()) {
             return false;
         }
+        // Test 16 chunks.
+        boolean posIsInChunks = false;
+        for (BlockPos lowerTip : boundingBoxChunks16) {
+            if (MathUtils.posIsInChunklikeCube(testPos, 16, lowerTip)) {
+                posIsInChunks = true;
+                break;
+            }
+        }
+        if (!posIsInChunks) return false;
+        // Test 4 chunks.
+        posIsInChunks = false;
+        for (BlockPos lowerTip : boundingBoxChunks4) {
+            if (MathUtils.posIsInChunklikeCube(testPos, 4, lowerTip)) {
+                posIsInChunks = true;
+                break;
+            }
+        }
+        if (!posIsInChunks) return false;
+        // Test bits.
         for (GeoFeatureBit bit : bits) {
             if (bit.blockPos.equals(testPos)) {
                 return true;
@@ -241,9 +294,13 @@ public class GeoFeature {
      */
     public GeoFeature(@NotNull NbtCompound nbt) {
         elementID = nbt.getInt("id");
-        NbtCompound megaBlocksNbt = nbt.getCompound("megaBlocks");
-        for (String key : megaBlocksNbt.getKeys()) {
-            touchedMegaBlocks.add(NbtUtils.blockPosFromNbt(megaBlocksNbt.getCompound(key)));
+        NbtCompound boundingBoxChunks16Nbt = nbt.getCompound("boundingBoxChunks16");
+        for (String key : boundingBoxChunks16Nbt.getKeys()) {
+            boundingBoxChunks16.add(NbtUtils.blockPosFromNbt(boundingBoxChunks16Nbt.getCompound(key)));
+        }
+        NbtCompound boundingBoxChunks4Nbt = nbt.getCompound("boundingBoxChunks4");
+        for (String key : boundingBoxChunks4Nbt.getKeys()) {
+            boundingBoxChunks4.add(NbtUtils.blockPosFromNbt(boundingBoxChunks4Nbt.getCompound(key)));
         }
         NbtCompound bitsNbt = nbt.getCompound("bits");
         for (String key : bitsNbt.getKeys()) {
@@ -261,13 +318,20 @@ public class GeoFeature {
 
         NbtCompound nbt = new NbtCompound();
         nbt.putInt("id", elementID);
-        NbtCompound megaBlocksNbt = new NbtCompound();
+        NbtCompound boundingBoxChunks16Nbt = new NbtCompound();
         i=0;
-        for (BlockPos megaBlock : touchedMegaBlocks) {
-            megaBlocksNbt.put(Integer.toString(i), NbtUtils.blockPosToNbt(megaBlock));
+        for (BlockPos lowerTip : boundingBoxChunks16) {
+            boundingBoxChunks16Nbt.put(Integer.toString(i), NbtUtils.blockPosToNbt(lowerTip));
             i++;
         }
-        nbt.put("megaBlocks", megaBlocksNbt);
+        nbt.put("boundingBoxChunks16", boundingBoxChunks16Nbt);
+        NbtCompound boundingBoxChunks4Nbt = new NbtCompound();
+        i=0;
+        for (BlockPos lowerTip : boundingBoxChunks4) {
+            boundingBoxChunks4Nbt.put(Integer.toString(i), NbtUtils.blockPosToNbt(lowerTip));
+            i++;
+        }
+        nbt.put("boundingBoxChunks4", boundingBoxChunks4Nbt);
         NbtCompound bitsNbt = new NbtCompound();
         i=0;
         for (GeoFeatureBit bit : bits) {

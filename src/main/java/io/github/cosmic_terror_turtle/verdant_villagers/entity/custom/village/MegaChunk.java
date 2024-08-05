@@ -13,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
+import static io.github.cosmic_terror_turtle.verdant_villagers.util.MathUtils.getCubeCoordinate;
+
 public class MegaChunk {
 
     public static final int LENGTH = 128;
@@ -26,20 +28,18 @@ public class MegaChunk {
      */
     public MegaChunk(int elementID, BlockPos pos) {
         this.elementID = elementID;
-        lowerTip = new BlockPos(toMegaCoord(pos.getX()), toMegaCoord(pos.getY()), toMegaCoord(pos.getZ()));
-    }
-    private int toMegaCoord(int coord) {
-        if (coord < 0) {
-            return (coord+1)/LENGTH*LENGTH-LENGTH;
-        } else {
-            return coord/LENGTH*LENGTH;
-        }
+        lowerTip = new BlockPos(
+                getCubeCoordinate(LENGTH, pos.getX()),
+                getCubeCoordinate(LENGTH, pos.getY()),
+                getCubeCoordinate(LENGTH, pos.getZ())
+        );
     }
 
     /**
      * Scans the blocks in this mega chunk. This includes counting block types and removing trees.
-     * @param blockCounts The map that the block type counts will be added to.
      * @param world The world this mega chunk exists in.
+     * @param blockCounts The map that the block type counts will be added to.
+     * @param removeTrees Whether log blocks found should be immediately removed.
      */
     public void scanBlocks(World world, HashMap<Identifier, Integer> blockCounts, boolean removeTrees) {
         BlockPos pos;
@@ -62,12 +62,6 @@ public class MegaChunk {
 
     public BlockPos getLowerTip() {
         return lowerTip;
-    }
-
-    public boolean posIsWithin(BlockPos pos) {
-        return lowerTip.getX()<=pos.getX() && pos.getX()<lowerTip.getX()+LENGTH
-                && lowerTip.getY()<=pos.getY() && pos.getY()<lowerTip.getY()+LENGTH
-                && lowerTip.getZ()<=pos.getZ() && pos.getZ()<lowerTip.getZ()+LENGTH;
     }
 
     /**
