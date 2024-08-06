@@ -305,7 +305,7 @@ public class RoadEdge extends RoadFeature {
                 if (columnTop != null || columnBottom != null) {
                     merged = VerticalBlockColumn.merge(columnTop, columnBottom);
                     for (BlockPos anchor : anchorPositions) {
-                        addToColumns(columnsToAddTo, merged.copyWith(anchor), false);
+                        addToColumns(columnsToAddTo, merged.copyWith(anchor));
                     }
                 }
                 // Special columns (only place when outside the junction's same height radii)
@@ -331,7 +331,7 @@ public class RoadEdge extends RoadFeature {
                     if (columnTop != null || columnBottom != null) {
                         merged = VerticalBlockColumn.merge(columnTop, columnBottom);
                         for (BlockPos anchor : anchorPositions) {
-                            addToColumns(columnsToAddTo, merged.copyWith(anchor), false);
+                            addToColumns(columnsToAddTo, merged.copyWith(anchor));
                         }
                     }
                 }
@@ -346,13 +346,13 @@ public class RoadEdge extends RoadFeature {
         }
         // Merge the lists of columns: First the outer special/normal columns, then the inner special/normal columns.
         for (VerticalBlockColumn column : outerNormalColumns) {
-            addToColumns(outerSpecialColumns, column, false);
+            addToColumns(outerSpecialColumns, column);
         }
         for (VerticalBlockColumn column : specialColumns) {
-            addToColumns(outerSpecialColumns, column, false);
+            addToColumns(outerSpecialColumns, column);
         }
         for (VerticalBlockColumn column : normalColumns) {
-            addToColumns(outerSpecialColumns, column, false);
+            addToColumns(outerSpecialColumns, column);
         }
         // Extract bits from columns.
         boolean columnOverlapsFrom;
@@ -406,18 +406,15 @@ public class RoadEdge extends RoadFeature {
     }
 
     /**
-     * Adds a vertical road column to a list if the x/z coordinate combination of the column's anchor is unique.
-     * @param columns The list of columns.
+     * Adds a vertical road column to a list if it does not overlap any existing columns. If there is overlap, the
+     * first overlapping column will copy the anchor of {@code newColumn} instead.
+     * @param columns   The list of road columns.
      * @param newColumn The column to be added.
-     * @param replaceOld Whether the first old column with the same anchor x/z should be replaced with the new column.
      */
-    private static void addToColumns(ArrayList<VerticalBlockColumn> columns, VerticalBlockColumn newColumn, boolean replaceOld) {
+    private static void addToColumns(ArrayList<VerticalBlockColumn> columns, VerticalBlockColumn newColumn) {
         for (VerticalBlockColumn oldColumn : columns) {
             if (VerticalBlockColumn.columnsOverlap(oldColumn, newColumn)) {
-                if (replaceOld) {
-                    columns.remove(oldColumn);
-                    columns.add(newColumn);
-                }
+                oldColumn.anchor = newColumn.anchor;
                 return;
             }
         }

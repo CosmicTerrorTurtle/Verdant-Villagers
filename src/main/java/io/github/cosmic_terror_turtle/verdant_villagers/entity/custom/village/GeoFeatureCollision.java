@@ -121,8 +121,6 @@ public class GeoFeatureCollision {
         }
         // Check the bits for collision.
         int harmfulOverlappingBits = 0;
-        boolean accessPathBitIsAir;
-        boolean edgeBitIsAir;
         ArrayList<BlockPos> toBeRemoved = new ArrayList<>();
         double connectionPointRadiusSquared;
         for (GeoFeatureBit accessPathBit : accessPath.getBits()) {
@@ -142,16 +140,15 @@ public class GeoFeatureCollision {
                     ) {
                         toBeRemoved.add(edgeBit.blockPos);
                         // If the overlapping bits are air and non-air, count it as a harmful collision. If the number
-                        // of those collisions is too high, return true.
-                        accessPathBitIsAir = accessPathBit.blockState.isOf(Blocks.AIR)
-                                || accessPath.sidewalkPositions.contains(accessPathBit.blockPos)
-                                || accessPath.archPositions.contains(accessPathBit.blockPos);
-                        edgeBitIsAir = edgeBit.blockState.isOf(Blocks.AIR)
-                                || edge.sidewalkPositions.contains(edgeBit.blockPos)
-                                || edge.archPositions.contains(edgeBit.blockPos);
-                        if (accessPathBitIsAir != edgeBitIsAir) {
+                        // of those collisions is too high, return true. Sidewalk and arch bits get ignored for these
+                        // collision detections.
+                        if ((accessPathBit.blockState.isOf(Blocks.AIR) != edgeBit.blockState.isOf(Blocks.AIR))
+                                && !accessPath.sidewalkPositions.contains(accessPathBit.blockPos)
+                                && !accessPath.archPositions.contains(accessPathBit.blockPos)
+                                && !edge.sidewalkPositions.contains(edgeBit.blockPos)
+                                && !edge.archPositions.contains(edgeBit.blockPos)) {
                             harmfulOverlappingBits++;
-                            if (harmfulOverlappingBits > 3) {
+                            if (harmfulOverlappingBits > 2) {
                                 return true;
                             }
                         }
