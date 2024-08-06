@@ -1251,6 +1251,7 @@ public class ServerVillage extends Village {
         boolean pointApproved;
         ArrayList<RoadDot> nearDotsToTest;
         RoadDot roadDot;
+        RoadEdge testEdge;
 
         // Iterate through all access points.
         for (PointOfInterest point : structure.pointsOfInterest) {
@@ -1285,7 +1286,7 @@ public class ServerVillage extends Village {
                 }
                 nearDotsToTest.remove(roadDot);
                 // Create test edge connecting the selected dot.
-                RoadEdge testEdge = new RoadEdge(
+                testEdge = new RoadEdge(
                         nextElementID++,
                         this,
                         new RoadJunction(nextElementID++, world, accessPoint.pos, 0.6),

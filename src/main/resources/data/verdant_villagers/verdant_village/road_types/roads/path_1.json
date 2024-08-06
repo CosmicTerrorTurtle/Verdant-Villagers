@@ -67,19 +67,19 @@
   "edge_special_template_block_columns": {
     "top": {
       "air": [
-        {"base_level_index": 0, "block_states": ["dir","tor","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0]},
+        {"base_level_index": 0, "block_states": ["wpl","tor","air","air","air","air","air"], "ints": [0,0,0,0,0,0,0]},
         {"base_level_index": -1, "block_states": ["air","air","air","air","air","air"], "ints": [0,0,0,0,0,0]},
         {"base_level_index": -1, "block_states": ["air","air","air","air","air","air"], "ints": [0,0,0,0,0,0]},
         {"base_level_index": -1, "block_states": ["air","air","air","air","air","air"], "ints": [0,0,0,0,0,0]}
       ],
       "terrain": [
-        {"base_level_index": 0, "block_states": ["dir","tor","air","air","air","air","wpl"], "ints": [0,0,0,0,0,0,2]},
+        {"base_level_index": 0, "block_states": ["wpl","tor","air","air","air","air","wpl"], "ints": [0,0,0,0,0,0,2]},
         {"base_level_index": -1, "block_states": ["air","air","air","air","air","wpl"], "ints": [0,0,0,0,0,2]},
         {"base_level_index": -1, "block_states": ["air","air","air","air","air","wpl"], "ints": [0,0,0,0,0,2]},
         {"base_level_index": 0, "block_states": ["wlo","wlo","wlo","wlo","wlo","wlo","wlo"], "ints": [2,2,2,2,2,2,2]}
       ],
       "fluid": [
-        {"base_level_index": 0, "block_states": ["dir","tor","air","air","air","air","wpl","wpl"], "ints": [0,0,0,0,0,0,2,2]},
+        {"base_level_index": 0, "block_states": ["wpl","tor","air","air","air","air","wpl","wpl"], "ints": [0,0,0,0,0,0,2,2]},
         {"base_level_index": -1, "block_states": ["air","air","air","air","air","wpl","wpl"], "ints": [0,0,0,0,0,2,2]},
         {"base_level_index": -1, "block_states": ["air","air","air","air","wpl","wpl","wpl"], "ints": [0,0,0,0,2,2,2]},
         {"base_level_index": 0, "block_states": ["wlo","wlo","wlo","wlo","wlo","wlo","wlo"], "ints": [2,2,2,2,2,2,2]}

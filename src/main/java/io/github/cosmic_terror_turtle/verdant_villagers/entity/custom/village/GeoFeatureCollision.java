@@ -5,6 +5,7 @@ import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.ro
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.road.RoadJunction;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure.Structure;
 import io.github.cosmic_terror_turtle.verdant_villagers.entity.custom.village.structure.StructureAccessPoint;
+import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
@@ -119,6 +120,9 @@ public class GeoFeatureCollision {
             return false;
         }
         // Check the bits for collision.
+        int harmfulOverlappingBits = 0;
+        boolean accessPathBitIsAir;
+        boolean edgeBitIsAir;
         ArrayList<BlockPos> toBeRemoved = new ArrayList<>();
         double connectionPointRadiusSquared;
         for (GeoFeatureBit accessPathBit : accessPath.getBits()) {
@@ -130,12 +134,27 @@ public class GeoFeatureCollision {
                     if (dot.pos.getSquaredDistance(edgeBit.blockPos) > connectionPointRadiusSquared) {
                         return true;
                     }
-                    // Remove the bit from the access path unless it should override arch/sidewalk positions of the edge.
+                    // Two bits close to the road to overlap. Remove the bit from the access path unless it should
+                    // override arch/sidewalk positions of the edge.
                     if (!edge.archPositions.contains(edgeBit.blockPos)
                             && (!edge.sidewalkPositions.contains(edgeBit.blockPos)
                                 || accessPath.archPositions.contains(edgeBit.blockPos))
                     ) {
                         toBeRemoved.add(edgeBit.blockPos);
+                        // If the overlapping bits are air and non-air, count it as a harmful collision. If the number
+                        // of those collisions is too high, return true.
+                        accessPathBitIsAir = accessPathBit.blockState.isOf(Blocks.AIR)
+                                || accessPath.sidewalkPositions.contains(accessPathBit.blockPos)
+                                || accessPath.archPositions.contains(accessPathBit.blockPos);
+                        edgeBitIsAir = edgeBit.blockState.isOf(Blocks.AIR)
+                                || edge.sidewalkPositions.contains(edgeBit.blockPos)
+                                || edge.archPositions.contains(edgeBit.blockPos);
+                        if (accessPathBitIsAir != edgeBitIsAir) {
+                            harmfulOverlappingBits++;
+                            if (harmfulOverlappingBits > 3) {
+                                return true;
+                            }
+                        }
                     }
                 }
             }
