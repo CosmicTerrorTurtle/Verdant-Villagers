@@ -510,13 +510,13 @@ public class RoadEdge extends RoadFeature {
     public class TerrainAdjustment {
 
         public static final double TERRAIN_ADJUSTING_SPACE = 4.0; // Space between terrain adjusting points
-        public static final double SMOOTHING_FACTOR = 0.25; // Factor by which a point gets adjusted towards its neighbors
+        public static final double SMOOTHING_FACTOR = 0.3; // Factor by which a point gets adjusted towards its neighbors
         public static final int MAX_SMOOTHING_ITERATIONS = 100; // The maximum number of iterations that smooth the adjusting offsets
         /**
          * The minimum difference between an adjusting point and the average of its two encompassing points for a point
          * to be classified as a bump.
          */
-        public static final double BUMP_THRESHOLD = 0.4;
+        public static final double BUMP_THRESHOLD = 0.35;
 
 
         private final double aOffsetStart;

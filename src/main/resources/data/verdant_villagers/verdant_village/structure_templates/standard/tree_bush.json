@@ -1,5 +1,5 @@
 {
-  "village_types": ["default", "coast", "under_ground", "sky", "nether_standard", "nether_coast", "nether_under_ground", "nether_sky"],
+  "village_types": ["default", "coast", "under_ground", "nether_standard", "nether_coast", "nether_under_ground"],
   "available_for_block_palettes": {},
   "available_for_villager_count": [0, 1000000],
   "data_per_structure_type": {

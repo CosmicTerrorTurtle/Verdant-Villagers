@@ -105,11 +105,11 @@
         {"base_level_index": 1, "block_states": ["bf0","bf0"], "ints": [0,0]}
       ],
       "air_above_terrain": [
-        {"base_level_index": 1, "block_states": ["bf1","bf0"], "ints": [0,0]},
-        {"base_level_index": 1, "block_states": ["bf1","bf0"], "ints": [0,0]},
-        {"base_level_index": 1, "block_states": ["bf1","bf0"], "ints": [0,0]},
-        {"base_level_index": 1, "block_states": ["bf1","bf0"], "ints": [0,0]},
-        {"base_level_index": 1, "block_states": ["bf1","bf1","bf1","bf1","bf0"], "ints": [3,0,0,0,0]}
+        {"base_level_index": 2, "block_states": ["bf1","bf0","bf0"], "ints": [0,0,0]},
+        {"base_level_index": 2, "block_states": ["bf1","bf0","bf0"], "ints": [0,0,0]},
+        {"base_level_index": 2, "block_states": ["bf1","bf0","bf0"], "ints": [0,0,0]},
+        {"base_level_index": 2, "block_states": ["bf1","bf0","bf0"], "ints": [0,0,0]},
+        {"base_level_index": 4, "block_states": ["bf1","bf1","bf1","bf0","bf0"], "ints": [3,0,0,0,0]}
       ],
       "terrain": [
         {"base_level_index": 1, "block_states": ["bf0","bf0"], "ints": [0,0]},

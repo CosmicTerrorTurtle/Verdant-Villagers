@@ -39,7 +39,7 @@ public class VerticalBlockColumn {
     }
 
     /**
-     * Tests of two columns overlap.
+     * Tests if two columns overlap.
      * @param column1 The first columns to test.
      * @param column2 The second columns to test.
      * @return True if the columns overlap.

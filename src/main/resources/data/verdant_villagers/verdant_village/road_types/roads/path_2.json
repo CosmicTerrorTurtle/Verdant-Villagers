@@ -93,10 +93,10 @@
         {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]}
       ],
       "air_above_terrain": [
-        {"base_level_index": 1, "block_states": ["wpl","pth"], "ints": [0,0]},
-        {"base_level_index": 1, "block_states": ["wpl","pth"], "ints": [0,0]},
-        {"base_level_index": 1, "block_states": ["wpl","pth"], "ints": [0,0]},
-        {"base_level_index": 4, "block_states": ["wlo","wlo","wlo","wlo","pth"], "ints": [3,0,0,0,0]}
+        {"base_level_index": 2, "block_states": ["wpl","dir","pth"], "ints": [0,0,0]},
+        {"base_level_index": 2, "block_states": ["wpl","dir","pth"], "ints": [0,0,0]},
+        {"base_level_index": 2, "block_states": ["wpl","dir","pth"], "ints": [0,0,0]},
+        {"base_level_index": 4, "block_states": ["wlo","wlo","wlo","dir","pth"], "ints": [3,0,0,0,0]}
       ],
       "terrain": [
         {"base_level_index": 1, "block_states": ["dir","pth"], "ints": [0,0]},
