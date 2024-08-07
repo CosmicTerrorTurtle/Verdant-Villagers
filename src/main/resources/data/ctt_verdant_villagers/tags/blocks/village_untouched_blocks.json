@@ -1,0 +1,25 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:portals",
+
+    "minecraft:barrier",
+    "minecraft:bedrock",
+    "minecraft:budding_amethyst",
+    "minecraft:chain_command_block",
+    "minecraft:command_block",
+    "minecraft:dragon_egg",
+    "minecraft:end_portal_frame",
+    "minecraft:jigsaw",
+    "minecraft:light",
+    "minecraft:moving_piston",
+    "minecraft:obsidian",
+    "minecraft:reinforced_deepslate",
+    "minecraft:repeating_command_block",
+    "minecraft:spawner",
+    "minecraft:structure_block",
+    "minecraft:structure_void",
+
+    "ctt_verdant_villagers:village_anchor"
+  ]
+}

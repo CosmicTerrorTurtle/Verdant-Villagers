@@ -1,0 +1,33 @@
+{
+  "palette_type_id": "ctt_verdant_villagers:wood",
+  "palette_id": "ctt_verdant_villagers:mangrove",
+  "add_to_defaults": true,
+  "indicator_blocks": [
+    "minecraft:mangrove_wood",
+    "minecraft:mangrove_log",
+    "minecraft:mangrove_planks"
+  ],
+  "replacement_rules": [
+    {"replace_block": "minecraft:grass_block", "with_state": "minecraft:muddy_mangrove_roots"},
+    {"replace_block": "minecraft:oak_sapling", "with_state": "minecraft:mangrove_propagule"},
+    {"replace_block": "minecraft:potted_oak_sapling", "with_state":  "minecraft:potted_mangrove_propagule"},
+    {"replace_block": "minecraft:oak_leaves", "with_block_and_copy_states":  "minecraft:mangrove_leaves"},
+    {"replace_block": "minecraft:oak_wood", "with_block_and_copy_states":  "minecraft:mangrove_wood"},
+    {"replace_block": "minecraft:stripped_oak_wood", "with_block_and_copy_states":  "minecraft:stripped_mangrove_wood"},
+    {"replace_block": "minecraft:oak_log", "with_block_and_copy_states":  "minecraft:mangrove_log"},
+    {"replace_block": "minecraft:stripped_oak_log", "with_block_and_copy_states":  "minecraft:stripped_mangrove_log"},
+    {"replace_block": "minecraft:oak_planks", "with_state":  "minecraft:mangrove_planks"},
+    {"replace_block": "minecraft:oak_stairs", "with_block_and_copy_states":  "minecraft:mangrove_stairs"},
+    {"replace_block": "minecraft:oak_slab", "with_block_and_copy_states":  "minecraft:mangrove_slab"},
+    {"replace_block": "minecraft:oak_sign", "with_block_and_copy_states":  "minecraft:mangrove_sign"},
+    {"replace_block": "minecraft:oak_wall_sign", "with_block_and_copy_states":  "minecraft:mangrove_wall_sign"},
+    {"replace_block": "minecraft:oak_hanging_sign", "with_block_and_copy_states":  "minecraft:mangrove_hanging_sign"},
+    {"replace_block": "minecraft:oak_wall_hanging_sign", "with_block_and_copy_states":  "minecraft:mangrove_wall_hanging_sign"},
+    {"replace_block": "minecraft:oak_fence", "with_block_and_copy_states":  "minecraft:mangrove_fence"},
+    {"replace_block": "minecraft:oak_fence_gate", "with_block_and_copy_states":  "minecraft:mangrove_fence_gate"},
+    {"replace_block": "minecraft:oak_door", "with_block_and_copy_states":  "minecraft:mangrove_door"},
+    {"replace_block": "minecraft:oak_trapdoor", "with_block_and_copy_states":  "minecraft:mangrove_trapdoor"},
+    {"replace_block": "minecraft:oak_pressure_plate", "with_state":  "minecraft:mangrove_pressure_plate"},
+    {"replace_block": "minecraft:oak_button", "with_block_and_copy_states":  "minecraft:mangrove_button"}
+  ]
+}

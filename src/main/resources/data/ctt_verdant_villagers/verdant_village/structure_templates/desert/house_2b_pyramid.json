@@ -1,0 +1,56 @@
+{
+  "village_types": ["desert", "desert_coast"],
+  "available_for_block_palettes": {},
+  "available_for_villager_count": [0, 1000000],
+  "data_per_structure_type": {
+    "house": {
+      "villagers_accounted_for": "2"
+    }
+  },
+  "abbreviation_map": {
+    "nul": "null",
+    "csp": "collision_space",
+    "air": "state:minecraft:air",
+    "pth": "state:minecraft:dirt_path",
+    "dir": "state:minecraft:dirt",
+    "sbl": "state:minecraft:sandstone",
+    "sst": "state:minecraft:sandstone_stairs:facing:west:half:bottom:shape:straight:waterlogged:false",
+    "ssl": "state:minecraft:sandstone_slab:type:bottom:waterlogged:false",
+    "ter": "state:minecraft:terracotta",
+    "wst": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_stairs:facing:north:half:bottom:shape:straight:waterlogged:false",
+    "crt": "state:minecraft:crafting_table",
+    "cnl": "state:minecraft:chest:facing:north:type:left:waterlogged:false",
+    "cnr": "state:minecraft:chest:facing:north:type:right:waterlogged:false",
+    "fur": "state:minecraft:furnace:facing:south:lit:false",
+    "tor": "state:minecraft:torch",
+    "wte": "state:minecraft:wall_torch:facing:east",
+    "bwh": "palette:0:ctt_verdant_villagers:color___minecraft:white_bed:facing:west:occupied:false:part:head",
+    "bwf": "palette:0:ctt_verdant_villagers:color___minecraft:white_bed:facing:west:occupied:false:part:foot"
+  },
+  "block_state_cube": [
+    [["nul","nul","nul","nul","sbl","sbl","sbl","nul","nul","nul","nul"],["air","air","air","air","sst","air","sst","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul"]],
+    [["nul","ter","sbl","sbl","sbl","sbl","sbl","sbl","sbl","ter","nul"],["air","ter","sbl","sbl","sbl","air","sbl","sbl","sbl","ter","air"],["air","air","air","air","ssl","air","ssl","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["nul","air","air","air","air","air","air","air","air","air","nul"]],
+    [["nul","sbl","sbl","sbl","sbl","sbl","sbl","sbl","sbl","sbl","nul"],["air","sbl","sbl","sbl","sbl","air","sbl","sbl","sbl","sbl","air"],["air","air","ssl","ssl","sbl","air","sbl","ssl","ssl","air","air"],["air","air","air","air","air","ssl","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["nul","air","air","air","air","air","air","air","air","air","nul"]],
+    [["nul","sbl","sbl","sbl","sbl","sbl","sbl","sbl","sbl","sbl","nul"],["air","sbl","sbl","sbl","fur","air","cnr","sbl","sbl","sbl","air"],["air","air","ssl","sbl","air","air","air","sbl","ssl","air","air"],["air","air","air","air","ssl","ssl","ssl","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["nul","air","air","air","air","air","air","air","air","air","nul"]],
+    [["nul","sbl","sbl","sbl","sbl","sbl","sbl","sbl","sbl","sbl","nul"],["air","sbl","sbl","sbl","wst","air","cnl","sbl","sbl","sbl","air"],["air","air","ssl","sbl","air","air","air","sbl","ssl","air","air"],["air","air","air","air","ssl","ssl","ssl","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["nul","air","air","air","air","air","air","air","air","air","nul"]],
+    [["nul","sbl","sbl","sbl","sbl","sbl","sbl","sbl","sbl","sbl","nul"],["air","sbl","sbl","sbl","bwf","air","bwf","sbl","sbl","sbl","air"],["air","air","ssl","sbl","air","air","air","sbl","ssl","air","air"],["air","air","air","air","ssl","ter","ssl","air","air","air","air"],["air","air","air","air","air","tor","air","air","air","air","air"],["nul","air","air","air","air","air","air","air","air","air","nul"]],
+    [["nul","sbl","sbl","sbl","sbl","sbl","sbl","sbl","sbl","sbl","nul"],["air","sbl","sbl","sbl","bwh","crt","bwh","sbl","sbl","sbl","air"],["air","air","ssl","sbl","air","wte","air","sbl","ssl","air","air"],["air","air","air","air","ssl","ssl","ssl","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["nul","air","air","air","air","air","air","air","air","air","nul"]],
+    [["nul","sbl","sbl","sbl","sbl","sbl","sbl","sbl","sbl","sbl","nul"],["air","sbl","sbl","sbl","sbl","sbl","sbl","sbl","sbl","sbl","air"],["air","air","ssl","sbl","sbl","sbl","sbl","sbl","ssl","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["nul","air","air","air","air","air","air","air","air","air","nul"]],
+    [["nul","sbl","sbl","sbl","sbl","sbl","sbl","sbl","sbl","sbl","nul"],["air","sbl","sbl","sbl","sbl","sbl","sbl","sbl","sbl","sbl","air"],["air","air","ssl","ssl","ssl","ssl","ssl","ssl","ssl","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["nul","air","air","air","air","air","air","air","air","air","nul"]],
+    [["nul","ter","sbl","sbl","sbl","sbl","sbl","sbl","sbl","ter","nul"],["air","ter","sbl","sbl","sbl","sbl","sbl","sbl","sbl","ter","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["nul","air","air","air","air","air","air","air","air","air","nul"]],
+    [["nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["nul","nul","nul","nul","nul","nul","nul","nul","nul","nul","nul"]]
+  ],
+  "center": [5, 0, 5],
+  "points_of_interest": [
+    {
+      "subclass_name": "StructureAccessPoint",
+      "subclass_data": {
+        "pos": [6, 0, 0],
+        "access_path_road_type": "ctt_verdant_villagers:path_1",
+        "connection_volume": [[6, 0, 0],[6, 0, 0]],
+        "sidewalk_positions": [],
+        "arch_positions": []
+      }
+    }
+  ]
+}

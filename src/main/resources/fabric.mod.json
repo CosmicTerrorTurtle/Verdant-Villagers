@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "verdant_villagers",
+  "id": "ctt_verdant_villagers",
   "version": "${version}",
 
   "name": "Verdant Villagers",
@@ -13,22 +13,22 @@
   },
 
   "license": "MIT License",
-  "icon": "assets/verdant_villagers/icon.png",
+  "icon": "assets/ctt_verdant_villagers/icon.png",
 
   "environment": "*",
   "entrypoints": {
     "main": [
-      "io.github.cosmic_terror_turtle.verdant_villagers.VerdantVillagers"
+      "io.github.cosmic_terror_turtle.ctt_verdant_villagers.VerdantVillagers"
     ],
     "client": [
-      "io.github.cosmic_terror_turtle.verdant_villagers.VerdantVillagersClient"
+      "io.github.cosmic_terror_turtle.ctt_verdant_villagers.VerdantVillagersClient"
     ],
     "fabric-datagen": [
-      "io.github.cosmic_terror_turtle.verdant_villagers.VerdantVillagersDataGenerator"
+      "io.github.cosmic_terror_turtle.ctt_verdant_villagers.VerdantVillagersDataGenerator"
     ]
   },
   "mixins": [
-    "verdant_villagers.mixins.json"
+    "ctt_verdant_villagers.mixins.json"
   ],
 
   "depends": {

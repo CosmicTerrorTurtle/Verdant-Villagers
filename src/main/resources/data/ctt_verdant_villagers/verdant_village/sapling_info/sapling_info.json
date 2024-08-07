@@ -1,0 +1,59 @@
+{
+  "minecraft:acacia_sapling": {
+    "diameters_per_tree_type": {
+      "1": 9
+    }
+  },
+  "minecraft:bamboo_sapling": {
+    "diameters_per_tree_type": {
+      "1": 1
+    }
+  },
+  "minecraft:birch_sapling": {
+    "diameters_per_tree_type": {
+      "1": 5
+    }
+  },
+  "minecraft:cherry_sapling": {
+    "diameters_per_tree_type": {
+      "1": 9
+    }
+  },
+  "minecraft:crimson_fungus": {
+    "diameters_per_tree_type": {
+      "1": 5
+    }
+  },
+  "minecraft:dark_oak_sapling": {
+    "diameters_per_tree_type": {
+      "4": 10
+    }
+  },
+  "minecraft:jungle_sapling": {
+    "diameters_per_tree_type": {
+      "1": 5,
+      "4": 12
+    }
+  },
+  "minecraft:mangrove_propagule": {
+    "diameters_per_tree_type": {
+      "1": 9
+    }
+  },
+  "minecraft:oak_sapling": {
+    "diameters_per_tree_type": {
+      "1": 9
+    }
+  },
+  "minecraft:spruce_sapling": {
+    "diameters_per_tree_type": {
+      "1": 5,
+      "4": 12
+    }
+  },
+  "minecraft:warped_fungus": {
+    "diameters_per_tree_type": {
+      "1": 5
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "village_types": ["desert", "desert_coast"],
+  "available_for_block_palettes": {},
+  "available_for_villager_count": [0, 1000000],
+  "data_per_structure_type": {
+    "decoration": {
+      "villagers_accounted_for": "1"
+    }
+  },
+  "abbreviation_map": {
+    "nul": "null",
+    "csp": "collision_space",
+    "air": "state:minecraft:air",
+    "css": "state:minecraft:cut_sandstone",
+    "ter": "state:minecraft:terracotta",
+    "tor": "state:minecraft:torch"
+  },
+  "block_state_cube": [
+    [["nul","nul","nul"],["csp","air","csp"],["csp","air","csp"],["csp","air","csp"],["csp","air","csp"],["csp","air","csp"]],
+    [["nul","css","nul"],["air","css","air"],["air","css","air"],["air","ter","air"],["air","tor","air"],["air","air","air"]],
+    [["nul","nul","nul"],["csp","air","csp"],["csp","air","csp"],["csp","air","csp"],["csp","air","csp"],["csp","air","csp"]]
+  ],
+  "center": [1, 0, 1],
+  "points_of_interest": []
+}

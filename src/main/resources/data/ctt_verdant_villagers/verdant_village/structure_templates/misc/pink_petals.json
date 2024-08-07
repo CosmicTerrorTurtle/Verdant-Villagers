@@ -1,0 +1,23 @@
+{
+  "village_types": ["default", "desert", "coast", "desert_coast", "under_ground", "sky", "nether_standard", "nether_coast", "nether_under_ground", "nether_sky"],
+  "available_for_block_palettes": {
+    "ctt_verdant_villagers:wood": ["ctt_verdant_villagers:cherry"]
+  },
+  "available_for_villager_count": [0, 1000000],
+  "data_per_structure_type": {
+    "decoration": {
+      "villagers_accounted_for": "0.2"
+    }
+  },
+  "abbreviation_map": {
+    "nul": "null",
+    "csp": "collision_space",
+    "gra": "palette:0:ctt_verdant_villagers:wood___minecraft:grass_block",
+    "ppe": "state:minecraft:pink_petals:flower_amount:4"
+  },
+  "block_state_cube": [
+    [["gra"],["ppe"],["air"],["air"]]
+  ],
+  "center": [0, 0, 0],
+  "points_of_interest": []
+}

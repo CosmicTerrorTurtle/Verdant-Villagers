@@ -1,0 +1,57 @@
+{
+  "abbreviation_map": {
+    "air": "state:minecraft:air",
+    "bf0": "palette:0:ctt_verdant_villagers:stone___minecraft:stone_bricks",
+    "gla": "state:minecraft:glass"
+  },
+  "scale": 1.0,
+  "edge_block_column_radii": [
+    1.3,
+    1.8,
+    2.0
+  ],
+  "edge_template_block_columns": {
+    "top": {
+      "air": [
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air"], "ints": [0,0,0,0,0]}
+      ],
+      "terrain": [
+        {"base_level_index": -1, "block_states": ["air","air","air","air","air"], "ints": [0,0,0,0,0]}
+      ],
+      "fluid": [
+        {"base_level_index": 1, "block_states": ["bf0","bf0","air","air","air","air","gla","gla"], "ints": [0,0,0,0,0,0,2,2]},
+        {"base_level_index": 1, "block_states": ["bf0","bf0","air","air","air","air","gla","gla"], "ints": [0,0,0,0,0,0,2,2]},
+        {"base_level_index": 1, "block_states": ["bf0","bf0","gla","gla","gla","air","gla","gla"], "ints": [2,2,2,2,2,2,2,2]}
+      ]
+    },
+    "bottom": {
+      "air": [
+        {"base_level_index": 1, "block_states": ["bf0","bf0"], "ints": [0,0]}
+      ],
+      "air_above_terrain": [
+        {"base_level_index": 1, "block_states": ["bf0","bf0"], "ints": [0,0]}
+      ],
+      "terrain": [
+        {"base_level_index": 1, "block_states": ["bf0","bf0"], "ints": [0,0]}
+      ],
+      "fluid": [
+        {"base_level_index": 1, "block_states": ["bf0","bf0"], "ints": [0,0]}
+      ]
+    }
+  },
+  "edge_special_column_space": 1000000.0,
+  "edge_special_block_column_radii": [],
+  "edge_special_template_block_columns": {
+    "top": {
+      "air": [],
+      "terrain": [],
+      "fluid": []
+    },
+    "bottom": {
+      "air": [],
+      "air_above_terrain": [],
+      "terrain": [],
+      "fluid": []
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "palette_type_id": "ctt_verdant_villagers:stone",
+  "palette_id": "ctt_verdant_villagers:deepslate_tiles",
+  "add_to_defaults": true,
+  "indicator_blocks": [
+    "minecraft:deepslate",
+    "minecraft:deepslate_tiles"
+  ],
+  "replacement_rules": [
+    {"replace_block": "minecraft:stone_bricks", "with_state": "minecraft:deepslate_tiles"},
+    {"replace_block": "minecraft:chiseled_stone_bricks", "with_state": "minecraft:cracked_deepslate_tiles"},
+    {"replace_block": "minecraft:stone_brick_stairs", "with_block_and_copy_states":  "minecraft:deepslate_tile_stairs"},
+    {"replace_block": "minecraft:stone_brick_slab", "with_block_and_copy_states":  "minecraft:deepslate_tile_slab"},
+    {"replace_block": "minecraft:stone_brick_wall", "with_block_and_copy_states":  "minecraft:deepslate_tile_wall"}
+  ]
+}

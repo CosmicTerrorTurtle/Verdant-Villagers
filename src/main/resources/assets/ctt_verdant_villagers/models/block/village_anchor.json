@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "ctt_verdant_villagers:block/village_anchor"
+  }
+}

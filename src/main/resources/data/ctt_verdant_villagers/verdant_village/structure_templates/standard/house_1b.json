@@ -1,0 +1,52 @@
+{
+  "village_types": ["default", "coast", "under_ground", "sky", "nether_standard", "nether_coast", "nether_under_ground", "nether_sky"],
+  "available_for_block_palettes": {},
+  "available_for_villager_count": [0, 15],
+  "data_per_structure_type": {
+    "house": {
+      "villagers_accounted_for": "1"
+    }
+  },
+  "abbreviation_map": {
+    "nul": "null",
+    "air": "state:minecraft:air",
+    "pth": "state:minecraft:dirt_path",
+    "dir": "state:minecraft:dirt",
+    "stf": "palette:0:ctt_verdant_villagers:stone___minecraft:stone_bricks",
+    "wlo": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_log:axis:y",
+    "wpl": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_planks",
+    "sbw": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_stairs:waterlogged:false:half:bottom:facing:west:shape:straight",
+    "sbe": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_stairs:waterlogged:false:half:bottom:facing:east:shape:straight",
+    "stw": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_stairs:waterlogged:false:half:top:facing:west:shape:straight",
+    "ste": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_stairs:waterlogged:false:half:top:facing:east:shape:straight",
+    "dle": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_door:half:lower:facing:east:hinge:left:open:false",
+    "due": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_door:half:upper:facing:east:hinge:left:open:false",
+    "crt": "state:minecraft:crafting_table",
+    "bhe": "palette:0:ctt_verdant_villagers:color___minecraft:white_bed:facing:east:part:head",
+    "bfe": "palette:0:ctt_verdant_villagers:color___minecraft:white_bed:facing:east:part:foot",
+    "gns": "state:minecraft:glass_pane:north:true:south:true",
+    "gwe": "state:minecraft:glass_pane:west:true:east:true",
+    "tor": "state:minecraft:torch"
+  },
+  "block_state_cube": [
+    [["nul","nul","nul","nul","nul","nul","nul"],["air","air","air","air","air","air","air"],["air","air","air","air","air","air","air"],["air","air","air","air","air","air","air"],["sbw","sbw","sbw","sbw","sbw","sbw","sbw"],["air","air","air","air","air","air","air"],["air","air","air","air","air","air","air"]],
+    [["nul","stf","stf","stf","stf","stf","nul"],["air","wlo","wpl","wpl","wpl","wlo","air"],["air","wlo","wpl","gns","wpl","wlo","air"],["air","wlo","wpl","wpl","wpl","wlo","air"],["ste","wlo","wpl","wpl","wpl","wlo","ste"],["sbw","sbw","sbw","sbw","sbw","sbw","sbw"],["air","air","air","air","air","air","air"]],
+    [["nul","stf","stf","stf","stf","stf","nul"],["air","wpl","crt","tor","bhe","wpl","air"],["air","gwe","air","air","air","gwe","air"],["air","wpl","air","air","air","wpl","air"],["air","wpl","air","air","air","wpl","air"],["ste","wpl","wpl","wpl","wpl","wpl","ste"],["sbw","sbw","sbw","sbw","sbw","sbw","sbw"]],
+    [["nul","stf","stf","stf","stf","stf","nul"],["air","wpl","air","air","bfe","wpl","air"],["air","gwe","air","air","air","gwe","air"],["air","wpl","air","air","air","wpl","air"],["air","wpl","air","air","air","wpl","air"],["stw","wpl","wpl","wpl","wpl","wpl","stw"],["sbe","sbe","sbe","sbe","sbe","sbe","sbe"]],
+    [["nul","stf","stf","stf","stf","stf","nul"],["air","wlo","wpl","dle","wpl","wlo","air"],["air","wlo","wpl","due","wpl","wlo","air"],["air","wlo","wpl","wpl","wpl","wlo","air"],["stw","wlo","wpl","wpl","wpl","wlo","stw"],["sbe","sbe","sbe","sbe","sbe","sbe","sbe"],["air","air","air","air","air","air","air"]],
+    [["nul","nul","nul","nul","nul","nul","nul"],["air","air","air","air","air","air","air"],["air","air","air","air","air","air","air"],["air","air","air","air","air","air","air"],["sbe","sbe","sbe","sbe","sbe","sbe","sbe"],["air","air","air","air","air","air","air"],["air","air","air","air","air","air","air"]]
+  ],
+  "center": [3, 0, 3],
+  "points_of_interest": [
+    {
+      "subclass_name": "StructureAccessPoint",
+      "subclass_data": {
+        "pos": [-3, 0, 0],
+        "access_path_road_type": "ctt_verdant_villagers:path_1",
+        "connection_volume": [[-3, 0, -1],[-3, 6, 1]],
+        "sidewalk_positions": [],
+        "arch_positions": []
+      }
+    }
+  ]
+}

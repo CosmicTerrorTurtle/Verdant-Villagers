@@ -1,0 +1,15 @@
+{
+  "palette_type_id": "ctt_verdant_villagers:stone",
+  "palette_id": "ctt_verdant_villagers:prismarine",
+  "add_to_defaults": false,
+  "indicator_blocks": [
+    "minecraft:prismarine"
+  ],
+  "replacement_rules": [
+    {"replace_block": "minecraft:stone_bricks", "with_state": "minecraft:prismarine"},
+    {"replace_block": "minecraft:chiseled_stone_bricks", "with_state": "minecraft:prismarine_bricks"},
+    {"replace_block": "minecraft:stone_brick_stairs", "with_block_and_copy_states":  "minecraft:prismarine_stairs"},
+    {"replace_block": "minecraft:stone_brick_slab", "with_block_and_copy_states":  "minecraft:prismarine_slab"},
+    {"replace_block": "minecraft:stone_brick_wall", "with_block_and_copy_states":  "minecraft:prismarine_wall"}
+  ]
+}

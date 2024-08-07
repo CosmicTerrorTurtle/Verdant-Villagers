@@ -1,0 +1,59 @@
+{
+  "village_types": ["under_water", "under_lava"],
+  "available_for_block_palettes": {},
+  "available_for_villager_count": [0, 1000000],
+  "data_per_structure_type": {
+    "house": {
+      "villagers_accounted_for": "2"
+    }
+  },
+  "abbreviation_map": {
+    "nul": "null",
+    "air": "state:minecraft:air",
+    "pot": "palette:0:ctt_verdant_villagers:wood___minecraft:potted_oak_sapling",
+    "lgx": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_log:axis:x",
+    "lgy": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_log:axis:y",
+    "lgz": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_log:axis:z",
+    "pla": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_planks",
+    "stn": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_stairs:facing:north:half:bottom:shape:straight:waterlogged:false",
+    "stw": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_stairs:facing:west:half:bottom:shape:straight:waterlogged:false",
+    "fnc": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_fence:east:false:north:false:south:false:waterlogged:false:west:false",
+    "dol": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_door:facing:west:half:lower:hinge:left:open:false:powered:false",
+    "dou": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_door:facing:west:half:upper:hinge:left:open:false:powered:false",
+    "prp": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_pressure_plate:powered:false",
+    "crt": "state:minecraft:crafting_table",
+    "brn": "state:minecraft:barrel:facing:north:open:false",
+    "bru": "state:minecraft:barrel:facing:up:open:false",
+    "css": "state:minecraft:chest:facing:south:type:single:waterlogged:false",
+    "cnl": "state:minecraft:chest:facing:north:type:left:waterlogged:false",
+    "cnr": "state:minecraft:chest:facing:north:type:right:waterlogged:false",
+    "gla": "state:minecraft:glass",
+    "beh": "palette:0:ctt_verdant_villagers:color___minecraft:white_bed:facing:east:occupied:false:part:head",
+    "bef": "palette:0:ctt_verdant_villagers:color___minecraft:white_bed:facing:east:occupied:false:part:foot",
+    "lan": "state:minecraft:lantern:hanging:true:waterlogged:false"
+  },
+  "block_state_cube": [
+    [["nul","nul","pla","lgy","pla","nul","nul"],["nul","nul","gla","lgy","gla","nul","nul"],["nul","nul","gla","lgy","gla","nul","nul"],["nul","nul","nul","nul","nul","nul","nul"],["nul","nul","nul","nul","nul","nul","nul"]],
+    [["nul","pla","pla","pla","pla","pla","nul"],["nul","gla","beh","crt","beh","gla","nul"],["nul","gla","air","air","air","gla","nul"],["nul","nul","gla","lgy","gla","nul","nul"],["nul","nul","nul","nul","nul","nul","nul"]],
+    [["pla","pla","pla","pla","pla","pla","pla"],["gla","bru","bef","air","bef","cnr","gla"],["gla","air","air","air","air","air","gla"],["nul","gla","air","air","air","gla","nul"],["nul","nul","gla","lgx","gla","nul","nul"]],
+    [["lgy","pla","pla","pla","pla","pla","lgy"],["lgy","css","air","air","air","cnl","lgy"],["lgy","air","air","air","air","air","lgy"],["nul","lgy","air","lan","air","lgy","nul"],["nul","nul","lgz","lgz","lgz","nul","nul"]],
+    [["pla","pla","pla","pla","pla","pla","pla"],["gla","stn","fnc","air","air","brn","gla"],["gla","air","prp","air","air","air","gla"],["nul","gla","air","air","air","gla","nul"],["nul","nul","gla","gla","gla","nul","nul"]],
+    [["nul","pla","pla","pla","pla","pla","nul"],["nul","gla","stw","air","pot","gla","nul"],["nul","gla","air","air","air","gla","nul"],["nul","nul","gla","air","gla","nul","nul"],["nul","nul","nul","gla","nul","nul","nul"]],
+    [["nul","nul","pla","pla","pla","nul","nul"],["nul","nul","gla","dol","gla","nul","nul"],["nul","nul","gla","dou","gla","nul","nul"],["nul","nul","gla","gla","gla","nul","nul"],["nul","nul","nul","gla","nul","nul","nul"]],
+    [["nul","nul","pla","pla","pla","nul","nul"],["nul","nul","gla","air","gla","nul","nul"],["nul","nul","gla","air","gla","nul","nul"],["nul","nul","gla","air","gla","nul","nul"],["nul","nul","gla","gla","gla","nul","nul"]],
+    [["nul","nul","pla","pla","pla","nul","nul"],["nul","nul","gla","gla","gla","nul","nul"],["nul","nul","gla","gla","gla","nul","nul"],["nul","nul","gla","gla","gla","nul","nul"],["nul","nul","gla","gla","gla","nul","nul"]]
+  ],
+  "center": [5, 0, 3],
+  "points_of_interest": [
+    {
+      "subclass_name": "StructureAccessPoint",
+      "subclass_data": {
+        "pos": [-5, 0, 0],
+        "access_path_road_type": "ctt_verdant_villagers:path_1",
+        "connection_volume": [[-5,0,-1],[-4,4,1]],
+        "sidewalk_positions": [[-5,0,-1],[-5,0,0],[-5,0,1],[-4,0,-1],[-4,0,1]],
+        "arch_positions": [[-5,1,-1],[-5,1,0],[-5,1,1],[-4,1,-1],[-4,1,1],[-5,2,-1],[-5,2,0],[-5,2,1],[-4,2,-1],[-4,2,1],[-5,3,-1],[-5,3,0],[-5,3,1],[-4,3,-1],[-4,3,1],[-5,4,-1],[-5,4,0],[-5,4,1],[-4,4,-1],[-4,4,0],[-4,4,1]]
+      }
+    }
+  ]
+}

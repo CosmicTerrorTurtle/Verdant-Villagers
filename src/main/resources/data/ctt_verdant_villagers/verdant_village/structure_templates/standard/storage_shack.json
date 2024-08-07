@@ -1,0 +1,44 @@
+{
+  "village_types": ["default", "desert", "coast", "desert_coast", "under_ground", "sky", "nether_standard", "nether_coast", "nether_under_ground", "nether_sky"],
+  "available_for_block_palettes": {},
+  "available_for_villager_count": [0, 15],
+  "data_per_structure_type": {
+    "storage": {
+      "villagers_accounted_for": "4"
+    }
+  },
+  "abbreviation_map": {
+    "nul": "null",
+    "air": "state:minecraft:air",
+    "pth": "state:minecraft:dirt_path",
+    "dir": "state:minecraft:dirt",
+    "stf": "palette:0:ctt_verdant_villagers:stone___minecraft:stone_bricks",
+    "wlo": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_log:axis:y",
+    "wpl": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_planks",
+    "sbn": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_stairs:waterlogged:false:half:bottom:facing:north:shape:straight",
+    "sbs": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_stairs:waterlogged:false:half:bottom:facing:south:shape:straight",
+    "wsb": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_slab:waterlogged:false:type:bottom",
+    "cws": "state:minecraft:chest:facing:west:type:single",
+    "bru": "state:minecraft:barrel:facing:up",
+    "gns": "state:minecraft:glass_pane:north:true:south:true"
+  },
+  "block_state_cube": [
+    [["nul","nul","nul","nul","nul","nul","nul"],["air","air","air","air","air","air","air"],["air","air","air","air","air","air","air"],["air","air","air","air","air","air","air"]],
+    [["nul","stf","stf","stf","stf","stf","nul"],["air","wlo","wpl","wpl","wpl","wlo","air"],["air","sbs","wpl","gns","wpl","sbn","air"],["air","air","wsb","wsb","wsb","air","air"]],
+    [["nul","stf","stf","stf","stf","stf","nul"],["air","wpl","cws","bru","cws","wpl","air"],["air","sbs","air","air","air","sbn","air"],["air","air","wsb","wsb","wsb","air","air"]],
+    [["nul","nul","pth","pth","pth","nul","nul"],["air","air","air","air","air","air","air"],["air","air","air","air","air","air","air"],["air","air","air","air","air","air","air"]]
+  ],
+  "center": [1, 0, 3],
+  "points_of_interest": [
+    {
+      "subclass_name": "StructureAccessPoint",
+      "subclass_data": {
+        "pos": [-1, 0, 0],
+        "access_path_road_type": "ctt_verdant_villagers:path_1",
+        "connection_volume": [[-1,0,-1],[-1,3,1]],
+        "sidewalk_positions": [],
+        "arch_positions": []
+      }
+    }
+  ]
+}

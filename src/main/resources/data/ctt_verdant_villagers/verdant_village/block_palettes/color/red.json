@@ -1,0 +1,27 @@
+{
+  "palette_type_id": "ctt_verdant_villagers:color",
+  "palette_id": "ctt_verdant_villagers:red",
+  "add_to_defaults": true,
+  "indicator_blocks": [
+    "minecraft:beetroots",
+    "minecraft:poppy",
+    "minecraft:rose_bush",
+    "minecraft:red_tulip"
+  ],
+  "replacement_rules": [
+    {"replace_block": "minecraft:white_bed", "with_block_and_copy_states":  "minecraft:red_bed"},
+    {"replace_block": "minecraft:white_wool", "with_state": "minecraft:red_wool"},
+    {"replace_block": "minecraft:white_carpet", "with_state": "minecraft:red_carpet"},
+    {"replace_block": "minecraft:white_stained_glass", "with_state": "minecraft:red_stained_glass"},
+    {"replace_block": "minecraft:white_stained_glass_pane", "with_block_and_copy_states": "minecraft:red_stained_glass_pane"},
+    {"replace_block": "minecraft:white_terracotta", "with_state": "minecraft:red_terracotta"},
+    {"replace_block": "minecraft:white_glazed_terracotta", "with_block_and_copy_states": "minecraft:red_glazed_terracotta"},
+    {"replace_block": "minecraft:white_banner", "with_block_and_copy_states": "minecraft:red_banner"},
+    {"replace_block": "minecraft:white_wall_banner", "with_block_and_copy_states": "minecraft:red_wall_banner"},
+    {"replace_block": "minecraft:white_shulker_box", "with_block_and_copy_states": "minecraft:red_shulker_box"},
+    {"replace_block": "minecraft:white_concrete", "with_state": "minecraft:red_concrete"},
+    {"replace_block": "minecraft:white_concrete_powder", "with_state": "minecraft:red_concrete_powder"},
+    {"replace_block": "minecraft:white_candle", "with_block_and_copy_states": "minecraft:red_candle"},
+    {"replace_block": "minecraft:white_candle_cake", "with_state": "minecraft:red_candle_cake"}
+  ]
+}

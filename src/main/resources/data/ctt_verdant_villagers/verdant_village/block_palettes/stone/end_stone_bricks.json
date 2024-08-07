@@ -1,0 +1,16 @@
+{
+  "palette_type_id": "ctt_verdant_villagers:stone",
+  "palette_id": "ctt_verdant_villagers:end_stone_bricks",
+  "add_to_defaults": false,
+  "indicator_blocks": [
+    "minecraft:end_stone",
+    "minecraft:end_stone_bricks"
+  ],
+  "replacement_rules": [
+    {"replace_block": "minecraft:stone_bricks", "with_state": "minecraft:end_stone_bricks"},
+    {"replace_block": "minecraft:chiseled_stone_bricks", "with_state": "minecraft:end_stone"},
+    {"replace_block": "minecraft:stone_brick_stairs", "with_block_and_copy_states":  "minecraft:end_stone_brick_stairs"},
+    {"replace_block": "minecraft:stone_brick_slab", "with_block_and_copy_states":  "minecraft:end_stone_brick_slab"},
+    {"replace_block": "minecraft:stone_brick_wall", "with_block_and_copy_states":  "minecraft:end_stone_brick_wall"}
+  ]
+}
