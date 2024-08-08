@@ -4,6 +4,7 @@
     "#minecraft:portals",
 
     "minecraft:barrier",
+    "minecraft:beacon",
     "minecraft:bedrock",
     "minecraft:budding_amethyst",
     "minecraft:chain_command_block",
@@ -16,6 +17,7 @@
     "minecraft:obsidian",
     "minecraft:reinforced_deepslate",
     "minecraft:repeating_command_block",
+    "minecraft:respawn_anchor",
     "minecraft:spawner",
     "minecraft:structure_block",
     "minecraft:structure_void",

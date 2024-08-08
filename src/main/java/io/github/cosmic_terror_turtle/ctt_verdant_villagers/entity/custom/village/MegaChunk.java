@@ -1,22 +1,26 @@
 package io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village;
 
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.util.ModTags;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.util.NbtUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static io.github.cosmic_terror_turtle.ctt_verdant_villagers.util.MathUtils.getCubeCoordinate;
 
 public class MegaChunk {
 
+    /**
+     * The side length of a {@link MegaChunk}.
+     */
     public static final int LENGTH = 128;
 
     public final int elementID;
@@ -36,15 +40,17 @@ public class MegaChunk {
     }
 
     /**
-     * Scans the blocks in this mega chunk. This includes counting block types and removing trees.
+     * Scans the blocks in this mega chunk. This includes counting block types, scanning for blocks to mine and
+     * possibly removing them.
      * @param world The world this mega chunk exists in.
      * @param blockCounts The map that the block type counts will be added to.
-     * @param removeTrees Whether log blocks found should be immediately removed.
+     * @param removeBlocksImmediately Whether blocks found to mine should be immediately removed.
      */
-    public void scanBlocks(World world, HashMap<Identifier, Integer> blockCounts, boolean removeTrees) {
+    public void scanBlocks(World world, HashMap<Identifier, Integer> blockCounts, boolean removeBlocksImmediately) {
         BlockPos pos;
         BlockState state;
         Identifier blockId;
+        ArrayList<BlockPos> toRemoveImmediately = new ArrayList<>();
         for (int i=0; i<LENGTH; i++) {
             for (int j=0; j<LENGTH; j++) {
                 for (int k=0; k<LENGTH; k++) {
@@ -52,11 +58,17 @@ public class MegaChunk {
                     state = world.getBlockState(pos);
                     blockId = Registries.BLOCK.getId(state.getBlock());
                     blockCounts.put(blockId, blockCounts.getOrDefault(blockId, 0)+1);
-                    if (removeTrees && state.isIn(BlockTags.LOGS)) {
-                        world.removeBlock(pos, false);
+                    // Check for block to mine and add them to the village's list or remove them immediately.
+                    if (state.isIn(ModTags.Blocks.VILLAGE_TREE_BLOCKS)) {
+                        if (removeBlocksImmediately) {
+                            toRemoveImmediately.add(pos);
+                        }
                     }
                 }
             }
+        }
+        for (BlockPos removePos : toRemoveImmediately) {
+            world.removeBlock(removePos, false);
         }
     }
 

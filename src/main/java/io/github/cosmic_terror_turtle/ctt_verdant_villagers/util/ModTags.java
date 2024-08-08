@@ -10,6 +10,11 @@ import net.minecraft.util.Identifier;
 public class ModTags {
     public static class Blocks {
 
+
+        /**
+         * Blocks that the village considers to be part of trees and mushrooms.
+         */
+        public static final TagKey<Block> VILLAGE_TREE_BLOCKS = getTag("village_tree_blocks");
         /**
          * Blocks that the village will never remove.
          */
