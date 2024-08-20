@@ -54,7 +54,7 @@ public class RoadEdge extends RoadFeature {
      * @param spiral Whether this edge should overcome great height differences using spiral ramps.
      */
     public RoadEdge(int elementID, ServerVillage village, RoadJunction from, RoadJunction to,
-                     boolean adjustToTerrain, RoadType roadType, boolean isAccessPath, boolean spiral) {
+                     boolean adjustToTerrain, RoadType roadType, boolean isAccessPath, boolean spiral, boolean fluidIsSurfaceForCoasts) {
         super(elementID);
         this.from = from;
         this.to = to;
@@ -67,7 +67,7 @@ public class RoadEdge extends RoadFeature {
         }
 
         preparePolynomialFunction(village.random, isAccessPath, spiral);
-        setBitsMegaBlocksAndRoadDots(village, roadType, isAccessPath, spiral);
+        setBitsMegaBlocksAndRoadDots(village, roadType, isAccessPath, spiral, fluidIsSurfaceForCoasts);
     }
 
     private void preparePolynomialFunction(Random random, boolean isAccessPath, boolean spiral) {
@@ -132,7 +132,7 @@ public class RoadEdge extends RoadFeature {
     }
 
     private void setBitsMegaBlocksAndRoadDots(ServerVillage village, RoadType roadType,
-                                              boolean isAccessPath, boolean spiral) {
+                                              boolean isAccessPath, boolean spiral, boolean fluidIsSurfaceForCoasts) {
         boolean overwriteJunctions = isAccessPath;
 
         ArrayList<VerticalBlockColumn> normalColumns = new ArrayList<>();
@@ -166,7 +166,7 @@ public class RoadEdge extends RoadFeature {
         }
         TerrainAdjustment terrainAdjustment;
         if (adjustToTerrain) {
-            terrainAdjustment = new TerrainAdjustment(village, sin, cos);
+            terrainAdjustment = new TerrainAdjustment(village, sin, cos, fluidIsSurfaceForCoasts);
         } else {
             terrainAdjustment = null;
         }
@@ -520,7 +520,7 @@ public class RoadEdge extends RoadFeature {
         private final double aOffsetEnd;
         private ArrayList<Double> yOffsetValues;
 
-        public TerrainAdjustment(ServerVillage village, double sin, double cos) {
+        public TerrainAdjustment(ServerVillage village, double sin, double cos, boolean fluidIsSurfaceForCoasts) {
             aOffsetStart = from.sameHeightRadius;
             aOffsetEnd = to.sameHeightRadius;
 
@@ -531,7 +531,7 @@ public class RoadEdge extends RoadFeature {
                 if (a<aOffsetStart || d-aOffsetEnd<a) {
                     yOffsetValues.add(0.0);
                 } else {
-                    yOffsetValues.add(getTerrainOffset(village, sin, cos, a, ySlope*(a-aOffsetStart), 0.2*d));
+                    yOffsetValues.add(getTerrainOffset(village, sin, cos, a, ySlope*(a-aOffsetStart), 0.2*d, fluidIsSurfaceForCoasts));
                 }
             }
 
@@ -547,13 +547,19 @@ public class RoadEdge extends RoadFeature {
             smoothOutliers();
         }
 
-        private double getTerrainOffset(ServerVillage village, double sin, double cos, double a, double yCoord, double maxOffset) {
+        private double getTerrainOffset(ServerVillage village, double sin, double cos, double a,
+                                        double yCoord, double maxOffset, boolean fluidIsSurfaceForCoasts) {
             BlockPos startPosition = from.pos.add(
                     (int) (a*cos - getFunctionAt(a)*sin),
                     (int) yCoord,
                     (int) (a*sin + getFunctionAt(a)*cos)
             );
-            BlockPos surfaceBlock = village.getSurfaceBlock(startPosition, (int) (startPosition.getY()-maxOffset), (int) (startPosition.getY()+maxOffset), false);
+            BlockPos surfaceBlock = village.getSurfaceBlock(
+                    startPosition,
+                    (int) (startPosition.getY()-maxOffset),
+                    (int) (startPosition.getY()+maxOffset),
+                    fluidIsSurfaceForCoasts
+            );
             double terrainOffset;
             if (surfaceBlock != null) {
                 terrainOffset = surfaceBlock.getY() - yCoord - from.pos.getY();

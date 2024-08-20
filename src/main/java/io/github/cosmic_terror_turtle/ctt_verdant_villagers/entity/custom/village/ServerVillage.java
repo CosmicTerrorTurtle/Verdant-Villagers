@@ -99,6 +99,10 @@ public class ServerVillage extends Village {
      */
     private static final int ACCESS_PATH_BASE_MAX_LENGTH = 20;
     public static final int ROAD_PILLAR_EXTENSION_LENGTH = 20;
+    /**
+     * The percentage of major roads that will become bridges over fluid surfaces for coastal villages.
+     */
+    private static final double ROAD_EDGE_COASTAL_BRIDGES_CHANCE = 0.7;
 
     /**
      * If true, the villagers get counted normally. If false, the count is incremented every {@link ServerVillage#update()}
@@ -599,7 +603,7 @@ public class ServerVillage extends Village {
      */
     private double getTicksBetweenUpdates() {
         if (PLAN_FAST) {
-            return 20 * 1.5;
+            return 20 * 1.4;
         }
         return 20 * (5 + 15 * Math.pow(1.03, -villagerCount));
     }
@@ -779,27 +783,43 @@ public class ServerVillage extends Village {
     }
 
     /**
+     * Determines the block position of the surface block closest to the given position. For some village terrain
+     * categories, there is a chance that a random position in the range is returned instead. Use this method for
+     * determining the center of a {@link GeoFeature}. For usage in {@link RoadEdge.TerrainAdjustment}, use
+     * {@link ServerVillage#getSurfaceBlock(BlockPos, int, int, boolean)} directly.
+     * @param startPosition The position of the block from which the search should start (+/- a small random offset).
+     * @param minY The minimum Y value checked.
+     * @param maxY The maximum Y value checked.
+     * @return The block position of the surface block or null if no surface block was found.
+     */
+    public BlockPos getSurfaceBlockForGeoFeature(BlockPos startPosition, int minY, int maxY) {
+        // For underground or sky terrain categories, sometimes return random position in the given range.
+        String terrainCategory = DataRegistry.getVillageTypeData(villageType).terrainCategory;
+        if (random.nextDouble() < 0.5 && (
+                terrainCategory.equals("under_ground") || terrainCategory.equals("sky")
+        )) {
+            // Return a random position.
+            return startPosition.withY(MathUtils.nextInt(minY, maxY));
+        } else {
+            // Return normal surface positions.
+            return getSurfaceBlock(startPosition, minY, maxY, true);
+        }
+    }
+
+    /**
      * Determines the block position of the surface block closest to the given position.
      * @param startPosition The position of the block from which the search should start (+/- a small random offset).
      * @param minY The minimum Y value checked.
      * @param maxY The maximum Y value checked.
-     * @param isForGeoFeature Whether the return value will be used for determining the center of a {@link GeoFeature}.
-     *                        For road edge terrain adjustments, select false.
+     * @param fluidIsSurfaceForCoasts If true, coastal villages will consider fluid blocks as solid ground.
      * @return The block position of the surface block or null if no surface block was found.
      */
-    public BlockPos getSurfaceBlock(BlockPos startPosition, int minY, int maxY, boolean isForGeoFeature) {
-        // For underground or sky terrain categories, sometimes return random position in the given range.
+    public BlockPos getSurfaceBlock(BlockPos startPosition, int minY, int maxY, boolean fluidIsSurfaceForCoasts) {
         String terrainCategory = DataRegistry.getVillageTypeData(villageType).terrainCategory;
-        if (isForGeoFeature && random.nextDouble() < 0.5 && (
-                terrainCategory.equals("under_ground")
-                || terrainCategory.equals("sky")
-        )) {
-            return startPosition.withY(MathUtils.nextInt(minY, maxY));
-        }
 
         // Determine the surface fluid mode depending on the village's terrain category.
         SurfaceFluidMode surfaceFluidMode = SurfaceFluidMode.NONE;
-        if (terrainCategory.equals("on_coast")) {
+        if (terrainCategory.equals("on_coast") && fluidIsSurfaceForCoasts) {
             surfaceFluidMode = SurfaceFluidMode.AS_GROUND;
         } else if (terrainCategory.equals("under_fluid")) {
             surfaceFluidMode = SurfaceFluidMode.AS_AIR;
@@ -882,6 +902,7 @@ public class ServerVillage extends Village {
         int surfaceBlockMaxYOffset = (int)(50*roadType.scale);
         MegaChunk testPosMegaChunk;
         RoadJunction newJunction;
+        boolean fluidIsSurfaceForCoasts;
         RoadEdge testEdge;
         ArrayList<RoadEdge> newEdges = new ArrayList<>();
         double testSquaredDist;
@@ -902,7 +923,7 @@ public class ServerVillage extends Village {
             ) {
                 // Determine the test position.
                 testPos = pos.add((int) (searchRadius*Math.cos(startAngle+addAngle)), 0, (int) (searchRadius*Math.sin(startAngle+addAngle)));
-                testPos = getSurfaceBlock(testPos, testPos.getY()-surfaceBlockMaxYOffset, testPos.getY()+surfaceBlockMaxYOffset, true);
+                testPos = getSurfaceBlockForGeoFeature(testPos, testPos.getY()-surfaceBlockMaxYOffset, testPos.getY()+surfaceBlockMaxYOffset);
                 if (testPos == null) {
                     continue;
                 }
@@ -967,6 +988,7 @@ public class ServerVillage extends Village {
                             continue;
                         }
                         // Create new road edge.
+                        fluidIsSurfaceForCoasts = random.nextDouble() < ROAD_EDGE_COASTAL_BRIDGES_CHANCE;
                         testEdge = new RoadEdge(
                                 nextElementID++,
                                 this,
@@ -975,7 +997,8 @@ public class ServerVillage extends Village {
                                 true,
                                 roadType,
                                 false,
-                                false
+                                false,
+                                fluidIsSurfaceForCoasts
                         );
                         // Is the edge's Y-slope okay?
                         if (Math.abs(testEdge.getYSlope()) > ROAD_EDGE_MAX_Y_SLOPE) {
@@ -991,7 +1014,8 @@ public class ServerVillage extends Village {
                                         false,
                                         roadType,
                                         false,
-                                        true
+                                        true,
+                                        fluidIsSurfaceForCoasts
                                 );
                             } else {
                                 continue;
@@ -1157,7 +1181,7 @@ public class ServerVillage extends Village {
             ) {
                 // Determine the test position.
                 testPos = pos.add((int) (searchRadius*Math.cos(startAngle+addAngle)), 0, (int) (searchRadius*Math.sin(startAngle+addAngle)));
-                testPos = getSurfaceBlock(testPos, testPos.getY()-surfaceBlockMaxYOffset, testPos.getY()+surfaceBlockMaxYOffset, true);
+                testPos = getSurfaceBlockForGeoFeature(testPos, testPos.getY()-surfaceBlockMaxYOffset, testPos.getY()+surfaceBlockMaxYOffset);
                 if (testPos == null) {
                     continue;
                 }
@@ -1294,6 +1318,7 @@ public class ServerVillage extends Village {
                         true,
                         roadTypeProvider.getRoadType(DataRegistry.getAccessPathRoadType(accessPoint.accessPathRoadType)),
                         true,
+                        false,
                         false
                 );
                 // Check edge's Y-slope.
