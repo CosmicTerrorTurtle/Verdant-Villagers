@@ -3,14 +3,14 @@
   "available_for_block_palettes": {},
   "available_for_villager_count": [0, 1000000],
   "data_per_structure_type": {
-    "tree_farm_4": {
+    "tree_farm_grass": {
       "villagers_accounted_for": "10.0"
     }
   },
   "abbreviation_map": {
     "nul": "null",
     "air": "state:minecraft:air",
-    "gra": "palette:0:ctt_verdant_villagers:wood___minecraft:grass_block",
+    "gra": "state:minecraft:grass_block",
     "pth": "state:minecraft:dirt_path",
     "dir": "state:minecraft:dirt",
     "tor": "state:minecraft:torch",
@@ -56,7 +56,8 @@
       "subclass_data": {
         "pos": [0, 1, 0],
         "saplings": "4",
-        "tree_diameter": 12
+        "tree_diameter": 12,
+        "soil_type": "grass"
       }
     },
     {
@@ -64,7 +65,8 @@
       "subclass_data": {
         "pos": [1, 1, 0],
         "saplings": "4",
-        "tree_diameter": 12
+        "tree_diameter": 12,
+        "soil_type": "grass"
       }
     },
     {
@@ -72,7 +74,8 @@
       "subclass_data": {
         "pos": [0, 1, 1],
         "saplings": "4",
-        "tree_diameter": 12
+        "tree_diameter": 12,
+        "soil_type": "grass"
       }
     },
     {
@@ -80,7 +83,8 @@
       "subclass_data": {
         "pos": [1, 1, 1],
         "saplings": "4",
-        "tree_diameter": 12
+        "tree_diameter": 12,
+        "soil_type": "grass"
       }
     }
   ]

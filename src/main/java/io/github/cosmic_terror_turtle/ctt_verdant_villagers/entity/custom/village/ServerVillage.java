@@ -38,7 +38,7 @@ public class ServerVillage extends Village {
     /**
      * The different phases that the village cycles through when updating.
      */
-    private enum UpdateCyclePhase {PAUSE, STRUCTURES, ROADS, VILLAGERS}
+    private enum UpdateCyclePhase {PAUSE, STRUCTURES, TREE_FARMS, ROADS, VILLAGERS}
     /**
      * Used for defining what block positions are valid ground positions. {@link SurfaceFluidMode#NONE} is for normal
      * positions on land, {@link SurfaceFluidMode#AS_GROUND} is for positions on land and on the fluid surface, and
@@ -668,25 +668,38 @@ public class ServerVillage extends Village {
                 cyclePhase = UpdateCyclePhase.STRUCTURES;
             }
             case STRUCTURES -> {
-                // Plan structures (select one type at random).
+                // Plan structures (select one type at random; this excludes tree farms).
                 String selectedStructureType = DataRegistry.getVillageTypeData(villageType).getRandomStructureTypeToBuild(random);
-                // Determine whether there are enough structures of the selected structure type present
-                switch (DataRegistry.getStructureTypeData(selectedStructureType).structureCheckMethod) {
-                    default -> {}
-                    case "count_villagers" -> {
-
-                        float villagersAccountedFor = 0;
-                        for (Structure structure : structures) {
-                            if (structure.dataPerStructureType.containsKey(selectedStructureType)) {
-                                villagersAccountedFor += Float.parseFloat(structure.dataPerStructureType.get(selectedStructureType).get("villagers_accounted_for"));
-                            }
-                        }
-                        if (villagersAccountedFor < getInflatedVillagerCount(villagerCount)) {
-                            if (!planSingleStructure(selectedStructureType)) {
-                                needForRoads++;
-                            }
-                        }
-
+                // If there are not enough structures of the selected structure type present, attempt to plan a structure.
+                if (selectedStructureType != null && !enoughStructuresPresent(
+                        selectedStructureType,
+                        DataRegistry.getStructureTypeData(selectedStructureType).structureCheckMethod)
+                ) {
+                    if (!planSingleStructure(selectedStructureType, true)) {
+                        needForRoads++;
+                    }
+                }
+                cyclePhase = UpdateCyclePhase.TREE_FARMS;
+            }
+            case TREE_FARMS -> {
+                // Plan tree farm structures.
+                // Collect what sapling soil types are needed.
+                ArrayList<String> saplingSoilTypesNeeded = new ArrayList<>();
+                for (BlockPalette palette : blockPalettes.get(DataRegistry.getSaplingSoilTypeWoodBlockPaletteTypeId())) {
+                    saplingSoilTypesNeeded.addAll(DataRegistry.getSaplingSoilTypesForPalette(palette.id));
+                }
+                // Select the type of tree farm.
+                String selectedTreeFarmStructureType =
+                        DataRegistry.getVillageTypeData(villageType)
+                        .getRandomTreeFarmStructureTypeToBuild(saplingSoilTypesNeeded, random);
+                // If there are not enough structures of the selected tree farm structure type present, attempt to plan
+                // a structure.
+                if (selectedTreeFarmStructureType != null && !enoughStructuresPresent(
+                        selectedTreeFarmStructureType,
+                        DataRegistry.getTreeFarmStructureTypeData(selectedTreeFarmStructureType).structureCheckMethod)
+                ) {
+                    if (!planSingleStructure(selectedTreeFarmStructureType, false)) {
+                        needForRoads++;
                     }
                 }
                 cyclePhase = UpdateCyclePhase.ROADS;
@@ -698,17 +711,16 @@ public class ServerVillage extends Village {
             }
             case VILLAGERS -> {
                 // Plant saplings
-                ArrayList<Integer> groupCounts = new ArrayList<>();
-                ArrayList<BlockPalette> woodBlockPalettes = blockPalettes.get(VerdantVillagers.MOD_ID+":wood");
+                HashSet<Integer> groupCounts = new HashSet<>();
+                ArrayList<BlockPalette> woodBlockPalettes = blockPalettes.get(DataRegistry.getSaplingSoilTypeWoodBlockPaletteTypeId());
                 BlockState saplingState;
                 SaplingData saplingData;
                 int requiredTreeDiameter;
                 for (Structure structure : structures) {
-                    if (structure.dataPerStructureType.containsKey("tree_farm_1")) {
-                        groupCounts.add(1);
-                    }
-                    if (structure.dataPerStructureType.containsKey("tree_farm_4")) {
-                        groupCounts.add(4);
+                    for (PointOfInterest poi : structure.pointsOfInterest) {
+                        if (poi instanceof SaplingLocationPoint saplingLocationPoint) {
+                            groupCounts.add(saplingLocationPoint.saplings);
+                        }
                     }
                     for (Integer saplingGroupCount : groupCounts) {
                         // For each group count, select a random sapling block from the wood block palettes.
@@ -717,9 +729,11 @@ public class ServerVillage extends Village {
                         if (saplingData.diametersPerTreeType.containsKey(saplingGroupCount)) {
                             requiredTreeDiameter = saplingData.diametersPerTreeType.get(saplingGroupCount);
                             for (PointOfInterest poi : structure.pointsOfInterest) {
+                                // Is sapling state to be placed fitting for the poi?
                                 if (poi instanceof SaplingLocationPoint saplingLocationPoint
                                         && saplingLocationPoint.saplings == saplingGroupCount
                                         && saplingLocationPoint.treeDiameter >= requiredTreeDiameter
+                                        && saplingData.soil_types.contains(saplingLocationPoint.soilType)
                                         && world.getBlockState(saplingLocationPoint.pos).isOf(Blocks.AIR)) {
                                     if (PLACE_BLOCKS_DIRECTLY) {
                                         attemptToPlace(new GeoFeatureBit(saplingState, saplingLocationPoint.pos));
@@ -730,6 +744,7 @@ public class ServerVillage extends Village {
                             }
                         }
                     }
+                    groupCounts.clear();
                 }
 
                 //output name and villager count for testing
@@ -738,6 +753,30 @@ public class ServerVillage extends Village {
                 }//
 
                 cyclePhase = UpdateCyclePhase.PAUSE;
+            }
+        }
+    }
+
+    /**
+     * Determines whether there are enough structures of a structure type present in the village.
+     * @param structureType The structure type to check.
+     * @param structureCheckMethod The structure check method to use.
+     * @return True if there are enough structures present.
+     */
+    private boolean enoughStructuresPresent(String structureType, String structureCheckMethod) {
+        switch (structureCheckMethod) {
+            default -> {
+                return true;
+            }
+            case "count_villagers" -> {
+
+                float villagersAccountedFor = 0;
+                for (Structure structure : structures) {
+                    if (structure.dataPerStructureType.containsKey(structureType)) {
+                        villagersAccountedFor += Float.parseFloat(structure.dataPerStructureType.get(structureType).get("villagers_accounted_for"));
+                    }
+                }
+                return villagersAccountedFor >= getInflatedVillagerCount(villagerCount);
             }
         }
     }
@@ -988,7 +1027,7 @@ public class ServerVillage extends Village {
                             continue;
                         }
                         // Create new road edge.
-                        fluidIsSurfaceForCoasts = random.nextDouble() < ROAD_EDGE_COASTAL_BRIDGES_CHANCE;
+                        fluidIsSurfaceForCoasts = random.nextDouble() >= ROAD_EDGE_COASTAL_BRIDGES_CHANCE;
                         testEdge = new RoadEdge(
                                 nextElementID++,
                                 this,
@@ -1142,18 +1181,22 @@ public class ServerVillage extends Village {
 
     /**
      * Attempts to add a single structure.
-     * @param structureType The arguments for the given structure type.
-     *             STRUCTURE_XXX: {description of the parameters}
+     * @param structureType The structure type to use.
+     * @param isRegularStructure Set to true if the type is for a regular structure, false if it is for a tree farm
+     *                           structure.
      * @return True if the attempt was successful.
      */
-    private boolean planSingleStructure(String structureType) {
+    private boolean planSingleStructure(String structureType, boolean isRegularStructure) {
         // Randomly select the structure template for this attempt.
         RawStructureTemplate rawTemplate = DataRegistry.getRandomTemplateFor(villageType, structureType, villagerCount, blockPalettes);
         if (rawTemplate == null) {
             return false;
         }
         // Set parameter specific to the structure type.
-        double searchDistance = DataRegistry.getStructureTypeData(structureType).searchDistanceMultiplier*SEARCH_DISTANCE_STRUCTURE;
+        StructureTypeData structureTypeData = isRegularStructure ?
+                DataRegistry.getStructureTypeData(structureType)
+                : DataRegistry.getTreeFarmStructureTypeData(structureType);
+        double searchDistance = structureTypeData.searchDistanceMultiplier*SEARCH_DISTANCE_STRUCTURE;
 
         boolean withinBounds = true;
         boolean foundPositionNearJunctions = true;
@@ -1271,7 +1314,6 @@ public class ServerVillage extends Village {
     private boolean connectAccessPoints(Structure structure) {
         ArrayList<RoadEdge> approvedPaths = new ArrayList<>();
 
-        StructureAccessPoint accessPoint;
         boolean pointApproved;
         ArrayList<RoadDot> nearDotsToTest;
         RoadDot roadDot;
@@ -1279,10 +1321,9 @@ public class ServerVillage extends Village {
 
         // Iterate through all access points.
         for (PointOfInterest point : structure.pointsOfInterest) {
-            if (!(point instanceof StructureAccessPoint)) {
+            if (!(point instanceof StructureAccessPoint accessPoint)) {
                 continue;
             }
-            accessPoint = (StructureAccessPoint) point;
             pointApproved = false;
 
             // Attempt to connect the access point.
@@ -1335,6 +1376,12 @@ public class ServerVillage extends Village {
                 }
                 for (Structure collisionTestStructure : structures) {
                     if (GeoFeatureCollision.featuresOverlap(testEdge, collisionTestStructure)) {
+                        continue connectDotFor;
+                    }
+                }
+                // Check if the test edge collides with any road edges.
+                for (RoadEdge edge : roadEdges) {
+                    if (!roadDot.edge.equals(edge) && GeoFeatureCollision.featuresOverlap(testEdge, edge)) {
                         continue connectDotFor;
                     }
                 }

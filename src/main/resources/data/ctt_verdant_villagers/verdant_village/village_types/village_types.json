@@ -3,84 +3,97 @@
     "dimensions": ["minecraft:overworld", "minecraft:the_end"],
     "biomes": [],
     "terrain_category": "on_land",
-    "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "crop_field", "decoration"],
-    "structure_types_weights": [2, 1, 1, 1, 1, 1]
+    "structure_types_to_build": ["house", "storage", "crop_field", "decoration"],
+    "structure_types_weights": [2, 1, 1, 1],
+    "tree_farm_structure_types_to_build": ["tree_farm_grass", "tree_farm_crimson", "tree_farm_warped"]
   },
   "desert": {
     "dimensions": [],
     "biomes": ["minecraft:desert"],
     "terrain_category": "on_land",
-    "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "crop_field", "decoration"],
-    "structure_types_weights": [2, 1, 1, 1, 1, 1]
+    "structure_types_to_build": ["house", "storage", "crop_field", "decoration"],
+    "structure_types_weights": [2, 1, 1, 1],
+    "tree_farm_structure_types_to_build": ["tree_farm_grass", "tree_farm_crimson", "tree_farm_warped"]
+
   },
   "coast": {
     "dimensions": ["minecraft:overworld", "minecraft:the_end"],
     "biomes": [],
     "terrain_category": "on_coast",
-    "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "crop_field", "decoration"],
-    "structure_types_weights": [2, 1, 1, 1, 1, 1]
+    "structure_types_to_build": ["house", "storage", "crop_field", "decoration"],
+    "structure_types_weights": [2, 1, 1, 1],
+    "tree_farm_structure_types_to_build": ["tree_farm_grass", "tree_farm_crimson", "tree_farm_warped"]
   },
   "desert_coast": {
     "dimensions": [],
     "biomes": ["minecraft:desert"],
     "terrain_category": "on_coast",
-    "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "crop_field", "decoration"],
-    "structure_types_weights": [2, 1, 1, 1, 1, 1]
+    "structure_types_to_build": ["house", "storage", "crop_field", "decoration"],
+    "structure_types_weights": [2, 1, 1, 1],
+    "tree_farm_structure_types_to_build": ["tree_farm_grass", "tree_farm_crimson", "tree_farm_warped"]
   },
   "under_water": {
     "dimensions": ["minecraft:overworld", "minecraft:the_end"],
     "biomes": [],
     "terrain_category": "under_fluid",
-    "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "crop_field", "decoration"],
-    "structure_types_weights": [2, 1, 1, 1, 1, 1]
+    "structure_types_to_build": ["house", "storage", "crop_field", "decoration"],
+    "structure_types_weights": [2, 1, 1, 1],
+    "tree_farm_structure_types_to_build": ["tree_farm_grass", "tree_farm_crimson", "tree_farm_warped"]
   },
   "under_ground": {
     "dimensions": ["minecraft:overworld", "minecraft:the_end"],
     "biomes": [],
     "terrain_category": "under_ground",
-    "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "crop_field", "decoration"],
-    "structure_types_weights": [2, 1, 1, 1, 1, 1]
+    "structure_types_to_build": ["house", "storage", "crop_field", "decoration"],
+    "structure_types_weights": [2, 1, 1, 1],
+    "tree_farm_structure_types_to_build": ["tree_farm_grass", "tree_farm_crimson", "tree_farm_warped"]
   },
   "sky": {
     "dimensions": ["minecraft:overworld", "minecraft:the_end"],
     "biomes": [],
     "terrain_category": "sky",
-    "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "crop_field", "decoration"],
-    "structure_types_weights": [2, 1, 1, 1, 1, 1]
+    "structure_types_to_build": ["house", "storage", "crop_field", "decoration"],
+    "structure_types_weights": [2, 1, 1, 1],
+    "tree_farm_structure_types_to_build": ["tree_farm_grass", "tree_farm_crimson", "tree_farm_warped"]
   },
   "nether_standard": {
     "dimensions": ["minecraft:the_nether"],
     "biomes": [],
     "terrain_category": "on_land",
-    "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "nether_crop_field", "decoration"],
-    "structure_types_weights": [2, 1, 1, 1, 1, 1]
+    "structure_types_to_build": ["house", "storage", "nether_crop_field", "decoration"],
+    "structure_types_weights": [2, 1, 1, 1],
+    "tree_farm_structure_types_to_build": ["tree_farm_grass", "tree_farm_crimson", "tree_farm_warped"]
   },
   "nether_coast": {
     "dimensions": ["minecraft:the_nether"],
     "biomes": [],
     "terrain_category": "on_coast",
-    "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "nether_crop_field", "decoration"],
-    "structure_types_weights": [2, 1, 1, 1, 1, 1]
+    "structure_types_to_build": ["house", "storage", "nether_crop_field", "decoration"],
+    "structure_types_weights": [2, 1, 1, 1],
+    "tree_farm_structure_types_to_build": ["tree_farm_grass", "tree_farm_crimson", "tree_farm_warped"]
   },
   "under_lava": {
     "dimensions": ["minecraft:the_nether"],
     "biomes": [],
     "terrain_category": "under_fluid",
-    "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "nether_crop_field", "decoration"],
-    "structure_types_weights": [2, 1, 1, 1, 1, 1]
+    "structure_types_to_build": ["house", "storage", "nether_crop_field", "decoration"],
+    "structure_types_weights": [2, 1, 1, 1],
+    "tree_farm_structure_types_to_build": ["tree_farm_grass", "tree_farm_crimson", "tree_farm_warped"]
   },
   "nether_under_ground": {
     "dimensions": ["minecraft:the_nether"],
     "biomes": [],
     "terrain_category": "under_ground",
-    "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "nether_crop_field", "decoration"],
-    "structure_types_weights": [2, 1, 1, 1, 1, 1]
+    "structure_types_to_build": ["house", "storage", "nether_crop_field", "decoration"],
+    "structure_types_weights": [2, 1, 1, 1],
+    "tree_farm_structure_types_to_build": ["tree_farm_grass", "tree_farm_crimson", "tree_farm_warped"]
   },
   "nether_sky": {
     "dimensions": ["minecraft:the_nether"],
     "biomes": [],
     "terrain_category": "sky",
-    "structure_types_to_build": ["house", "storage", "tree_farm_1", "tree_farm_4", "nether_crop_field", "decoration"],
-    "structure_types_weights": [2, 1, 1, 1, 1, 1]
+    "structure_types_to_build": ["house", "storage", "nether_crop_field", "decoration"],
+    "structure_types_weights": [2, 1, 1, 1],
+    "tree_farm_structure_types_to_build": ["tree_farm_grass", "tree_farm_crimson", "tree_farm_warped"]
   }
 }

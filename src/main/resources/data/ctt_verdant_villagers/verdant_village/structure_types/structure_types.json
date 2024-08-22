@@ -7,14 +7,6 @@
     "search_distance_multiplier": 1,
     "structure_check_method": "count_villagers"
   },
-  "tree_farm_1": {
-    "search_distance_multiplier": 1,
-    "structure_check_method": "count_villagers"
-  },
-  "tree_farm_4": {
-    "search_distance_multiplier": 1,
-    "structure_check_method": "count_villagers"
-  },
   "crop_field": {
     "search_distance_multiplier": 1,
     "structure_check_method": "count_villagers"

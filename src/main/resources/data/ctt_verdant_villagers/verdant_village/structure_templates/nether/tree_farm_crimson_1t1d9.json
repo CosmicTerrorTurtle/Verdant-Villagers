@@ -1,0 +1,61 @@
+{
+  "village_types": ["default", "desert", "coast", "desert_coast", "under_ground", "sky", "nether_standard", "nether_coast", "nether_under_ground", "nether_sky"],
+  "available_for_block_palettes": {},
+  "available_for_villager_count": [0, 1000000],
+  "data_per_structure_type": {
+    "tree_farm_crimson": {
+      "villagers_accounted_for": "2.5"
+    }
+  },
+  "abbreviation_map": {
+    "nul": "null",
+    "air": "state:minecraft:air",
+    "cny": "state:minecraft:crimson_nylium",
+    "pth": "state:minecraft:dirt_path",
+    "dir": "state:minecraft:dirt",
+    "tor": "state:minecraft:torch",
+    "fcn": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:true:south:false:west:false:east:false",
+    "fcs": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:false:south:true:west:false:east:false",
+    "fns": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:true:south:true:west:false:east:false",
+    "fwe": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:false:south:false:west:true:east:true",
+    "fnw": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:true:south:false:west:true:east:false",
+    "fne": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:true:south:false:west:false:east:true",
+    "fsw": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:false:south:true:west:true:east:false",
+    "fse": "palette:0:ctt_verdant_villagers:wood___minecraft:oak_fence:waterlogged:false:north:false:south:true:west:false:east:true"
+  },
+  "block_state_cube": [
+    [["nul","cny","cny","cny","cny","cny","cny","cny","cny","cny","nul"],["nul","fsw","fns","fns","fns","fns","fns","fns","fns","fnw","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"]],
+    [["cny","cny","cny","cny","cny","cny","cny","cny","cny","cny","cny"],["fsw","fne","air","air","air","air","air","air","air","fse","fnw"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"]],
+    [["cny","cny","cny","cny","cny","cny","cny","cny","cny","cny","cny"],["fwe","air","tor","air","air","air","air","air","tor","air","fwe"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"]],
+    [["cny","cny","cny","cny","cny","cny","cny","cny","cny","cny","cny"],["fwe","air","air","air","air","air","air","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"]],
+    [["cny","cny","cny","cny","cny","cny","cny","cny","cny","cny","cny"],["fwe","air","air","air","air","air","air","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"]],
+    [["cny","cny","cny","cny","cny","cny","cny","cny","cny","cny","cny"],["fwe","air","air","air","air","air","air","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"]],
+    [["cny","cny","cny","cny","cny","cny","cny","cny","cny","cny","cny"],["fwe","air","air","air","air","air","air","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"]],
+    [["cny","cny","cny","cny","cny","cny","cny","cny","cny","cny","cny"],["fwe","air","air","air","air","air","air","air","air","air","fwe"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"]],
+    [["cny","cny","cny","cny","cny","cny","cny","cny","cny","cny","cny"],["fwe","air","tor","air","air","air","air","air","tor","air","fwe"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"]],
+    [["cny","cny","cny","cny","cny","cny","cny","cny","cny","cny","cny"],["fse","fnw","air","air","air","air","air","air","air","fsw","fne"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"],["air","air","air","air","air","air","air","air","air","air","air"]],
+    [["nul","cny","cny","cny","cny","pth","cny","cny","cny","cny","nul"],["nul","fse","fns","fns","fcn","air","fcs","fns","fns","fne","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"],["nul","air","air","air","air","air","air","air","air","air","nul"]]
+  ],
+  "center": [5, 0, 5],
+  "points_of_interest": [
+    {
+      "subclass_name": "StructureAccessPoint",
+      "subclass_data": {
+        "pos": [-6, 0, 0],
+        "access_path_road_type": "ctt_verdant_villagers:path_1",
+        "connection_volume": [[-6,0,0],[-6,0,0]],
+        "sidewalk_positions": [],
+        "arch_positions": []
+      }
+    },
+    {
+      "subclass_name": "SaplingLocationPoint",
+      "subclass_data": {
+        "pos": [0, 1, 0],
+        "saplings": "1",
+        "tree_diameter": 9,
+        "soil_type": "crimson_nylium"
+      }
+    }
+  ]
+}

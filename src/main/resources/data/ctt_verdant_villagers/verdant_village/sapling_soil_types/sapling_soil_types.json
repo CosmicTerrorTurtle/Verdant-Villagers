@@ -1,0 +1,16 @@
+{
+  "wood_block_palette_type_id": "ctt_verdant_villagers:wood",
+  "sapling_soil_types_per_palette_id": {
+    "ctt_verdant_villagers:acacia": ["grass"],
+    "ctt_verdant_villagers:bamboo": ["grass"],
+    "ctt_verdant_villagers:birch": ["grass"],
+    "ctt_verdant_villagers:cherry": ["grass"],
+    "ctt_verdant_villagers:crimson": ["crimson_nylium"],
+    "ctt_verdant_villagers:dark_oak": ["grass"],
+    "ctt_verdant_villagers:jungle": ["grass"],
+    "ctt_verdant_villagers:mangrove": ["grass"],
+    "ctt_verdant_villagers:oak": ["grass"],
+    "ctt_verdant_villagers:spruce": ["grass"],
+    "ctt_verdant_villagers:warped": ["warped_nylium"]
+  }
+}

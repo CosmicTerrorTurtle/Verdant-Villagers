@@ -1,0 +1,17 @@
+{
+  "tree_farm_grass": {
+    "search_distance_multiplier": 1,
+    "structure_check_method": "count_villagers",
+    "sapling_soil_types": ["grass"]
+  },
+  "tree_farm_crimson": {
+    "search_distance_multiplier": 1,
+    "structure_check_method": "count_villagers",
+    "sapling_soil_types": ["crimson_nylium"]
+  },
+  "tree_farm_warped": {
+    "search_distance_multiplier": 1,
+    "structure_check_method": "count_villagers",
+    "sapling_soil_types": ["warped_nylium"]
+  }
+}

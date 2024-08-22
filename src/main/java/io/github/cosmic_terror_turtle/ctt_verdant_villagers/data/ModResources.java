@@ -13,6 +13,7 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Map;
 
@@ -75,6 +76,30 @@ public class ModResources {
                     }
                 }
 
+                // Sapling soil types
+                for (Map.Entry<Identifier, Resource> result :
+                        manager.findResources("verdant_village"+File.separator+"sapling_soil_types", id -> id.getPath().endsWith(".json")).entrySet()
+                ) {
+                    try (JsonReader reader = new JsonReader(new InputStreamReader(result.getValue().getInputStream()))) {
+
+                        reader.beginObject();
+                        while (reader.hasNext()) {
+                            switch (reader.nextName()) {
+                                default -> throw new IOException();
+                                case "wood_block_palette_type_id"
+                                        -> DataRegistry.setSaplingSoilTypeWoodBlockPaletteTypeId(reader.nextString());
+                                case "sapling_soil_types_per_palette_id" -> DataRegistry.addSaplingSoilTypes(
+                                        JsonUtils.readMap(reader, reader1 -> JsonUtils.readList(reader1, JsonReader::nextString))
+                                );
+                            }
+                        }
+                        reader.endObject();
+
+                    } catch (Exception e) {
+                        VerdantVillagers.LOGGER.error("Error occurred while loading resource json " + result.getKey(), e);
+                    }
+                }
+
                 // Village types
                 for (Map.Entry<Identifier, Resource> result :
                         manager.findResources("verdant_village"+File.separator+"village_types", id -> id.getPath().endsWith(".json")).entrySet()
@@ -121,6 +146,19 @@ public class ModResources {
                     try (JsonReader reader = new JsonReader(new InputStreamReader(result.getValue().getInputStream()))) {
 
                         DataRegistry.addStructureTypes(StructureTypeData.readStructureTypes(reader));
+
+                    } catch (Exception e) {
+                        VerdantVillagers.LOGGER.error("Error occurred while loading resource json " + result.getKey(), e);
+                    }
+                }
+
+                // Tree farm structure types
+                for (Map.Entry<Identifier, Resource> result :
+                        manager.findResources("verdant_village"+File.separator+"tree_farm_structure_types", id -> id.getPath().endsWith(".json")).entrySet()
+                ) {
+                    try (JsonReader reader = new JsonReader(new InputStreamReader(result.getValue().getInputStream()))) {
+
+                        DataRegistry.addTreeFarmStructureTypes(TreeFarmStructureTypeData.readTreeFarmStructureTypes(reader));
 
                     } catch (Exception e) {
                         VerdantVillagers.LOGGER.error("Error occurred while loading resource json " + result.getKey(), e);

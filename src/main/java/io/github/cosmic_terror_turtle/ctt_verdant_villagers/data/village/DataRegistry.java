@@ -1,10 +1,12 @@
 package io.github.cosmic_terror_turtle.ctt_verdant_villagers.data.village;
 
 import com.google.gson.stream.JsonReader;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.VerdantVillagers;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.structure.PointOfInterest;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.structure.SaplingLocationPoint;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.structure.StructureAccessPoint;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.Identifier;
 
 import java.io.IOException;
 import java.util.*;
@@ -19,8 +21,11 @@ public class DataRegistry {
     private static final HashMap<String, HashMap<String, BlockPalette>> blockPalettes = new HashMap<>();
     private static final HashMap<String, HashMap<String, BlockPalette>> defaultBlockPalettes = new HashMap<>();
     private static final HashMap<String, SaplingData> saplingData = new HashMap<>();
+    private static String saplingSoilTypeWoodBlockPaletteTypeId = VerdantVillagers.MOD_ID + ":wood";
+    private static final HashMap<Identifier, ArrayList<String>> saplingSoilTypesPerPaletteId = new HashMap<>();
     private static final HashMap<String, VillageTypeData> villageTypes = new HashMap<>();
     private static final HashMap<String, StructureTypeData> structureTypes = new HashMap<>();
+    private static final HashMap<String, TreeFarmStructureTypeData> treeFarmStructureTypes = new HashMap<>();
     private static final HashMap<String, ArrayList<RawStructureTemplate>> templatesPerVillageType = new HashMap<>();
     private static final HashMap<String, RawRoadType> roadTypes = new HashMap<>();
     private static final HashMap<String, RawRoadType> accessPathRoadTypes = new HashMap<>();
@@ -34,8 +39,10 @@ public class DataRegistry {
         blockPalettes.clear();
         defaultBlockPalettes.clear();
         saplingData.clear();
+        saplingSoilTypesPerPaletteId.clear();
         villageTypes.clear();
         structureTypes.clear();
+        treeFarmStructureTypes.clear();
         templatesPerVillageType.clear();
         roadTypes.clear();
         accessPathRoadTypes.clear();
@@ -70,6 +77,15 @@ public class DataRegistry {
             for (String structureType : typeData.structureTypesToBuild) {
                 if (!structureTypes.containsKey(structureType)) {
                     throw new RuntimeException("Structure type '"+structureType+"' does not exist.");
+                }
+            }
+        }
+
+        // Each tree farm structure type listed in VillageTypeData.treeFarmStructureTypesToBuild must exist.
+        for (VillageTypeData typeData : villageTypes.values()) {
+            for (String treeFarmStructureType : typeData.treeFarmStructureTypesToBuild) {
+                if (!treeFarmStructureTypes.containsKey(treeFarmStructureType)) {
+                    throw new RuntimeException("Tree farm structure type '"+treeFarmStructureType+"' does not exist.");
                 }
             }
         }
@@ -228,6 +244,24 @@ public class DataRegistry {
         return saplingData.get(id);
     }
 
+    public static void setSaplingSoilTypeWoodBlockPaletteTypeId(String id) {
+        saplingSoilTypeWoodBlockPaletteTypeId = id;
+    }
+    public static String getSaplingSoilTypeWoodBlockPaletteTypeId() {
+        return saplingSoilTypeWoodBlockPaletteTypeId;
+    }
+    public static void addSaplingSoilTypes(HashMap<String, ArrayList<String>> newTypes) {
+        Identifier key;
+        for (String strKey : newTypes.keySet()) {
+            key = new Identifier(strKey);
+            if (!saplingSoilTypesPerPaletteId.containsKey(key)) saplingSoilTypesPerPaletteId.put(key, new ArrayList<>());
+            saplingSoilTypesPerPaletteId.get(key).addAll(newTypes.get(strKey));
+        }
+    }
+    public static ArrayList<String> getSaplingSoilTypesForPalette(Identifier paletteId) {
+        return saplingSoilTypesPerPaletteId.get(paletteId);
+    }
+
     public static void addVillageTypes(HashMap<String, VillageTypeData> newVillageTypes) {
         for (Map.Entry<String, VillageTypeData> entry : newVillageTypes.entrySet()) {
             villageTypes.put(entry.getKey(), entry.getValue());
@@ -246,6 +280,13 @@ public class DataRegistry {
     }
     public static StructureTypeData getStructureTypeData(String structureType) {
         return structureTypes.get(structureType);
+    }
+
+    public static void addTreeFarmStructureTypes(HashMap<String, TreeFarmStructureTypeData> newStructureTypes) {
+        treeFarmStructureTypes.putAll(newStructureTypes);
+    }
+    public static TreeFarmStructureTypeData getTreeFarmStructureTypeData(String structureType) {
+        return treeFarmStructureTypes.get(structureType);
     }
 
     public static void addTemplate(RawStructureTemplate template, ArrayList<String> villageTypes) {

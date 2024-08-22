@@ -15,6 +15,7 @@ public class VillageTypeData {
     public String terrainCategory;
     public ArrayList<String> structureTypesToBuild;
     public float[] structureTypesCumulativeChances;
+    public ArrayList<String> treeFarmStructureTypesToBuild;
 
     public VillageTypeData(JsonReader reader) throws IOException {
         dimensions = null;
@@ -22,6 +23,7 @@ public class VillageTypeData {
         terrainCategory = null;
         structureTypesToBuild = null;
         ArrayList<Integer> structureTypesWeights = null;
+        treeFarmStructureTypesToBuild = null;
 
         reader.beginObject();
         while (reader.hasNext()) {
@@ -32,12 +34,14 @@ public class VillageTypeData {
                 case "terrain_category" -> terrainCategory = reader.nextString();
                 case "structure_types_to_build" -> structureTypesToBuild = JsonUtils.readList(reader, JsonReader::nextString);
                 case "structure_types_weights" -> structureTypesWeights = JsonUtils.readList(reader, JsonReader::nextInt);
+                case "tree_farm_structure_types_to_build"
+                        -> treeFarmStructureTypesToBuild = JsonUtils.readList(reader, JsonReader::nextString);
             }
         }
         reader.endObject();
 
         if (dimensions==null || biomes==null || terrainCategory==null || structureTypesToBuild==null || structureTypesWeights==null
-                || structureTypesToBuild.size() != structureTypesWeights.size()) {
+                || structureTypesToBuild.size() != structureTypesWeights.size() || treeFarmStructureTypesToBuild ==null) {
             throw new IOException();
         }
         structureTypesCumulativeChances = new float[structureTypesToBuild.size()];
@@ -72,5 +76,28 @@ public class VillageTypeData {
             }
         }
         return structureTypesToBuild.get(structureTypesToBuild.size()-1);
+    }
+
+    /**
+     * Randomly selects a tree farm structure type belonging to a random sapling soil type from the given list.
+     * @param saplingSoilTypesNeeded A list of all soil types that the village needs for its saplings, duplicates are
+     *                               allowed.
+     * @param random The random instance to use as a randomizer.
+     * @return The selected type.
+     */
+    public String getRandomTreeFarmStructureTypeToBuild(ArrayList<String> saplingSoilTypesNeeded, Random random) {
+        // Randomly select one of the needed soil types.
+        String saplingSoilType = saplingSoilTypesNeeded.get(random.nextInt(saplingSoilTypesNeeded.size()));
+
+        ArrayList<String> structureTypes = new ArrayList<>();
+        TreeFarmStructureTypeData treeFarmStructureTypeData;
+        for (String structureType : treeFarmStructureTypesToBuild) {
+            treeFarmStructureTypeData = DataRegistry.getTreeFarmStructureTypeData(structureType);
+            if (treeFarmStructureTypeData.saplingSoilTypes.contains(saplingSoilType)) {
+                structureTypes.add(structureType);
+            }
+        }
+        // Randomly return a structure type for the selected soil type.
+        return structureTypes.get(random.nextInt(structureTypes.size()));
     }
 }
