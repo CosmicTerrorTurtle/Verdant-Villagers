@@ -1,6 +1,5 @@
 package io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village;
 
-import io.github.cosmic_terror_turtle.ctt_verdant_villagers.VerdantVillagers;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.data.village.*;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.VillageHeartEntity;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.road.*;
@@ -136,7 +135,6 @@ public class ServerVillage extends Village {
     public final HashMap<Identifier, Integer> blockCounts; // Map that holds the number of blocks contained in the mega chunks for each type.
     private final ArrayList<MegaChunk> megaChunks;
     private final HashMap<String, ArrayList<BlockPalette>> blockPalettes; // Map between block palette type and the list of palettes this village uses for that type.
-    private int blockPaletteLevel; // Current level for the block palettes.
     private final ArrayList<RoadJunction> roadJunctions;
     private final ArrayList<RoadEdge> roadEdges;
     private final ArrayList<RoadEdge> accessPaths;
@@ -272,7 +270,6 @@ public class ServerVillage extends Village {
 
         // Maps, lists and block palettes
 
-        blockPaletteLevel = 0;
         blockPalettes = new HashMap<>();
         for (String typeKey : DataRegistry.getBlockPaletteTypeKeys()) {
             blockPalettes.put(typeKey, new ArrayList<>());
@@ -290,6 +287,8 @@ public class ServerVillage extends Village {
             }
         }
         addBlockPalettesForAllTypes(tmpBlockCounts);
+        roadTypeProvider.resetTemplates();
+        structureProvider.resetTemplates();
 
         blockCounts = new HashMap<>();
         megaChunks = new ArrayList<>();
@@ -350,7 +349,6 @@ public class ServerVillage extends Village {
             blockPalettesNbt.put(typeKey, palettesForTypeNbt);
         }
         nbt.put("blockPalettes", blockPalettesNbt);
-        nbt.putInt("blockPaletteLevel", blockPaletteLevel);
 
         // Road junctions
         NbtCompound roadJunctionsNbt = new NbtCompound();
@@ -440,7 +438,8 @@ public class ServerVillage extends Village {
                 addBlockPaletteFor(typeKey, blockCounts);
             }
         }
-        blockPaletteLevel = nbt.getInt("blockPaletteLevel");
+        roadTypeProvider.resetTemplates();
+        structureProvider.resetTemplates();
 
         // Road junctions
         NbtCompound roadJunctionsNbt = nbt.getCompound("roadJunctions");
@@ -475,6 +474,11 @@ public class ServerVillage extends Village {
         return world;
     }
 
+    public void remove() {
+        roadTypeProvider.remove();
+        structureProvider.remove();
+    }
+
     public void changeVillagerCount(int amount) {
         villagerCount += amount;
         if (villagerCount < 0) {
@@ -487,34 +491,37 @@ public class ServerVillage extends Village {
      * Determines the number of block palettes this village should have depending on the current villager count.
      * @return The number of block palettes.
      */
-    private int getBlockPaletteLevel() {
-        if (villagerCount < 10) {
-            return 0;
-        } else if (villagerCount < 20) {
+    private int getTargetBlockPaletteLevel() {
+        if (villagerCount < 5) {
             return 1;
-        } else if (villagerCount < 40) {
+        } else if (villagerCount < 10) {
             return 2;
-        } else if (villagerCount < 60) {
+        } else if (villagerCount < 15) {
             return 3;
+        } else if (villagerCount < 20) {
+            return 4;
+        } else if (villagerCount < 30) {
+            return 5;
         }
-        return 4;
+        return 6;
     }
 
     /**
-     * Calls addBlockPaletteFor() for all palette types and resets the template manager afterwards.
+     * Calls addBlockPaletteFor() for all palette types. The road type and structure providers should be reset after
+     * calling this method.
      * @param blockCountMap The block count map that shall be used for evaluating a palette.
      */
     private void addBlockPalettesForAllTypes(HashMap<Identifier, Integer> blockCountMap) {
         for (String typeKey : DataRegistry.getBlockPaletteTypeKeys()) {
             addBlockPaletteFor(typeKey, blockCountMap);
         }
-        structureProvider.resetTemplates();
     }
 
     /**
      * Adds a new(!) block palette to the list. This takes into account the list of indicator blocks
      * of each palette and adds the block palette that matches the village terrain the most. If no new palette
-     * fits the terrain sufficiently, a random default palette is added.
+     * fits the terrain sufficiently, a random default palette is added. The road type and structure providers should
+     * be reset after calling this method.
      * @param typeKey The palette type.
      * @param blockCountMap The block count map that shall be used for evaluating a palette.
      */
@@ -569,7 +576,8 @@ public class ServerVillage extends Village {
     }
 
     /**
-     * Adds a random default palette to the list that is not already in the list.
+     * Adds a random default palette to the list that is not already in the list. The road type and structure providers
+     * should be reset after calling this method.
      * @param typeKey The palette type key of the list.
      */
     private void addRandomDefaultBlockPaletteOf(String typeKey) {
@@ -633,10 +641,14 @@ public class ServerVillage extends Village {
                 roadType = roadTypeProvider.getRoadType(DataRegistry.getRandomRoadTypeFor(villageType, villagerCount));
 
                 // Add new block palettes if necessary.
-                if (getBlockPaletteLevel() > blockPaletteLevel) {
-                    blockPaletteLevel = getBlockPaletteLevel();
-                    addBlockPalettesForAllTypes(blockCounts);
+                int targetBlockPaletteLevel = getTargetBlockPaletteLevel();
+                for (String blockPaletteType : blockPalettes.keySet()) {
+                    if (blockPalettes.get(blockPaletteType).size() < targetBlockPaletteLevel) {
+                        addBlockPaletteFor(blockPaletteType, blockCounts);
+                    }
                 }
+                roadTypeProvider.resetTemplates();
+                structureProvider.resetTemplates();
 
                 // Count iron golems and villagers
                 Box box;
@@ -656,8 +668,10 @@ public class ServerVillage extends Village {
 
                 // Spawn iron golems if necessary
                 if (ironGolemCount * 10 < villagerCount && random.nextDouble() < 0.08) {
-                    LargeEntitySpawnHelper.trySpawnAt(EntityType.IRON_GOLEM, SpawnReason.MOB_SUMMONED, (ServerWorld) world, pos,
-                            10, (int)(roadType.scale*50), 35, LargeEntitySpawnHelper.Requirements.IRON_GOLEM);
+                    LargeEntitySpawnHelper.trySpawnAt(
+                            EntityType.IRON_GOLEM, SpawnReason.MOB_SUMMONED, (ServerWorld) world, pos, 10,
+                            (int)(roadType.scale*50), 40, LargeEntitySpawnHelper.Requirements.IRON_GOLEM
+                    );
                 }
 
                 // Spawn villagers if necessary

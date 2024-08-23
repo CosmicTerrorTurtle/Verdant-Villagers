@@ -26,6 +26,10 @@ public class StructureProvider {
         providers.add(this);
     }
 
+    public void remove() {
+        providers.remove(this);
+    }
+
     /**
      * Sets all templates to null. Call this when the village heart has updated its block palettes.
      */

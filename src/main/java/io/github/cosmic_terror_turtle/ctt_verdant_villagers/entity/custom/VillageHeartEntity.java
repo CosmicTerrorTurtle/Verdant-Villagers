@@ -22,6 +22,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.world.entity.EntityChangeListener;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -84,6 +85,35 @@ public class VillageHeartEntity extends PathAwareEntity implements GeoEntity {
         if (getNavigation().isIdle()) {
             getNavigation().startMovingTo(v.x, v.y, v.z, speedModifier);
         }
+    }
+
+    @Override
+    public void setChangeListener(EntityChangeListener entityChangeListener) {
+        // This method gets called in ServerEntityManager#unload(EntityLike) whenever an entity gets unloaded
+        // together with its chunk.
+        super.setChangeListener(entityChangeListener);
+        if (getRemovalReason() == RemovalReason.UNLOADED_TO_CHUNK) {
+            removeVillageOnServer();
+        }
+    }
+
+    @Override
+    public void remove(RemovalReason reason) {
+        super.remove(reason);
+        removeVillageOnServer();
+    }
+
+    @Override
+    public void onRemoved() {
+        super.onRemoved();
+        village = null;
+    }
+
+    private void removeVillageOnServer() {
+        if (village instanceof ServerVillage serverVillage) {
+            serverVillage.remove();
+        }
+        village = null;
     }
 
     @Override
