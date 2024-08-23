@@ -123,7 +123,7 @@ public class ServerVillage extends Village {
     private final ArrayList<RoadEdge> accessPathsToPlace = new ArrayList<>();
 
     // Fields persistent when the entity gets unloaded.
-    private int nextElementID; // The unique id that is given next to a new feature. Always post-increment when assigning the next id.
+    private long nextElementID; // The unique id that is given next to a new feature. Always post-increment when assigning the next id.
     // Village type parameters
     private final float landAbove;
     private final float landBelow;
@@ -312,7 +312,7 @@ public class ServerVillage extends Village {
     public NbtCompound toNbt() {
         NbtCompound nbt = new NbtCompound();
 
-        nbt.putInt("nextElementID", nextElementID);
+        nbt.putLong("nextElementID", nextElementID);
         nbt.putInt("villagerCount", villagerCount);
         nbt.putFloat("landAbove", landAbove);
         nbt.putFloat("landBelow", landBelow);
@@ -397,7 +397,7 @@ public class ServerVillage extends Village {
 
         // Read the village heart from the nbt tag.
 
-        nextElementID = nbt.getInt("nextElementID");
+        nextElementID = nbt.getLong("nextElementID");
         villagerCount = nbt.getInt("villagerCount");
         landAbove = nbt.getFloat("landAbove");
         landBelow = nbt.getFloat("landBelow");

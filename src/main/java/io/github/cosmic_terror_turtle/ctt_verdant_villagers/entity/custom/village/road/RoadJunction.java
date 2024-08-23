@@ -28,7 +28,7 @@ public class RoadJunction extends RoadFeature {
      * @param pos The position of the junction.
      * @param sameHeightRadius The same height radius of the junction.
      */
-    public RoadJunction(int elementID, World world, BlockPos pos, double sameHeightRadius) {
+    public RoadJunction(long elementID, World world, BlockPos pos, double sameHeightRadius) {
         super(elementID);
         this.pos = pos;
         this.radius = 0.0;
@@ -44,7 +44,7 @@ public class RoadJunction extends RoadFeature {
      * @param pos The position of the junction.
      * @param type The road type used.
      */
-    public RoadJunction(int elementID, World world, BlockPos pos, RoadType type) {
+    public RoadJunction(long elementID, World world, BlockPos pos, RoadType type) {
         super(elementID);
         this.pos = pos;
         radius = type.junctionRadius;

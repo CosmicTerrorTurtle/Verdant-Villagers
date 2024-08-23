@@ -46,7 +46,7 @@ public class StructureProvider {
      * @param rawTemplate The template used for the new structure.
      * @return The new Structure.
      */
-    public Structure getStructure(int elementID, BlockPos anchor, RawStructureTemplate rawTemplate) {
+    public Structure getStructure(long elementID, BlockPos anchor, RawStructureTemplate rawTemplate) {
         if (!templateMap.containsKey(rawTemplate)) {
             StructureTemplate template = new StructureTemplate(village, rawTemplate);
             templateMap.put(rawTemplate, template);

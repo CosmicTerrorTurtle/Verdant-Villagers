@@ -18,7 +18,7 @@ public class Structure extends GeoFeature {
     protected final BlockPos anchor;
     public ArrayList<PointOfInterest> pointsOfInterest;
 
-    public Structure(Random random, int elementID, BlockPos anchor, StructureTemplate template) {
+    public Structure(Random random, long elementID, BlockPos anchor, StructureTemplate template) {
         super(elementID);
         this.anchor = anchor;
         dataPerStructureType = template.dataPerStructureType;

@@ -24,16 +24,12 @@ public class GeoFeature {
     public static final int ROTATE_CLOCKWISE = 3;
 
     public static int getRandomRotation(Random random) {
-        double p = random.nextDouble();
-        if (p<0.25) {
-            return ROTATE_COUNTER_CLOCKWISE;
-        } else if (p<0.5) {
-            return ROTATE_CLOCKWISE;
-        } else if (p<0.75) {
-            return ROTATE_OPPOSITE;
-        } else {
-            return ROTATE_NOT;
-        }
+        return switch (random.nextInt(4)) {
+            default -> ROTATE_NOT;
+            case 1 -> ROTATE_COUNTER_CLOCKWISE;
+            case 2 -> ROTATE_CLOCKWISE;
+            case 3 -> ROTATE_OPPOSITE;
+        };
     }
 
     /**
@@ -61,7 +57,7 @@ public class GeoFeature {
         }
     }
 
-    public final int elementID;
+    public final long elementID;
     private int xMin = 0;
     private int xMax = 0;
     private int yMin = 0;
@@ -78,7 +74,7 @@ public class GeoFeature {
     private final ArrayList<BlockPos> boundingBoxChunks4 = new ArrayList<>();
     protected final ArrayList<GeoFeatureBit> bits = new ArrayList<>();
 
-    public GeoFeature(int elementID) {
+    public GeoFeature(long elementID) {
         this.elementID = elementID;
     }
 
@@ -293,7 +289,7 @@ public class GeoFeature {
      * @param nbt The compound representing a GeoFeature.
      */
     public GeoFeature(@NotNull NbtCompound nbt) {
-        elementID = nbt.getInt("id");
+        elementID = nbt.getLong("id");
         NbtCompound boundingBoxChunks16Nbt = nbt.getCompound("boundingBoxChunks16");
         for (String key : boundingBoxChunks16Nbt.getKeys()) {
             boundingBoxChunks16.add(NbtUtils.blockPosFromNbt(boundingBoxChunks16Nbt.getCompound(key)));
@@ -317,7 +313,7 @@ public class GeoFeature {
         int i;
 
         NbtCompound nbt = new NbtCompound();
-        nbt.putInt("id", elementID);
+        nbt.putLong("id", elementID);
         NbtCompound boundingBoxChunks16Nbt = new NbtCompound();
         i=0;
         for (BlockPos lowerTip : boundingBoxChunks16) {

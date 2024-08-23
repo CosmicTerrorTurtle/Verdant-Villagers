@@ -15,7 +15,7 @@ public class RoadFeature extends GeoFeature {
     public ArrayList<BlockPos> archPositions = new ArrayList<>();
     public ArrayList<GeoFeatureBit> pillarStartBits = new ArrayList<>();
 
-    public RoadFeature(int elementID) {
+    public RoadFeature(long elementID) {
         super(elementID);
     }
 

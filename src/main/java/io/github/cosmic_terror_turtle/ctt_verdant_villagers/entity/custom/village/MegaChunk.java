@@ -23,14 +23,14 @@ public class MegaChunk {
      */
     public static final int LENGTH = 128;
 
-    public final int elementID;
+    public final long elementID;
     private final BlockPos lowerTip;
 
     /**
      * Creates a new MegaChunk.
      * @param pos A position within the new MegaChunk.
      */
-    public MegaChunk(int elementID, BlockPos pos) {
+    public MegaChunk(long elementID, BlockPos pos) {
         this.elementID = elementID;
         lowerTip = new BlockPos(
                 getCubeCoordinate(LENGTH, pos.getX()),
@@ -89,7 +89,7 @@ public class MegaChunk {
      * @param nbt The compound representing a MegaChunk.
      */
     public MegaChunk(@NotNull NbtCompound nbt) {
-        elementID = nbt.getInt("id");
+        elementID = nbt.getLong("id");
         lowerTip = NbtUtils.blockPosFromNbt(nbt.getCompound("lowerTip"));
     }
 
@@ -99,7 +99,7 @@ public class MegaChunk {
      */
     public NbtCompound toNbt() {
         NbtCompound nbt = new NbtCompound();
-        nbt.putInt("id", elementID);
+        nbt.putLong("id", elementID);
         nbt.put("lowerTip", NbtUtils.blockPosToNbt(lowerTip));
         return nbt;
     }

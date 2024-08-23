@@ -53,7 +53,7 @@ public class RoadEdge extends RoadFeature {
      * @param isAccessPath Whether this edge is an access path.
      * @param spiral Whether this edge should overcome great height differences using spiral ramps.
      */
-    public RoadEdge(int elementID, ServerVillage village, RoadJunction from, RoadJunction to,
+    public RoadEdge(long elementID, ServerVillage village, RoadJunction from, RoadJunction to,
                      boolean adjustToTerrain, RoadType roadType, boolean isAccessPath, boolean spiral, boolean fluidIsSurfaceForCoasts) {
         super(elementID);
         this.from = from;
@@ -435,14 +435,14 @@ public class RoadEdge extends RoadFeature {
         super(nbt);
         if (junctions != null) {
             // Major road
-            int fromId = nbt.getInt("fromId");
+            long fromId = nbt.getLong("fromId");
             for (RoadJunction junction : junctions) {
                 if (junction.elementID == fromId) {
                     from = junction;
                     break;
                 }
             }
-            int toId = nbt.getInt("toId");
+            long toId = nbt.getLong("toId");
             for (RoadJunction junction : junctions) {
                 if (junction.elementID == toId) {
                     to = junction;
@@ -478,8 +478,8 @@ public class RoadEdge extends RoadFeature {
         NbtCompound nbt = super.toNbt();
         int i;
         if (isMajorRoad) {
-            nbt.putInt("fromId", from.elementID);
-            nbt.putInt("toId", to.elementID);
+            nbt.putLong("fromId", from.elementID);
+            nbt.putLong("toId", to.elementID);
         } else {
             // Is access path
             nbt.put("from", from.toNbt());

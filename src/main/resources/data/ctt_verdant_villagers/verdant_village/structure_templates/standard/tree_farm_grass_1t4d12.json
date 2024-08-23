@@ -4,7 +4,7 @@
   "available_for_villager_count": [0, 1000000],
   "data_per_structure_type": {
     "tree_farm_grass": {
-      "villagers_accounted_for": "10.0"
+      "villagers_accounted_for": "4.0"
     }
   },
   "abbreviation_map": {

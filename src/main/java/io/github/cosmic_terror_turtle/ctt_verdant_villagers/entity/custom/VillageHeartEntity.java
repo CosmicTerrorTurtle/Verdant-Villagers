@@ -261,7 +261,7 @@ public class VillageHeartEntity extends PathAwareEntity implements GeoEntity {
      * @param nbt The NbtCompound used for syncing.
      */
     private void setSyncNbt(NbtCompound nbt) {
-        if (village!=null && nbt.contains("name")) {
+        if (village!=null && nbt.contains("villagerCount")) {
             village.setVillagerCount(nbt.getInt("villagerCount"));
         }
     }
