@@ -1,7 +1,9 @@
 {
-  "village_types": ["default", "coast", "under_ground", "sky", "nether_standard", "nether_coast", "nether_under_ground", "nether_sky"],
+  "village_types": ["default", "coast", "under_water", "under_ground", "sky", "nether_standard", "nether_coast", "under_lava", "nether_under_ground", "nether_sky"],
   "available_for_block_palettes": {},
   "available_for_villager_count": [0, 15],
+  "available_for_terrain_types_above": ["air", "terrain"],
+  "available_for_terrain_types_below": [],
   "data_per_structure_type": {
     "house": {
       "villagers_accounted_for": "1"

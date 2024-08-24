@@ -1219,6 +1219,8 @@ public class ServerVillage extends Village {
         double startAngle;
         BlockPos testPos;
         int surfaceBlockMaxYOffset = (int)(50*roadType.scale);
+        String terrainTypeAbove;
+        String terrainTypeBelow;
         MegaChunk testPosMegaChunk;
         Structure newStructure;
 
@@ -1240,6 +1242,17 @@ public class ServerVillage extends Village {
                 testPos = pos.add((int) (searchRadius*Math.cos(startAngle+addAngle)), 0, (int) (searchRadius*Math.sin(startAngle+addAngle)));
                 testPos = getSurfaceBlockForGeoFeature(testPos, testPos.getY()-surfaceBlockMaxYOffset, testPos.getY()+surfaceBlockMaxYOffset);
                 if (testPos == null) {
+                    continue;
+                }
+                // Test if the terrain at the test position matches the constraints of the structure template.
+                terrainTypeAbove = TerrainTypeUtils.getTerrainType(true, world, testPos, 5);
+                terrainTypeBelow = TerrainTypeUtils.getTerrainType(false, world, testPos, 5);
+                if (
+                        !rawTemplate.availableForTerrainTypesAbove.isEmpty()
+                                && !rawTemplate.availableForTerrainTypesAbove.contains(terrainTypeAbove)
+                        || !rawTemplate.availableForTerrainTypesBelow.isEmpty()
+                                && !rawTemplate.availableForTerrainTypesBelow.contains(terrainTypeBelow)
+                ) {
                     continue;
                 }
                 // Find the mega chunk that this position is a part of.

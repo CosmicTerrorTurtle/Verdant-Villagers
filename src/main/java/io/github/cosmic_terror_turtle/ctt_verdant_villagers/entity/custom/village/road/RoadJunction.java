@@ -1,6 +1,7 @@
 package io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.road;
 
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.GeoFeatureBit;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.TerrainTypeUtils;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.VerticalBlockColumn;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.util.MathUtils;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.util.NbtUtils;
@@ -33,8 +34,8 @@ public class RoadJunction extends RoadFeature {
         this.pos = pos;
         this.radius = 0.0;
         this.sameHeightRadius = sameHeightRadius;
-        terrainTypeTop = RoadType.getTerrainType(true, world, pos, (int) (radius+2));
-        terrainTypeBottom = RoadType.getTerrainType(false, world, pos, (int) (radius+2));
+        terrainTypeTop = TerrainTypeUtils.getTerrainType(true, world, pos, (int) (radius+2));
+        terrainTypeBottom = TerrainTypeUtils.getTerrainType(false, world, pos, (int) (radius+2));
     }
 
     /**
@@ -49,27 +50,27 @@ public class RoadJunction extends RoadFeature {
         this.pos = pos;
         radius = type.junctionRadius;
         sameHeightRadius = type.junctionSameHeightRadius;
-        terrainTypeTop = RoadType.getTerrainType(true, world, pos, (int) (radius+2));
-        terrainTypeBottom = RoadType.getTerrainType(false, world, pos, (int) (radius+2));
+        terrainTypeTop = TerrainTypeUtils.getTerrainType(true, world, pos, (int) (radius+2));
+        terrainTypeBottom = TerrainTypeUtils.getTerrainType(false, world, pos, (int) (radius+2));
 
         setBitsAndMegaBlocks(type);
     }
 
     private void setBitsAndMegaBlocks(RoadType type) {
         // Normal columns
-        ArrayList<VerticalBlockColumn> templateBlockColumnsTop = type.junctionTemplateBlockColumns.get("top").get(terrainTypeTop);
-        ArrayList<VerticalBlockColumn> templateBlockColumnsBottom = type.junctionTemplateBlockColumns.get("bottom").get(terrainTypeBottom);
+        ArrayList<VerticalBlockColumn> templateBlockColumnsTop = type.junctionTemplateBlockColumns.get(RoadType.TERRAIN_TYPE_ABOVE_KEY).get(terrainTypeTop);
+        ArrayList<VerticalBlockColumn> templateBlockColumnsBottom = type.junctionTemplateBlockColumns.get(RoadType.TERRAIN_TYPE_BELOW_KEY).get(terrainTypeBottom);
         // Special columns (choose random keys for top/bottom)
         String specialKey;
         ArrayList<String> keys;
-        HashMap<String, ArrayList<VerticalBlockColumn>> specialColumnsMapTop = type.junctionSpecialTemplateBlockColumns.get("top").get(terrainTypeTop);
+        HashMap<String, ArrayList<VerticalBlockColumn>> specialColumnsMapTop = type.junctionSpecialTemplateBlockColumns.get(RoadType.TERRAIN_TYPE_ABOVE_KEY).get(terrainTypeTop);
         ArrayList<VerticalBlockColumn> specialColumnsTop = null;
         if (!specialColumnsMapTop.isEmpty()) {
             keys = new ArrayList<>(specialColumnsMapTop.keySet());
             specialKey = keys.get(MathUtils.nextInt(0, keys.size()-1));
             specialColumnsTop = specialColumnsMapTop.get(specialKey);
         }
-        HashMap<String, ArrayList<VerticalBlockColumn>> specialColumnsMapBottom = type.junctionSpecialTemplateBlockColumns.get("bottom").get(terrainTypeBottom);
+        HashMap<String, ArrayList<VerticalBlockColumn>> specialColumnsMapBottom = type.junctionSpecialTemplateBlockColumns.get(RoadType.TERRAIN_TYPE_BELOW_KEY).get(terrainTypeBottom);
         ArrayList<VerticalBlockColumn> specialColumnsBottom = null;
         if (!specialColumnsMapBottom.isEmpty()) {
             keys = new ArrayList<>(specialColumnsMapBottom.keySet());

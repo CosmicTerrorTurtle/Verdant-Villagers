@@ -114,17 +114,4 @@ public class BlockStateParsing {
     private static <T extends Comparable<T>> BlockState getStateWith(BlockState state, Property<T> property, String value) {
         return state.with(property, property.parse(value).get());
     }
-
-    /**
-     * Convenience method for retrieving a block state from a village block palette.
-     * @param village The village that the block palette belongs to.
-     * @param paletteModId The mod id under which the palette type is registered.
-     * @param paletteType The name of the palette type.
-     * @param defaultBlockState The default block state to be replaced, for example oak wood for wood palettes.
-     * @param paletteIndex The block palette index for the village.
-     * @return The block state returned by the village.
-     */
-    public static BlockState getBlockStateFrom(ServerVillage village, String paletteModId, String paletteType, BlockState defaultBlockState, int paletteIndex) {
-        return village.getBlockPaletteOf(new Identifier(paletteModId, paletteType), paletteIndex).getBlockState(defaultBlockState);
-    }
 }

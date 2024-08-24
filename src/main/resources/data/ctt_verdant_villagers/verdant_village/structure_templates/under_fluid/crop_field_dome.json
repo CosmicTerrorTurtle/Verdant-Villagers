@@ -1,7 +1,9 @@
 {
-  "village_types": ["under_water"],
+  "village_types": ["default", "desert", "coast", "desert_coast", "under_water", "under_ground", "sky"],
   "available_for_block_palettes": {},
   "available_for_villager_count": [0, 1000000],
+  "available_for_terrain_types_above": ["fluid"],
+  "available_for_terrain_types_below": [],
   "data_per_structure_type": {
     "crop_field": {
       "villagers_accounted_for": "6"

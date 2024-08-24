@@ -2,6 +2,7 @@ package io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.villa
 
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.GeoFeatureBit;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.ServerVillage;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.TerrainTypeUtils;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.VerticalBlockColumn;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.util.MathUtils;
 import net.minecraft.nbt.NbtCompound;
@@ -198,10 +199,10 @@ public class RoadEdge extends RoadFeature {
         ArrayList<VerticalBlockColumn> specialColumnsBottom;
         topTerrain = from.terrainTypeTop;
         bottomTerrain = from.terrainTypeBottom;
-        columnsTop = roadType.edgeTemplateBlockColumns.get("top").get(topTerrain);
-        columnsBottom = roadType.edgeTemplateBlockColumns.get("bottom").get(bottomTerrain);
-        specialColumnsTop = roadType.edgeSpecialTemplateBlockColumns.get("top").get(topTerrain);
-        specialColumnsBottom = roadType.edgeSpecialTemplateBlockColumns.get("bottom").get(bottomTerrain);
+        columnsTop = roadType.edgeTemplateBlockColumns.get(RoadType.TERRAIN_TYPE_ABOVE_KEY).get(topTerrain);
+        columnsBottom = roadType.edgeTemplateBlockColumns.get(RoadType.TERRAIN_TYPE_BELOW_KEY).get(bottomTerrain);
+        specialColumnsTop = roadType.edgeSpecialTemplateBlockColumns.get(RoadType.TERRAIN_TYPE_ABOVE_KEY).get(topTerrain);
+        specialColumnsBottom = roadType.edgeSpecialTemplateBlockColumns.get(RoadType.TERRAIN_TYPE_BELOW_KEY).get(bottomTerrain);
         for (double a=0; a<d; a+=ROAD_STEP) {
             if (spiral && completedSpirals<Math.abs(spiralNum) && a > d/2) {
                 a-=ROAD_STEP;
@@ -256,12 +257,12 @@ public class RoadEdge extends RoadFeature {
             spaceAfterLastTerrainCheck += ROAD_STEP;
             if (spaceAfterLastTerrainCheck > ROAD_TYPE_TERRAIN_SPACE && from.radius < a && a < d-to.radius) {
                 spaceAfterLastTerrainCheck = 0;
-                topTerrain = RoadType.getTerrainType(true, world, centerPos, (int) (radius+2));
-                bottomTerrain = RoadType.getTerrainType(false, world, centerPos, (int) (radius+2));
-                columnsTop = roadType.edgeTemplateBlockColumns.get("top").get(topTerrain);
-                columnsBottom = roadType.edgeTemplateBlockColumns.get("bottom").get(bottomTerrain);
-                specialColumnsTop = roadType.edgeSpecialTemplateBlockColumns.get("top").get(topTerrain);
-                specialColumnsBottom = roadType.edgeSpecialTemplateBlockColumns.get("bottom").get(bottomTerrain);
+                topTerrain = TerrainTypeUtils.getTerrainType(true, world, centerPos, (int) (radius+2));
+                bottomTerrain = TerrainTypeUtils.getTerrainType(false, world, centerPos, (int) (radius+2));
+                columnsTop = roadType.edgeTemplateBlockColumns.get(RoadType.TERRAIN_TYPE_ABOVE_KEY).get(topTerrain);
+                columnsBottom = roadType.edgeTemplateBlockColumns.get(RoadType.TERRAIN_TYPE_BELOW_KEY).get(bottomTerrain);
+                specialColumnsTop = roadType.edgeSpecialTemplateBlockColumns.get(RoadType.TERRAIN_TYPE_ABOVE_KEY).get(topTerrain);
+                specialColumnsBottom = roadType.edgeSpecialTemplateBlockColumns.get(RoadType.TERRAIN_TYPE_BELOW_KEY).get(bottomTerrain);
             }
             // Determine if special columns need to be calculated.
             spaceAfterLastSpecialColumn += ROAD_STEP;
@@ -566,7 +567,7 @@ public class RoadEdge extends RoadFeature {
             } else {
                 // No surface block found. For air, start offset at max in order to get a bridge-like arched slope. For
                 // other terrain types on top, start at zero.
-                if (RoadType.getTerrainType(true, village.getWorld(), startPosition, 6).equals("air")) {
+                if (TerrainTypeUtils.getTerrainType(true, village.getWorld(), startPosition, 6).equals("air")) {
                     terrainOffset = maxOffset;
                 } else {
                     terrainOffset = 0;

@@ -14,6 +14,8 @@ public class RawStructureTemplate {
 
     public HashMap<String, ArrayList<String>> availableForBlockPalettes;
     public ArrayList<Integer> availableForVillagerCount;
+    public ArrayList<String> availableForTerrainTypesAbove;
+    public ArrayList<String> availableForTerrainTypesBelow;
     public HashMap<String, HashMap<String, String>> dataPerStructureType;
     public String[][][] blockStateCube;
     public ArrayList<Integer> center;
@@ -30,6 +32,8 @@ public class RawStructureTemplate {
 
         HashMap<String, ArrayList<String>> availableForBlockPalettes = null;
         ArrayList<Integer> availableForVillagerCount = null;
+        ArrayList<String> availableForTerrainTypesAbove = null;
+        ArrayList<String> availableForTerrainTypesBelow = null;
         HashMap<String, HashMap<String, String>> dataPerStructureType = null;
         HashMap<String, String> abbreviationMap = null;
         ArrayList<ArrayList<ArrayList<String>>> blockStateArray = null;
@@ -41,15 +45,29 @@ public class RawStructureTemplate {
             switch (reader.nextName()) {
                 default -> throw new IOException();
                 case "village_types" -> villageTypes = JsonUtils.readList(reader, JsonReader::nextString);
-                case "available_for_block_palettes" -> availableForBlockPalettes = JsonUtils.readMap(reader, reader1 -> JsonUtils.readList(reader1, JsonReader::nextString));
-                case "available_for_villager_count" -> availableForVillagerCount = JsonUtils.readList(reader, JsonReader::nextInt);
-                case "data_per_structure_type" -> dataPerStructureType = JsonUtils.readMap(reader, reader1 -> JsonUtils.readMap(reader1, JsonReader::nextString));
+                case "available_for_block_palettes" -> availableForBlockPalettes = JsonUtils.readMap(
+                        reader, reader1 -> JsonUtils.readList(reader1, JsonReader::nextString)
+                );
+                case "available_for_villager_count" -> availableForVillagerCount = JsonUtils.readList(
+                        reader, JsonReader::nextInt
+                );
+                case "available_for_terrain_types_above" -> availableForTerrainTypesAbove = JsonUtils.readList(
+                        reader, JsonReader::nextString
+                );
+                case "available_for_terrain_types_below" -> availableForTerrainTypesBelow = JsonUtils.readList(
+                        reader, JsonReader::nextString
+                );
+                case "data_per_structure_type" -> dataPerStructureType = JsonUtils.readMap(
+                        reader, reader1 -> JsonUtils.readMap(reader1, JsonReader::nextString)
+                );
                 case "abbreviation_map" -> abbreviationMap = JsonUtils.readMap(reader, JsonReader::nextString);
-                case "block_state_cube" -> blockStateArray = JsonUtils.readList(reader, reader1 -> JsonUtils.readList(reader1, reader2 -> JsonUtils.readList(reader2, JsonReader::nextString)));
+                case "block_state_cube" -> blockStateArray = JsonUtils.readList(
+                        reader, reader1 -> JsonUtils.readList(reader1, reader2 -> JsonUtils.readList(reader2, JsonReader::nextString))
+                );
                 case "center" -> center = JsonUtils.readList(reader, JsonReader::nextInt);
                 case "points_of_interest" -> {
                     if (abbreviationMap == null) {
-                        throw new IOException("Abbreviation map must be defined before point of interest.");
+                        throw new IOException("Abbreviation map must be defined before points of interest.");
                     }
                     pointsOfInterest = readPointsOfInterest(reader, abbreviationMap);
                 }
@@ -57,25 +75,33 @@ public class RawStructureTemplate {
         }
         reader.endObject();
 
-        if (villageTypes==null || availableForBlockPalettes==null || availableForVillagerCount==null || availableForVillagerCount.size()!=2 || dataPerStructureType==null
-                || abbreviationMap==null || blockStateArray==null || center==null || center.size()!=3 || pointsOfInterest==null) {
+        if (villageTypes==null || availableForBlockPalettes==null || availableForVillagerCount==null
+                || availableForVillagerCount.size()!=2 || dataPerStructureType==null || abbreviationMap==null
+                || blockStateArray==null || center==null || center.size()!=3 || pointsOfInterest==null) {
             throw new IOException();
         }
 
         DataRegistry.addTemplate(
-                new RawStructureTemplate(availableForBlockPalettes, availableForVillagerCount, dataPerStructureType, getCube(blockStateArray, abbreviationMap), center, pointsOfInterest),
-                villageTypes
+                new RawStructureTemplate(
+                        availableForBlockPalettes, availableForVillagerCount, availableForTerrainTypesAbove,
+                        availableForTerrainTypesBelow, dataPerStructureType, getCube(blockStateArray, abbreviationMap),
+                        center, pointsOfInterest
+                ), villageTypes
         );
     }
 
     public RawStructureTemplate(HashMap<String, ArrayList<String>> availableForBlockPalettes,
                                 ArrayList<Integer> availableForVillagerCount,
+                                ArrayList<String> availableForTerrainTypesAbove,
+                                ArrayList<String> availableForTerrainTypesBelow,
                                 HashMap<String, HashMap<String, String>> dataPerStructureType,
                                 String[][][] blockStateCube,
                                 ArrayList<Integer> center,
                                 ArrayList<RawPointOfInterest> pointsOfInterest) {
         this.availableForBlockPalettes = availableForBlockPalettes;
         this.availableForVillagerCount = availableForVillagerCount;
+        this.availableForTerrainTypesAbove = availableForTerrainTypesAbove;
+        this.availableForTerrainTypesBelow = availableForTerrainTypesBelow;
         this.dataPerStructureType = dataPerStructureType;
         this.blockStateCube = blockStateCube;
         this.center = center;
