@@ -3,8 +3,8 @@ package io.github.cosmic_terror_turtle.ctt_verdant_villagers.data.village;
 import com.google.gson.stream.JsonReader;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.data.JsonUtils;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.ServerVillage;
-import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.structure.PointOfInterest;
-import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.structure.StructureAccessPoint;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.structure.PointOfInterest;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.structure.StructureAccessPoint;
 import net.minecraft.util.math.BlockPos;
 
 import java.io.IOException;

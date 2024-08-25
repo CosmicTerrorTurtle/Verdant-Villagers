@@ -1,6 +1,6 @@
 package io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village;
 
-import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.road.RoadType;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.road.RoadType;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.util.ModTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

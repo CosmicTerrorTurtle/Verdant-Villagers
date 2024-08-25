@@ -1,7 +1,7 @@
-package io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.road;
+package io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.road;
 
-import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.GeoFeature;
-import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.GeoFeatureBit;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.GeoFeature;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.GeoFeatureBit;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.util.NbtUtils;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;

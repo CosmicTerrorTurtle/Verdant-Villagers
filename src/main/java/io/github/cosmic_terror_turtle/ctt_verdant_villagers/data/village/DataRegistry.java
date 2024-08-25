@@ -2,9 +2,9 @@ package io.github.cosmic_terror_turtle.ctt_verdant_villagers.data.village;
 
 import com.google.gson.stream.JsonReader;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.VerdantVillagers;
-import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.structure.PointOfInterest;
-import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.structure.SaplingLocationPoint;
-import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.structure.StructureAccessPoint;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.structure.PointOfInterest;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.structure.SaplingLocationPoint;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.structure.StructureAccessPoint;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
 

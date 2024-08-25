@@ -1,6 +1,6 @@
 package io.github.cosmic_terror_turtle.ctt_verdant_villagers.util;
 
-import io.github.cosmic_terror_turtle.ctt_verdant_villagers.command.SaveVillageStructureCommand;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.command.SaveVerdantVillageStructureCommand;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.ModEntities;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.VillageHeartEntity;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -18,6 +18,6 @@ public class ModRegistries {
     }
 
     private static void registerCommands() {
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> SaveVillageStructureCommand.register(dispatcher));
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> SaveVerdantVillageStructureCommand.register(dispatcher));
     }
 }

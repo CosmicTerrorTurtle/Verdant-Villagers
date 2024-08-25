@@ -1,4 +1,4 @@
-package io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.structure;
+package io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.structure;
 
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.data.village.RawStructureTemplate;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.ServerVillage;

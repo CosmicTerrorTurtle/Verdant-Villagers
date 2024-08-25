@@ -8,6 +8,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.data.village.BlockStateParsing;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.data.village.RawStructureTemplate;
 import net.minecraft.block.BlockState;
 import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.command.argument.IdentifierArgumentType;
@@ -26,11 +27,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SaveVillageStructureCommand {
+public class SaveVerdantVillageStructureCommand {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(
-                CommandManager.literal("save_village_structure").then(
+                CommandManager.literal("save_verdant_village_structure").then(
                         CommandManager.argument("file_name", StringArgumentType.word()).then(
                                 CommandManager.argument("pos1", BlockPosArgumentType.blockPos()).then(
                                         CommandManager.argument("pos2", BlockPosArgumentType.blockPos()).then(
@@ -77,7 +78,7 @@ public class SaveVillageStructureCommand {
         Identifier stateId;
         String parsedState;
         HashMap<String, String> inverseAbbreviationMap = new HashMap<>();
-        inverseAbbreviationMap.put("null", "nul");
+        inverseAbbreviationMap.put(RawStructureTemplate.NULL_KEY, "nul");
         inverseAbbreviationMap.put(BlockStateParsing.COLLISION_SPACE, "csp");
         int abbreviationName = 0x100;
         ArrayList<ArrayList<ArrayList<String>>> stateStrings = new ArrayList<>();
@@ -90,7 +91,7 @@ public class SaveVillageStructureCommand {
                 for (int z=lowerZ; z<=upperZ; z++) {
                     state = world.getBlockState(new BlockPos(x, y, z));
                     stateId = Registries.BLOCK.getId(state.getBlock());
-                    // If the state's block id matches, write null keyword
+                    // If the state's block id matches the ids given to the command, write null/collision space keywords.
                     if (nullBlockId != null && nullBlockId.equals(stateId)) {
                         stateStrings__.add("nul");
                     } else if(collisionSpaceId != null && collisionSpaceId.equals(stateId)) {
@@ -134,6 +135,14 @@ public class SaveVillageStructureCommand {
             writer.value(1000000L);
             writer.endArray();
             writer.setIndent(normalIndent);
+
+            writer.name("available_for_terrain_types_above");
+            writer.beginArray();
+            writer.endArray();
+
+            writer.name("available_for_terrain_types_below");
+            writer.beginArray();
+            writer.endArray();
 
             writer.name("data_per_structure_type");
             writer.beginObject();

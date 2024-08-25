@@ -1,4 +1,4 @@
-package io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village;
+package io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature;
 
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.util.NbtUtils;
 import net.minecraft.block.BlockState;

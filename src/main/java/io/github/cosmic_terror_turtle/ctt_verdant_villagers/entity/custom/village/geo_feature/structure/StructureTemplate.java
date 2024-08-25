@@ -1,9 +1,9 @@
-package io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.structure;
+package io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.structure;
 
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.data.village.BlockStateParsing;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.data.village.RawStructureTemplate;
-import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.GeoFeatureBit;
-import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.GeoFeatureBitOption;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.GeoFeatureBit;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.GeoFeatureBitOption;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.ServerVillage;
 
 import java.util.ArrayList;

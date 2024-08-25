@@ -1,9 +1,9 @@
 package io.github.cosmic_terror_turtle.ctt_verdant_villagers.data.village;
 
-import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.GeoFeatureBit;
-import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.GeoFeatureBitOption;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.GeoFeatureBit;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.GeoFeatureBitOption;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.ServerVillage;
-import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.structure.StructureTemplate;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.structure.StructureTemplate;
 import net.minecraft.block.BlockState;
 import net.minecraft.registry.Registries;
 import net.minecraft.state.property.Property;

@@ -1,4 +1,4 @@
-package io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.road;
+package io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.road;
 
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.data.village.RawRoadType;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.ServerVillage;

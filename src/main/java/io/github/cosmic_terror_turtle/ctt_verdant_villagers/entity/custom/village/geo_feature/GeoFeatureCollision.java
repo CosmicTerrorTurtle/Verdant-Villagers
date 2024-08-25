@@ -1,10 +1,10 @@
-package io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village;
+package io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature;
 
-import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.road.RoadDot;
-import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.road.RoadEdge;
-import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.road.RoadJunction;
-import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.structure.Structure;
-import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.structure.StructureAccessPoint;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.road.RoadDot;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.road.RoadEdge;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.road.RoadJunction;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.structure.Structure;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.structure.StructureAccessPoint;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 
@@ -18,7 +18,7 @@ public class GeoFeatureCollision {
      * @param feature2 Second input.
      * @return True if they overlap.
      */
-    static boolean featuresOverlap(GeoFeature feature1, GeoFeature feature2) {
+    public static boolean featuresOverlap(GeoFeature feature1, GeoFeature feature2) {
         // Check bounds.
         if (!feature1.boundsCollideWith(feature2)) {
             return false;
@@ -63,7 +63,7 @@ public class GeoFeatureCollision {
      * @param oldEdge The already existing Edge.
      * @return True if the edges overlap.
      */
-    static boolean edgesOverlap(RoadEdge newEdge, RoadEdge oldEdge) {
+    public static boolean edgesOverlap(RoadEdge newEdge, RoadEdge oldEdge) {
         // Check bounds.
         if (!newEdge.boundsCollideWith(oldEdge)) {
             return false;
@@ -113,7 +113,7 @@ public class GeoFeatureCollision {
      * @param dot The road dot that the access path is trying to connect to.
      * @return True if the path collides with the edge.
      */
-    static boolean accessPathCollidesWithEdge(RoadEdge accessPath, RoadDot dot) {
+    public static boolean accessPathCollidesWithEdge(RoadEdge accessPath, RoadDot dot) {
         RoadEdge edge = dot.edge;
         // Check bounds.
         if (!accessPath.boundsCollideWith(edge)) {
@@ -168,7 +168,7 @@ public class GeoFeatureCollision {
      * @param accessPath The access path.
      * @return True if the access path collides with the structure.
      */
-    static boolean accessPathCollidesWithItsStructure(Structure structure, StructureAccessPoint accessPoint,
+    public static boolean accessPathCollidesWithItsStructure(Structure structure, StructureAccessPoint accessPoint,
                                                       RoadEdge accessPath) {
         // Check bounds.
         if (!structure.boundsCollideWith(accessPath)) {

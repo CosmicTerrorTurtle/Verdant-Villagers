@@ -2,8 +2,11 @@ package io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.villa
 
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.data.village.*;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.VillageHeartEntity;
-import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.road.*;
-import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.structure.*;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.GeoFeature;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.GeoFeatureBit;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.GeoFeatureCollision;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.road.*;
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.geo_feature.structure.*;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.util.MathUtils;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.util.ModTags;
 import net.minecraft.block.Block;
