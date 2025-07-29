@@ -14,6 +14,10 @@ import java.util.List;
 public class VillageAnchorBlockEntity extends BlockEntity {
 
     public static final int TICKS_BETWEEN_CALLS = 100;
+    /**
+     * The maximum distance at which village hearts will be called by this anchor block.
+     */
+    public static final double MAX_CALL_DISTANCE = 100.0;
 
     private int ticksSinceLastCall;
 
@@ -40,21 +44,22 @@ public class VillageAnchorBlockEntity extends BlockEntity {
      * Searches for the nearest village heart within a box and orders it to move towards a position above this block.
      */
     private void callVillageHeart() {
-        if (world != null) {
-            List<VillageHeartEntity> list = world.getEntitiesByClass(VillageHeartEntity.class, new Box(pos).expand(VillageHeartEntity.MAX_ANCHOR_CALL_DISTANCE), entity -> true);
-            double bestD = -1.0;
-            double d;
-            VillageHeartEntity closestVillageHeart = null;
-            for (VillageHeartEntity villageHeart : list) {
-                d = villageHeart.squaredDistanceTo(Vec3d.ofCenter(pos));
-                if (closestVillageHeart != null && bestD <= d) continue;
-                bestD = d;
-                closestVillageHeart = villageHeart;
-            }
-            if (closestVillageHeart != null) {
-                closestVillageHeart.setTargetPosition(Vec3d.ofCenter(pos).add(0, VillageHeartEntity.ANCHOR_HOVER_HEIGHT, 0), 1.0);
-            }
+        if (world == null) return;
+
+        List<VillageHeartEntity> nearHearts = world.getEntitiesByClass(
+                VillageHeartEntity.class, new Box(pos).expand(MAX_CALL_DISTANCE), entity -> true);
+        Vec3d center = Vec3d.ofCenter(pos);
+        double bestDistance = -1.0;
+        double distance;
+        VillageHeartEntity closestVillageHeart = null;
+        for (VillageHeartEntity villageHeart : nearHearts) {
+            distance = villageHeart.squaredDistanceTo(center);
+            if (closestVillageHeart != null && bestDistance <= distance) continue;
+            bestDistance = distance;
+            closestVillageHeart = villageHeart;
+        }
+        if (closestVillageHeart != null) {
+            closestVillageHeart.setHoverTargetPosition(center, 1.0);
         }
     }
-
 }

@@ -1,5 +1,6 @@
 package io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom;
 
+import io.github.cosmic_terror_turtle.ctt_verdant_villagers.block.custom.entity.VillageAnchorBlockEntity;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.ClientVillage;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.ServerVillage;
 import io.github.cosmic_terror_turtle.ctt_verdant_villagers.entity.custom.village.Village;
@@ -32,8 +33,10 @@ import software.bernie.geckolib.core.object.PlayState;
 
 public class VillageHeartEntity extends PathAwareEntity implements GeoEntity {
 
-    public static final double MAX_ANCHOR_CALL_DISTANCE = 100.0;
-    public static final double ANCHOR_HOVER_HEIGHT = 5;
+    /**
+     * The height this village heart will hover above its target.
+     */
+    public static final double HOVER_HEIGHT = 5;
     public static final double MIN_DISTANCE_BETWEEN_HEARTS = 800.0;
 
     private final AnimatableInstanceCache cache;
@@ -57,7 +60,7 @@ public class VillageHeartEntity extends PathAwareEntity implements GeoEntity {
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, 1)
                 .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3)
                 .add(EntityAttributes.GENERIC_FLYING_SPEED, 0.3)
-                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, MAX_ANCHOR_CALL_DISTANCE);
+                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, VillageAnchorBlockEntity.MAX_CALL_DISTANCE);
     }
 
     @Override
@@ -81,9 +84,17 @@ public class VillageHeartEntity extends PathAwareEntity implements GeoEntity {
         return birdNavigation;
     }
 
-    public void setTargetPosition(Vec3d v, double speedModifier) {
+    /**
+     * Sets the position this village heart wants to move to if this entity's navigation is not in idle mode. It is a
+     * couple blocks higher than the given position.
+     * @param position The position to hover above.
+     * @param speedModifier The speed modifier that will be used for moving toward the target position.
+     */
+    public void setHoverTargetPosition(Vec3d position, double speedModifier) {
         if (getNavigation().isIdle()) {
-            getNavigation().startMovingTo(v.x, v.y, v.z, speedModifier);
+            // Move the position to the hovering height
+            position = position.add(0, HOVER_HEIGHT, 0);
+            getNavigation().startMovingTo(position.x, position.y, position.z, speedModifier);
         }
     }
 
@@ -172,7 +183,8 @@ public class VillageHeartEntity extends PathAwareEntity implements GeoEntity {
                 VillageHeartEntity.class,
                 new Box(getBlockPos()).expand(MIN_DISTANCE_BETWEEN_HEARTS),
                 entity -> true
-        ).size() <= 1) {
+            ).size() == 1
+        ) {
             village.tick();
         }
     }
